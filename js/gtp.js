@@ -21,6 +21,7 @@
     ROW12_TILES = 12;
     ROW14_TILES = 14;
     TOTAL_TILES = ROW12_TILES * 2 + ROW14_TILES * 2;
+	 PUNCTUATION_REGEX = /[\.\,\?\!\@\#\$\%\^\&\*\(\)\<\>\:\;\']/g
 
 		$.getJSON("quiz/quiz_data.json", function(json) {
 			var game = $(".game");
@@ -73,7 +74,7 @@
 
       //*needs to clean up strings here like double spaces
 
-      phrase = "ICE CREAM SANDWICHES";
+      phrase = "ICE'S CREAM SANDWICHES";
 
       //Checks phrase for length
       if (phrase.length > TOTAL_TILES)
@@ -99,8 +100,13 @@
 
       for (var word = 0; word < words.length; word++){
         for (var c = 0; c < words[word].length; c++){
-          $('div.cell_'+(wordIndex[word]+c)).addClass("contain_letter");
-          $('div.cell_'+(wordIndex[word]+c)+' div.flipper div.back p.letter').text(words[word].charAt(c)).ad;
+          $('div.cell_'+(wordIndex[word]+c)).addClass("contains_letter");
+          $('div.cell_'+(wordIndex[word]+c)+' div.flipper div.back p.letter').text(words[word].charAt(c));
+		  
+		   //Display punctuation
+		   if (PUNCTUATION_REGEX.test(words[word].charAt(c))){
+			   $('div.cell_'+(wordIndex[word]+c)).addClass("flip");
+		   }
         }
       }
 
@@ -112,11 +118,11 @@
 
       ctx2 = $.schedule({
     id:      null,         /* unique identifier of high-level schedule */
-    time:    2000,         /* time in milliseconds after which the task is run */
+    time:    5000,         /* time in milliseconds after which the task is run */
     repeat:  false,        /* whether schedule should be automatically repeated */
     protect: false,        /* whether schedule should be protected from double scheduling */
     obj:     null,         /* function context object ("this") */
-    func:    function(){ $('.contain_letter').addClass("flip"); }, /* function to call */
+    func:    function(){ $('.contains_letter').addClass("flip"); }, /* function to call */
     args:    [row]            /* function arguments to pass */
     });
 
