@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<title>Guess That Phrase</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <link rel="stylesheet" href="css/grid.css">
+	<link rel="stylesheet" href="css/animate.min.css">
+	<link rel="stylesheet" type="text/css" href="css/gtp.css">
+    <link rel="stylesheet" type="text/css" href="css/gtp.presentation.css">
+</head>
+<body>
+	<div class="container_18 game">
+	</div>
+
+	<!-- ICanHaz Macros -->
+
+	<!-- Board Macros -->
+	<script id="board_template" type="text/html">
+        <div class="board">
+        </div>
+	</script>
+
+    <script id="board_row_template" type="text/html">
+        <div class="row">
+        </div>
+	</script>
+
+    <script id="board_cell_template" type="text/html">
+        <div class="grid_1 cell flip-container">
+          <div class="flipper">
+            <div class="front"></div>
+            <div class="back"><p class="letter"></p></div>
+          </div>
+        </div>
+	</script>
+
+    <script id="puzzle_hint_template" type="text/html">
+        <div class="grid_18 puzzle_hint">{{ hint }}</div>
+	</script>
+
+	<script src="js/jquery-2.1.0.min.js"></script>
+    <script src="js/jquery.schedule.js"></script>
+	<script src="js/icanhaz.min.js"></script>
+	<script src="js/howler.min.js"></script>
+	<script src="js/gtp.js"></script>
+
+
+</body>
+</html>
