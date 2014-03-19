@@ -23,9 +23,9 @@
     TOTAL_TILES = ROW12_TILES * 2 + ROW14_TILES * 2;
 	 PUNCTUATION_REGEX = /[\.\,\?\!\@\#\$\%\^\&\*\(\)\<\>\:\;\']/g
 
-		$.getJSON("quiz/quiz_data.json", function(json) {
+
 			var game = $(".game");
-			var quizData = json.quiz_data;
+
 
 			//prepare board
 			var board = ich.board_template();
@@ -127,6 +127,6 @@
     });
 
 
-		});
+
 	});
 })(jQuery);
