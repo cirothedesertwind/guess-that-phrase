@@ -12,6 +12,20 @@
 
     //---------------------------------------------------------------------
 
+		onLetterClick = function(event) {
+			var letter = event.data.letter;
+			var words = event.data.words;
+			var wordIndex = event.data.wordIndex;
+
+      			for (var word = 0; word < words.length; word++){
+       				 for (var c = 0; c < words[word].length; c++){
+				   if (words[word].charAt(c) == letter){
+					   $('div.cell_'+(wordIndex[word]+c)).addClass("flip");
+				   }
+      				  }
+    			  }
+		};
+
 		onCellClick = function(event) {
 			var game = event.data.game;
 			var board = event.data.board;
@@ -22,6 +36,7 @@
     ROW14_TILES = 14;
     TOTAL_TILES = ROW12_TILES * 2 + ROW14_TILES * 2;
 	 PUNCTUATION_REGEX = /[\.\,\?\!\@\#\$\%\^\&\*\(\)\<\>\:\;\']/g
+    ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 
 			var game = $(".game");
@@ -114,17 +129,18 @@
 
       //End phrase setup----------------------------------------------
 
-      //Board flips test
+      //Add clickable letters
 
-      ctx2 = $.schedule({
-    id:      null,         /* unique identifier of high-level schedule */
-    time:    5000,         /* time in milliseconds after which the task is run */
-    repeat:  false,        /* whether schedule should be automatically repeated */
-    protect: false,        /* whether schedule should be protected from double scheduling */
-    obj:     null,         /* function context object ("this") */
-    func:    function(){ $('.contains_letter').addClass("flip"); }, /* function to call */
-    args:    [row]            /* function arguments to pass */
-    });
+	
+      		l = ich.alphabet_template();
+      		for (var e = 0; e < ALPHABET.length; e++){
+			l.append(ich.letter_template({"letter":ALPHABET.charAt(e)}).click({"letter":ALPHABET.charAt(e),"words":words,"wordIndex":wordIndex},onLetterClick));
+		}
+		
+
+	game.append(l);
+
+      
 
 
 
