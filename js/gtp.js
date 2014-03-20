@@ -74,7 +74,7 @@
 
       //*needs to clean up strings here like double spaces
 
-      phrase = "ICE'S CREAM SANDWICHES";
+      phrase = "ICE'S CREAME SANDWICHES";
 
       //Checks phrase for length
       if (phrase.length > TOTAL_TILES)
@@ -90,7 +90,7 @@
 
       //wordIndex[0] = 0;
       //guess an even splitting for now
-      wordIndex[0] = (TOTAL_TILES - phrase.length)/2;
+      wordIndex[0] = Math.floor((TOTAL_TILES - phrase.length)/2);//Javascript does not use integer division
 
       for (var w = 1; w < words.length; w++){
         wordIndex[w] = wordIndex[w-1] + words[w-1].length+1;//+1 for space
@@ -100,6 +100,7 @@
 
       for (var word = 0; word < words.length; word++){
         for (var c = 0; c < words[word].length; c++){
+	  alert(words[word].charAt(c) + ";"+(wordIndex[word]+c));
           $('div.cell_'+(wordIndex[word]+c)).addClass("contains_letter");
           $('div.cell_'+(wordIndex[word]+c)+' div.flipper div.back p.letter').text(words[word].charAt(c));
 		  
