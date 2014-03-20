@@ -100,7 +100,6 @@
 
       for (var word = 0; word < words.length; word++){
         for (var c = 0; c < words[word].length; c++){
-	  alert(words[word].charAt(c) + ";"+(wordIndex[word]+c));
           $('div.cell_'+(wordIndex[word]+c)).addClass("contains_letter");
           $('div.cell_'+(wordIndex[word]+c)+' div.flipper div.back p.letter').text(words[word].charAt(c));
 		  
