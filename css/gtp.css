@@ -78,4 +78,12 @@ span.letter {
 	cursor: pointer;
 }
 
+span.letter.letter_called {
+	color: gray;
+}
+
+span.letter.letter_called_none {
+	color: red;
+}
+
 /*Cell flip animation ----------------------------- */
