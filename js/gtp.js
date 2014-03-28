@@ -83,7 +83,6 @@
             sliceAngle = (2 * Math.PI) / WHEEL.slices.length;
 
             for (var i = 0; i < WHEEL.slices.length; i++) {
-                console.log(angleOffset+sliceAngle*i);
                 WHEEL.drawSlice(context, i, angleOffset+sliceAngle*i, sliceAngle);
             }
       },
