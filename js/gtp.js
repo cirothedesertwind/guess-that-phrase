@@ -1,5 +1,155 @@
 (function($){
 	$(document).ready(function() {
+
+    ///////////////////////////////////////////////////////////
+    ////////// WHEEL CALLBACK FUNCTIONS ///////////////////////
+    ///////////////////////////////////////////////////////////
+
+
+    ///////////////////////////////////////////////////////////
+    ////////////////// WHEEL DATA /////////////////////////////
+    ///////////////////////////////////////////////////////////
+
+
+    //Callbacks are used for special slices such as bankrupcies
+    //and loose your turn.
+
+    var WHEEL = {
+      size: 600,
+      radius: 290,
+      slices: [
+        { value : 100, alt : "", color : '#cc0000', callback : null},
+        { value : 100, alt : "", color : '#00cc00', callback : null},
+        { value : 100, alt : "", color : '#0000cc', callback : null},
+        { value : 100, alt : "", color : '#cc0000', callback : null},
+        { value : 100, alt : "", color : '#cc0000', callback : null},
+        { value : 100, alt : "", color : '#cc0000', callback : null},
+        { value : 100, alt : "", color : '#cc0000', callback : null},
+        { value : 100, alt : "", color : '#cc0000', callback : null},
+        { value : 100, alt : "", color : '#cc0000', callback : null},
+        { value : 100, alt : "", color : '#cc0000', callback : null},
+        { value : 100, alt : "", color : '#cc0000', callback : null},
+        { value : 100, alt : "", color : '#cc0000', callback : null},
+        { value : 100, alt : "", color : '#cc0000', callback : null},
+        { value : 100, alt : "", color : '#cc0000', callback : null},
+        { value : 100, alt : "", color : '#cc0000', callback : null},
+        { value : 100, alt : "", color : '#cc0000', callback : null},
+        { value : 100, alt : "", color : '#cc0000', callback : null},
+        { value : 100, alt : "", color : '#cc0000', callback : null},
+        { value : 100, alt : "", color : '#cc0000', callback : null},
+        { value : 100, alt : "", color : '#cc0000', callback : null},
+        { value : 100, alt : "", color : '#cc0000', callback : null},
+        { value : 100, alt : "", color : '#cc0000', callback : null},
+        { value : 100, alt : "", color : '#cc0000', callback : null},
+        { value : 100, alt : "", color : '#cc0000', callback : null}
+      ],
+      currency : "$",
+
+      lineHeight : 22,
+
+      innerLineWidth : 1,
+      innerCircleFill : '#ffffff',
+      innerCircleStroke : '#000000',
+
+      outerLineWidth : 5,
+      outerCircleStroke : '#000000',
+
+
+      ///////////////////////////////////////////////////////////
+      ////////////////// WHEEL FXNS /////////////////////////////
+      ///////////////////////////////////////////////////////////
+
+      spin  : function() {
+      },
+
+      draw : function(context, angleOffset) {
+            WHEEL.clear(context);
+            WHEEL.drawSlices(context, angleOffset);
+            WHEEL.drawCircles(context);
+            WHEEL.drawPointer(context);
+      },
+
+      clear : function(context) {
+            context.clearRect(0, 0, context.width, context.height);
+      },
+
+      drawSlices : function(context, angleOffset) {
+            context.lineWidth    = 1;
+            context.strokeStyle  = '#000000';
+            context.textBaseline = "middle";
+            context.textAlign    = "center";
+            context.font         = "1.4em Arial";
+
+            sliceAngle = (2 * Math.PI) / WHEEL.slices.length;
+
+            for (var i = 0; i < WHEEL.slices.length; i++) {
+                console.log(angleOffset+sliceAngle*i);
+                WHEEL.drawSlice(context, i, angleOffset+sliceAngle*i, sliceAngle);
+            }
+      },
+
+      drawSlice : function(context, index, angle, sliceAngle){
+            context.save();
+            context.beginPath();
+
+            context.moveTo(WHEEL.size / 2, WHEEL.size / 2);
+            context.arc(WHEEL.size / 2, WHEEL.size / 2, WHEEL.radius, angle, angle + sliceAngle, false); // Draw a arc around the edge
+            context.lineTo(WHEEL.size / 2, WHEEL.size / 2);
+            context.closePath();
+
+            context.fillStyle = WHEEL.slices[index].color;
+            context.fill();
+            context.stroke();
+
+            // Draw the text verticaly
+            context.translate(WHEEL.size / 2, WHEEL.size / 2);
+            context.rotate((angle + angle + sliceAngle) / 2);
+	          context.translate(0.85 * WHEEL.radius, 0);
+	          context.rotate(Math.PI / 2);
+
+            context.fillStyle = '#000000';
+
+            str = WHEEL.currency + WHEEL.slices[index].value.toString();
+
+	          for (var i=0; i < str.length; i++){
+              context.fillText(str.charAt(i), 0, WHEEL.lineHeight * i);
+            }
+
+            context.restore();
+      },
+
+      drawCircles : function(context) {
+            //Draw inner circle to conceal Moire pattern
+            context.beginPath();
+            context.arc(WHEEL.size / 2, WHEEL.size / 2, 20, 0, 2 * Math.PI, false);
+            context.closePath();
+
+            context.fillStyle   =  WHEEL.innerCircleFill;
+            context.strokeStyle =  WHEEL.innerCircleStroke;
+            context.fill();
+            context.stroke();
+
+            // Draw outer circle co conceal jaggy edges
+            context.beginPath();
+            context.arc(WHEEL.size / 2, WHEEL.size / 2, WHEEL.radius, 0, 2 * Math.PI, false);
+            context.closePath();
+
+            context.lineWidth   = WHEEL.outerLineWidth;
+            context.strokeStyle = WHEEL.outerCircleStroke;
+            context.stroke();
+      },
+
+      drawPointer : function(context) {
+      },
+
+    }
+
+    ///////////////////////////////////////////////////////////
+    //////////////////////  START /////////////////////////////
+    ///////////////////////////////////////////////////////////
+
+
+
 		//---------------------------------------------------------------------
 		//Pre-scripted macros
 		$.fn.disableSelection = function() {
@@ -152,7 +302,7 @@
 
       MIN = 0;            // for each line, we can minimally choose 0 words to display...
       MAX = words.length; // for each line, we can maximally choose "words.length" words to display...
-      
+
       var string = "";
       var len;
       var words_per_line = new Array();
@@ -165,15 +315,15 @@
 
       // if the phrase length can fit in one line, then we'll do that...
       // otherwise, we need an algorithm to decide how to best fit it on the board
-      if (phrase.length > 10) { 
+      if (phrase.length > 10) {
 
         // the algorithm is simple -- try every possibility, and choose the best one that fits on the board
-        // the best one minimizes the differences between the lengths of the lines, so 
+        // the best one minimizes the differences between the lengths of the lines, so
         //  X-----------  //
         // -WHAT-A------- //
         // -BUMMER------- //
         //  X-----------  //
-        // 
+        //
         // is better than
         //
         //  X-----------  //
@@ -190,35 +340,35 @@
               choose[3] = MAX - choose[0] - choose[1] - choose[2];
               tmp_choose[3] = choose[3];
 
-              // to decide which choice of words per line is best, we need to calculate the length of the 
+              // to decide which choice of words per line is best, we need to calculate the length of the
               // line with the words, taking into consideration the spaces. we do this for each line
 
               len=0;
               for (var i = 0; i < choose[0]; i++) {
                 word = words[i];
                 len += word.length;
-              } if (len!=0) { len += choose[0]-1;} 
+              } if (len!=0) { len += choose[0]-1;}
               len_per_line[0] = len;
 
               len=0;
               for (var i = 0; i < choose[1]; i++) {
                 word = words[i+choose[0]];
                 len += word.length;
-              } if (len!=0) { len += choose[1]-1;} 
+              } if (len!=0) { len += choose[1]-1;}
               len_per_line[1] = len;
 
               len=0;
               for (var i = 0; i < choose[2]; i++) {
                 word = words[i+choose[0]+choose[1]];
                 len += word.length;
-              } if (len!=0) { len += choose[2]-1;} 
+              } if (len!=0) { len += choose[2]-1;}
               len_per_line[2] = len;
 
               len=0;
               for (var i = 0; i < choose[3]; i++) {
                 word = words[i+choose[0]+choose[1]+choose[2]];
                 len += word.length;
-              } if (len!=0) { len += choose[3]-1;} 
+              } if (len!=0) { len += choose[3]-1;}
               len_per_line[3] = len;
 
               // now, sometimes the choices are bad -- i.e. the lengths of the lines are too long
@@ -232,15 +382,15 @@
               // -X------------ //
               // -BUMMER------- //
               //  X-----------  //
-              // 
+              //
               // instead of
               //
               //  X-----------  //
               // -WHAT-A------- //
               // -BUMMER------- //
               //  X-----------  //
-              // 
-              // so we fix it here... 
+              //
+              // so we fix it here...
 
               var num_lines_occupied = 0;
               for (var i = 0; i < len_per_line.length; i++) {
@@ -322,7 +472,7 @@
               if ((cur_max_diff < min_max_diff) && (cur_max_diff != -1)) {
                 // if we enter here, it means we found a new best option!
                 min_max_diff = cur_max_diff;
-                
+
                 // we set the words here
                 words_per_line[0]=[];
                 words_per_line[1]=[];
@@ -349,8 +499,8 @@
                 }
               }
             }
-          }      
-        }    
+          }
+        }
       } else {
 
         // it looks like our selection fits on one line
@@ -372,7 +522,7 @@
       }
 
       // since we have our best choice, we have to now set the indices to place the words on the board
-      var count = 0; 
+      var count = 0;
       var index;
       for (var i = 0; i < words_per_line.length; i++) {
         index = LINE_IND[i];
@@ -392,7 +542,7 @@
         for (var c = 0; c < words[word].length; c++){
           $('div.cell_'+(wordIndex[word]+c)).addClass("contains_letter");
           $('div.cell_'+(wordIndex[word]+c)+' div.flipper div.back p.letter').text(words[word].charAt(c));
-		  
+
 		   //Display punctuation
 		   if (PUNCTUATION_REGEX.test(words[word].charAt(c))){
 			   $('div.cell_'+(wordIndex[word]+c)).addClass("flip");
@@ -408,18 +558,34 @@
 
       //Add clickable letters
 
-	
+
       		l = ich.alphabet_template();
       		for (var e = 0; e < ALPHABET.length; e++){
 			l.append(ich.letter_template({"letter":ALPHABET.charAt(e)}).click({"letter":ALPHABET.charAt(e),"words":words,"wordIndex":wordIndex},onLetterClick));
 		}
-		
+
 
 	game.append(l);
 
-      
+      ///////////////////////////////////////////////////////////
+      ////////////////// BEGIN WHEEL SETUP //////////////////////
+      ///////////////////////////////////////////////////////////
 
+      wheelContainer = ich.wheel_container_template();
+      wheelCanvas = ich.wheel_canvas_template({ size : WHEEL.size });
 
+      wheelContainer.append(wheelCanvas);
+      game.append(wheelContainer);
+
+      canvas = wheelCanvas.get(0);
+      canvas.addEventListener("click", WHEEL.spin);
+      canvasContext = canvas.getContext("2d");
+
+      WHEEL.draw(canvasContext, 0);
+
+      ///////////////////////////////////////////////////////////
+      /////////////////// END WHEEL SETUP ///////////////////////
+      ///////////////////////////////////////////////////////////
 
 	});
 })(jQuery);
