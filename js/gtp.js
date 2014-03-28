@@ -139,6 +139,20 @@
       },
 
       drawPointer : function(context) {
+
+            context.lineWidth = 2;
+            context.strokeStyle = '#000000';
+            context.fileStyle = '#ffffff';
+
+            context.beginPath();
+
+            context.moveTo(WHEEL.size / 2, 40);
+            context.lineTo(WHEEL.size / 2-10, 0);
+            context.lineTo(WHEEL.size / 2+10, 0);
+            context.closePath();
+
+            context.stroke();
+            context.fill();
       },
 
     }
