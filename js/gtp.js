@@ -2,47 +2,84 @@
 	$(document).ready(function() {
 
     ///////////////////////////////////////////////////////////
+    ////////////// WHEEL START ////////////////////////////////
+    ///////////////////////////////////////////////////////////
+
+    //Inspired by http://bramp.net/blog/2011/07/27/html5-canvas-lunch-wheel/
+
+    ///////////////////////////////////////////////////////////
+    ////////// WHEEL VARIABLES ////////////////////////////////
+    ///////////////////////////////////////////////////////////
+
+    var canvasContext = null;
+    var wheelSpinTimer = null;
+
+    var isSpinning = false;
+    var spinDuration = 0;
+    var countTime = 0;
+
+    var wheelAngle = 0;
+    var spinRandomFactor = 0;
+
+    ///////////////////////////////////////////////////////////
+    ////////// WHEEL FORMATTING FUNCTIONS /////////////////////
+    ///////////////////////////////////////////////////////////
+
+    //Formatting functions should only have a context argument
+
+    var bankruptFormat = function(context){
+            context.lineWidth    = 1;
+            context.fillStyle  = '#FFFFFF';
+            context.textBaseline = "middle";
+            context.textAlign    = "center";
+            context.font         = "1em Arial";
+    }
+
+    ///////////////////////////////////////////////////////////
     ////////// WHEEL CALLBACK FUNCTIONS ///////////////////////
     ///////////////////////////////////////////////////////////
 
+    //Callbacks are used to change gameplay eg. bankrupt
+    //and loose your turn.
 
     ///////////////////////////////////////////////////////////
     ////////////////// WHEEL DATA /////////////////////////////
     ///////////////////////////////////////////////////////////
 
-
-    //Callbacks are used for special slices such as bankrupcies
-    //and loose your turn.
-
     var WHEEL = {
       size: 600,
       radius: 290,
       slices: [
-        { value : 100, alt : "", color : '#cc0000', callback : null},
-        { value : 100, alt : "", color : '#00cc00', callback : null},
-        { value : 100, alt : "", color : '#0000cc', callback : null},
-        { value : 100, alt : "", color : '#cc0000', callback : null},
-        { value : 100, alt : "", color : '#cc0000', callback : null},
-        { value : 100, alt : "", color : '#cc0000', callback : null},
-        { value : 100, alt : "", color : '#cc0000', callback : null},
-        { value : 100, alt : "", color : '#cc0000', callback : null},
-        { value : 100, alt : "", color : '#cc0000', callback : null},
-        { value : 100, alt : "", color : '#cc0000', callback : null},
-        { value : 100, alt : "", color : '#cc0000', callback : null},
-        { value : 100, alt : "", color : '#cc0000', callback : null},
-        { value : 100, alt : "", color : '#cc0000', callback : null},
-        { value : 100, alt : "", color : '#cc0000', callback : null},
-        { value : 100, alt : "", color : '#cc0000', callback : null},
-        { value : 100, alt : "", color : '#cc0000', callback : null},
-        { value : 100, alt : "", color : '#cc0000', callback : null},
-        { value : 100, alt : "", color : '#cc0000', callback : null},
-        { value : 100, alt : "", color : '#cc0000', callback : null},
-        { value : 100, alt : "", color : '#cc0000', callback : null},
-        { value : 100, alt : "", color : '#cc0000', callback : null},
-        { value : 100, alt : "", color : '#cc0000', callback : null},
-        { value : 100, alt : "", color : '#cc0000', callback : null},
-        { value : 100, alt : "", color : '#cc0000', callback : null}
+        { value : 100, alt : "", color : '#cc0000', formatting : null, callback : null},
+        { value : 100, alt : "", color : '#00cc00', formatting : null, callback : null},
+        { value : 100, alt : "", color : '#0000cc', formatting : null, callback : null},
+        { value :  -1, alt : "BANKRUPT", color : '#000000', formatting : bankruptFormat, callback : null},
+        { value : 100, alt : "", color : '#cc0000', formatting : null, callback : null},
+        { value : 100, alt : "", color : '#00cc00', formatting : null, callback : null},
+        { value : 100, alt : "", color : '#0000cc', formatting : null, callback : null},
+        { value :  -1, alt : "BANKRUPT", color : '#000000', formatting : bankruptFormat, callback : null},
+        { value : 100, alt : "", color : '#cc0000', formatting : null, callback : null},
+        { value : 100, alt : "", color : '#00cc00', formatting : null, callback : null},
+        { value : 100, alt : "", color : '#0000cc', formatting : null, callback : null},
+        { value :  -1, alt : "BANKRUPT", color : '#000000', formatting : bankruptFormat, callback : null},
+        { value : 100, alt : "", color : '#cc0000', formatting : null, callback : null},
+        { value : 100, alt : "", color : '#00cc00', formatting : null, callback : null},
+        { value : 100, alt : "", color : '#0000cc', formatting : null, callback : null},
+        { value :  -1, alt : "BANKRUPT", color : '#000000', formatting : bankruptFormat, callback : null},
+        { value : 100, alt : "", color : '#cc0000', formatting : null, callback : null},
+        { value : 100, alt : "", color : '#00cc00', formatting : null, callback : null},
+        { value : 100, alt : "", color : '#0000cc', formatting : null, callback : null},
+        { value :  -1, alt : "BANKRUPT", color : '#000000', formatting : bankruptFormat, callback : null},
+        { value : 100, alt : "", color : '#cc0000', formatting : null, callback : null},
+        { value : 100, alt : "", color : '#00cc00', formatting : null, callback : null},
+        { value : 100, alt : "", color : '#0000cc', formatting : null, callback : null},
+        { value :  -1, alt : "BANKRUPT", color : '#000000', formatting : bankruptFormat, callback : null},
+        { value : 100, alt : "", color : '#cc0000', formatting : null, callback : null},
+        { value : 100, alt : "", color : '#00cc00', formatting : null, callback : null},
+        { value : 100, alt : "", color : '#0000cc', formatting : null, callback : null},
+        { value :  -1, alt : "BANKRUPT", color : '#000000', formatting : bankruptFormat, callback : null}
       ],
+
       currency : "$",
 
       lineHeight : 22,
@@ -51,15 +88,64 @@
       innerCircleFill : '#ffffff',
       innerCircleStroke : '#000000',
 
-      outerLineWidth : 5,
+      outerLineWidth : 4,
       outerCircleStroke : '#000000',
 
+      rotations : 25.1327412287, //Math.PI * 8
+      spinDuration : 6000,
+
+      ///////////////////////////////////////////////////////////
+      /////////////// INTERNAL VARS /////////////////////////////
+      ///////////////////////////////////////////////////////////
+
+      REFRESH_RATE : 15,
 
       ///////////////////////////////////////////////////////////
       ////////////////// WHEEL FXNS /////////////////////////////
       ///////////////////////////////////////////////////////////
 
+      /* Easing Equation from
+         jQuery Easing v1.3. BSD License. Copyright © 2008 George McGinley Smith
+         t: current time, b: beginning value, c: change In value, d: duration  */
+      easeOutCubic : function (t, b, c, d) {
+	        return c*((t=t/d-1)*t*t + 1) + b;
+      },
+
+       onTimerTick : function() {
+           countTime += WHEEL.REFRESH_RATE;
+
+           if (countTime >= spinDuration){
+             isSpinning = false;
+             wheelSpinTimer.stop();
+
+             //Simplify the wheel angle after each spin
+             while (wheelAngle >= Math.PI * 2){
+               wheelAngle -= Math.PI * 2;
+             }
+           }
+           else {
+             wheelAngle = WHEEL.easeOutCubic(countTime,0,1,spinDuration) * WHEEL.rotations * spinRandomFactor;
+           }
+
+           WHEEL.draw(canvasContext, wheelAngle);
+
+        },
+
       spin  : function() {
+        if (wheelSpinTimer == null){ //Initialize timer first time
+           wheelSpinTimer = $.timer(WHEEL.onTimerTick);
+           wheelSpinTimer.set({ time : WHEEL.REFRESH_RATE, autostart : false });
+        }
+
+        if (!isSpinning){
+          isSpinning = true;
+          spinDuration = WHEEL.spinDuration;
+          countTime = 0;
+
+          spinRandomFactor = 0.90 + 0.1 * Math.random();
+
+          wheelSpinTimer.play();
+        }
       },
 
       draw : function(context, angleOffset) {
@@ -92,7 +178,7 @@
             context.beginPath();
 
             context.moveTo(WHEEL.size / 2, WHEEL.size / 2);
-            context.arc(WHEEL.size / 2, WHEEL.size / 2, WHEEL.radius, angle, angle + sliceAngle, false); // Draw a arc around the edge
+            context.arc(WHEEL.size / 2, WHEEL.size / 2, WHEEL.radius+WHEEL.outerLineWidth/2, angle, angle + sliceAngle, false); // Draw a arc around the edge
             context.lineTo(WHEEL.size / 2, WHEEL.size / 2);
             context.closePath();
 
@@ -108,10 +194,18 @@
 
             context.fillStyle = '#000000';
 
-            str = WHEEL.currency + WHEEL.slices[index].value.toString();
+            var str = null;
+            if (WHEEL.slices[index].alt.length == 0){
+              str = WHEEL.currency + WHEEL.slices[index].value.toString();
+            } else {
+              str = WHEEL.slices[index].alt;
+            }
 
-	          for (var i=0; i < str.length; i++){
-              context.fillText(str.charAt(i), 0, WHEEL.lineHeight * i);
+            if (WHEEL.slices[index].formatting != null)
+              WHEEL.slices[index].formatting(context);
+
+            for (var i=0; i < str.length; i++){
+                context.fillText(str.charAt(i), 0, WHEEL.lineHeight * i);
             }
 
             context.restore();
@@ -128,7 +222,8 @@
             context.fill();
             context.stroke();
 
-            // Draw outer circle co conceal jaggy edges
+            // Draw outer circle to conceal jaggy edges
+            // TODO: This circle aliases pretty bad.
             context.beginPath();
             context.arc(WHEEL.size / 2, WHEEL.size / 2, WHEEL.radius, 0, 2 * Math.PI, false);
             context.closePath();
@@ -594,7 +689,7 @@
       canvas.addEventListener("click", WHEEL.spin);
       canvasContext = canvas.getContext("2d");
 
-      WHEEL.draw(canvasContext, 0);
+      WHEEL.draw(canvasContext, wheelAngle);
 
       ///////////////////////////////////////////////////////////
       /////////////////// END WHEEL SETUP ///////////////////////
