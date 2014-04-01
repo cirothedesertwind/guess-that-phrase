@@ -263,7 +263,20 @@
 
 	//build a board
     buildBoard = function(){
-		var game = $(".game");
+      var game = $(".game");
+
+      //create the forms to collect phrases
+      var phrases_template = ich.phrases_template();
+      game.append(phrases_template);
+
+      $(".phrases").append(
+        "<form>First phrase: <input type=\"text\" id=\"phrase1\"><br>"+
+        "<form>Second phrase: <input type=\"text\" id=\"phrase2\"><br>"+
+        "<form>Third phrase: <input type=\"text\" id=\"phrase3\"><br>"+
+        "<form>Fourth phrase: <input type=\"text\" id=\"phrase4\"><br>"+
+        "<form>Fifth phrase: <input type=\"text\" id=\"phrase5\"><br>"+
+        "<input type=\"submit\" value=\"Submit\">"
+      );
 
 
 			//prepare board
