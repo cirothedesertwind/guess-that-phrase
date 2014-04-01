@@ -1,5 +1,9 @@
 (function($){
 	$(document).ready(function() {
+    
+    ///////////////////////////////////////////////////////////
+    ////////////// WHEEL START ////////////////////////////////
+    ///////////////////////////////////////////////////////////
 
     ///////////////////////////////////////////////////////////
     ////////////// WHEEL START ////////////////////////////////
@@ -257,57 +261,9 @@
     ///////////////////////////////////////////////////////////
 
 
-
-		//---------------------------------------------------------------------
-		//Pre-scripted macros
-		$.fn.disableSelection = function() {
-			return this
-            .attr('unselectable', 'on')
-            .css('user-select', 'none')
-            .on('selectstart', false);
-		};
-
-
-    //---------------------------------------------------------------------
-
-		onLetterClick = function(event) {
-			if (!isSpinning){
-
-	    		var letter = event.data.letter;
-	    		var words = event.data.words;
-		    	var wordIndex = event.data.wordIndex;
-		    	var count = 0;
-
-      			for (var word = 0; word < words.length; word++){
-       				 for (var c = 0; c < words[word].length; c++){
-		        		   if (words[word].charAt(c) == letter){
-		        			   $('div.cell_'+(wordIndex[word]+c)).addClass("flip");
-		        			   count++;
-		        		   }
-      				  }
-    			 }
-
-			    if (count > 0)
-				    $(".letter_"+letter).addClass("letter_called");
-			    else
-				    $(".letter_"+letter).addClass("letter_called_none");
-			}
-		};
-
-		onCellClick = function(event) {
-			var game = event.data.game;
-			var board = event.data.board;
-		};
-
-		//Initialization of board----------------------------------------------
-    ROW12_TILES = 12;
-    ROW14_TILES = 14;
-    TOTAL_TILES = ROW12_TILES * 2 + ROW14_TILES * 2;
-	 PUNCTUATION_REGEX = /[\.\,\?\!\@\#\$\%\^\&\*\(\)\<\>\:\;\']/g
-    ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
-
-			var game = $(".game");
+	//build a board
+    buildBoard = function(){
+		var game = $(".game");
 
 
 			//prepare board
@@ -731,6 +687,59 @@
       ///////////////////////////////////////////////////////////
       /////////////////// END WHEEL SETUP ///////////////////////
       ///////////////////////////////////////////////////////////
+    }
+
+
+		//---------------------------------------------------------------------
+		//Pre-scripted macros
+		$.fn.disableSelection = function() {
+			return this
+            .attr('unselectable', 'on')
+            .css('user-select', 'none')
+            .on('selectstart', false);
+		};
+
+
+    //---------------------------------------------------------------------
+
+		onLetterClick = function(event) {
+			if (!isSpinning){
+
+	    		var letter = event.data.letter;
+	    		var words = event.data.words;
+		    	var wordIndex = event.data.wordIndex;
+		    	var count = 0;
+
+      			for (var word = 0; word < words.length; word++){
+       				 for (var c = 0; c < words[word].length; c++){
+		        		   if (words[word].charAt(c) == letter){
+		        			   $('div.cell_'+(wordIndex[word]+c)).addClass("flip");
+		        			   count++;
+		        		   }
+      				  }
+    			 }
+
+			    if (count > 0)
+				    $(".letter_"+letter).addClass("letter_called");
+			    else
+				    $(".letter_"+letter).addClass("letter_called_none");
+			}
+		};
+
+		onCellClick = function(event) {
+			var game = event.data.game;
+			var board = event.data.board;
+		};
+
+		//Initialization of board----------------------------------------------
+    ROW12_TILES = 12;
+    ROW14_TILES = 14;
+    TOTAL_TILES = ROW12_TILES * 2 + ROW14_TILES * 2;
+	 PUNCTUATION_REGEX = /[\.\,\?\!\@\#\$\%\^\&\*\(\)\<\>\:\;\']/g
+    ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+
+		buildBoard();
 
 	});
 })(jQuery);
