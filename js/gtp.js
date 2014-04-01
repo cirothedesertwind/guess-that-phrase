@@ -420,6 +420,9 @@
       var successful_find = false;
       var choose = new Array(4);
       var tmp_choose = new Array(4);
+      var indent;
+      var num_lines_occupied;
+      var max_line_len;
 
       // if the phrase length can fit in one line, then we'll do that...
       // otherwise, we need an algorithm to decide how to best fit it on the board
@@ -500,7 +503,7 @@
               //
               // so we fix it here...
 
-              var num_lines_occupied = 0;
+              num_lines_occupied = 0;
               for (var i = 0; i < len_per_line.length; i++) {
                 if (len_per_line[i] > 0) {
                   num_lines_occupied++;
@@ -553,7 +556,6 @@
                 }
               }
 
-
               // we check the validity of our choices one more time now that the lines aren't fumbled
               if ((len_per_line[0] > 12) || (len_per_line[1] > 13) || (len_per_line[2] > 13) || (len_per_line[3] > 12)) {
                 continue;
@@ -577,9 +579,17 @@
                 }
               }
 
+              // if we enter here, it means we found a new best option!
               if ((cur_max_diff < min_max_diff) && (cur_max_diff != -1)) {
-                // if we enter here, it means we found a new best option!
                 min_max_diff = cur_max_diff;
+
+                // we need to set the indent variable to center the text
+                // to do this, we need to know the length of the longest line
+                max_line_len = 0;
+                for (var i = 0; i < len_per_line.length; i++) {
+                  max_line_len = Math.max(max_line_len, len_per_line[i]);
+                }      
+
 
                 // we set the words here
                 words_per_line[0]=[];
@@ -612,7 +622,9 @@
       } else {
 
         // it looks like our selection fits on one line
+        num_lines_occupied = 1;
         successful_find = true;
+        max_line_len = phrase.length;
 
         len_per_line[0] = 0;
         len_per_line[1] = phrase.length;
@@ -625,15 +637,35 @@
         words_per_line[3] = new Array();
       }
 
+      // we need to alert the user if they gave a phrase that could not fit on the board
       if (successful_find == false) {
         alert("could not fit the phrase on the board");
       }
+
+      // here we set the indent variable
+      var indent;
+      if ((max_line_len == 12) || (max_line_len == 13)) {
+        indent = 0;
+      } else if ((max_line_len == 10) || (max_line_len == 11)) {
+        indent = 1;
+      } else if ((max_line_len == 8) || (max_line_len == 9)) {
+        indent = 2;
+      } else if ((max_line_len == 6) || (max_line_len == 7)) {
+        indent = 3;
+      } else if ((max_line_len == 4) || (max_line_len == 5)) {
+        indent = 4;
+      } else if ((max_line_len == 2) || (max_line_len == 3)) {
+        indent = 5;
+      } else if ((max_line_len == 1)) {
+        indent = 6;
+      }
+
 
       // since we have our best choice, we have to now set the indices to place the words on the board
       var count = 0;
       var index;
       for (var i = 0; i < words_per_line.length; i++) {
-        index = LINE_IND[i];
+        index = LINE_IND[i]+indent;
         for (var j = 0; j < words_per_line[i].length; j++) {
           wordIndex[count] = index;
           count++;
@@ -657,6 +689,8 @@
 		   }
         }
       }
+
+
 
       //reveal punctuation marks (apostrophes,hyphens, question marks and exclamation marks)
 
