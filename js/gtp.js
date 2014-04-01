@@ -271,24 +271,27 @@
     //---------------------------------------------------------------------
 
 		onLetterClick = function(event) {
-			var letter = event.data.letter;
-			var words = event.data.words;
-			var wordIndex = event.data.wordIndex;
-			var count = 0;
+			if (!isSpinning){
+
+	    		var letter = event.data.letter;
+	    		var words = event.data.words;
+		    	var wordIndex = event.data.wordIndex;
+		    	var count = 0;
 
       			for (var word = 0; word < words.length; word++){
        				 for (var c = 0; c < words[word].length; c++){
-				   if (words[word].charAt(c) == letter){
-					   $('div.cell_'+(wordIndex[word]+c)).addClass("flip");
-					   count++;
-				   }
+		        		   if (words[word].charAt(c) == letter){
+		        			   $('div.cell_'+(wordIndex[word]+c)).addClass("flip");
+		        			   count++;
+		        		   }
       				  }
-    			  }
+    			 }
 
-			if (count > 0)
-				$(".letter_"+letter).addClass("letter_called");
-			else
-				$(".letter_"+letter).addClass("letter_called_none");
+			    if (count > 0)
+				    $(".letter_"+letter).addClass("letter_called");
+			    else
+				    $(".letter_"+letter).addClass("letter_called_none");
+			}
 		};
 
 		onCellClick = function(event) {
