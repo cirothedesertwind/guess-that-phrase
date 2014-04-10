@@ -1,9 +1,60 @@
 (function($){
 	$(document).ready(function() {
-    
+
     ///////////////////////////////////////////////////////////
-    ////////////// WHEEL START ////////////////////////////////
+    ////////////// GAME VARIABLES /////////////////////////////
     ///////////////////////////////////////////////////////////
+
+    var players = 0;
+    var currentPlayer = 0;
+    var currentRound  = 0;
+
+    ///////////////////////////////////////////////////////////
+    ////////////// GAME STATE MACHINE /////////////////////////
+    ///////////////////////////////////////////////////////////
+
+    var gsm = StateMachine.create({
+      initial: 'init',
+      events: [
+        //Init the game
+        { name: 'initGame',  from: 'init',  to: 'initGame' },
+        //Init round when either start or end of last round
+        { name: 'initRound', from: ['initGame','termRound'], to: 'initRound'},
+        //Start the game with the randomized starting player
+        { name: 'initTurn', from: ['initRound', 'termTurn'], to: 'initTurn'},
+        //Spin a wheel at the start of the turn, or after sucessfully calling a consonant or buying a vowel.
+        { name: 'spin',  from: ['initTurn', 'success'],    to: 'consonant' },
+        //Buy a vowel only after spinning the wheel and calling a consonant or buying another vowel previously
+        { name: 'buyVowel', from: 'success', to: 'vowel' },
+        //On a sucessful selection, prompt for next action
+        { name: 'success', from: ['consonant', 'vowel'], to: 'success' },
+        //Loose your turn by incorrectly calling a letter or vowel,
+        //landing on bankrupt or loose your turn, or incorrectly
+        //solving the puzzle (triggered by facilitator clicking button)
+        { name: 'looseTurn', from: ['consonant', 'vowel', 'spin'], to: 'termTurn' },
+        //Terminate round when solved
+        { name: 'solvePuzzle', from: ['initTurn', 'success'], to: 'termRound'  },
+        //End game when all rounds end
+        { name: 'stop', from: 'termRound', to: 'term'}
+      ],
+
+      callbacks: {
+        onenterinitGame:  function(event, from, to) { buildBoard(); },
+        onenterinitRound: function(event, from, to) { alert(" init and pickplayer"); /*TODO: If another round exists...*/ currentPlayer = Math.floor((Math.random()*players)); showStartingPlayer(); gsm.initTurn(); },
+        onenterinitTurn:  function(event, from, to) { /*TODO: If puzzle is unsolved, prompt */ alert("Spin or solve?"); },
+        onentersuccess:   function(event, from, to) { /*TODO: If puzzle is unsolved, prompt (iff vowels available & player has > $250, incude vowel option) */ alert("Buy a vowel, spin or solve?"); },
+        onenterconsonant: function(event, from, to) { /*TODO: Enable only consonant letters, prompt for consonant*/ alert("Please call a consonant.");},
+        onentervowel:     function(event, from, to) { /*TODO: Enable only vowel letters, prompt for vowel (iff vowels available & player has > $250) else reject */ alert("Please call a vowel."); },
+        onentertermTurn:  function(event, from, to) { /*Go to next player and start turn. */ currentPlayer = currentPlayer++ % players; gsm.initTurn(); },
+        onentertermRound: function(event, from, to) { /*Go to next round and start. */ currentRound = currentRound++; gsm.initRound(); },
+        onenterterm:      function(event, from, to) { alert("The game has ended."); },
+      }
+
+    });
+
+    var showStartingPlayer = function(){
+      //TODO: Visualize starting player for this round
+    }
 
     ///////////////////////////////////////////////////////////
     ////////////// WHEEL START ////////////////////////////////
@@ -126,6 +177,9 @@
              while (wheelAngle >= Math.PI * 2){
                wheelAngle -= Math.PI * 2;
              }
+
+             //Declare spin was decision made by player
+             gsm.spin();
            }
            else {
              wheelAngle = WHEEL.easeOutCubic(countTime,0,1,spinDuration) * WHEEL.rotations * spinRandomFactor;
@@ -279,10 +333,11 @@
       );
 
 
+      //TODO: Sanitize phrases and set to uppercase
+
 			//prepare board
 			var board = ich.board_template();
 			game.append(board);
-			//var round = quizData.rounds[0];
 
 			board.disableSelection();
 
@@ -319,6 +374,7 @@
 
 
       board.append(ich.puzzle_hint_template({hint:"Phrase"}));
+
       /*end board setup*/
 
       //Phrase setup----------------------------------------------
@@ -560,7 +616,7 @@
                 max_line_len = 0;
                 for (var i = 0; i < len_per_line.length; i++) {
                   max_line_len = Math.max(max_line_len, len_per_line[i]);
-                }      
+                }
 
 
                 // we set the words here
@@ -679,7 +735,11 @@
 		}
 
 
+
 	game.append(l);
+
+      //Add options
+      game.append(ich.options_template());
 
       ///////////////////////////////////////////////////////////
       ////////////////// BEGIN WHEEL SETUP //////////////////////
@@ -732,10 +792,25 @@
       				  }
     			 }
 
-			    if (count > 0)
+			    if (count > 0){
 				    $(".letter_"+letter).addClass("letter_called");
-			    else
+
+            if (VOWELS_REGEX.test(letter)){
+              //TODO: Deduct $250 from score
+            } else { /*Consonant */
+              //TODO: Add count * value of slice to score of current player
+            }
+
+            //Successful selection
+            gsm.success();
+
+          }else{ /*Count == 0 */
 				    $(".letter_"+letter).addClass("letter_called_none");
+
+            //There were no instances of that letter therefore player looses turn
+            gsm.looseTurn();
+          }
+
 			}
 		};
 
@@ -750,9 +825,11 @@
     TOTAL_TILES = ROW12_TILES * 2 + ROW14_TILES * 2;
 	 PUNCTUATION_REGEX = /[\.\,\?\!\@\#\$\%\^\&\*\(\)\<\>\:\;\']/g
     ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    VOWELS_REGEX = /AEIOU/g
 
 
-		buildBoard();
+    gsm.initGame();
+    gsm.initRound();
 
 	});
 })(jQuery);

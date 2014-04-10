@@ -13,6 +13,7 @@
 </head>
 <body>
 	<div class="container_18 game">
+
 	</div>
 
 	<!-- ICanHaz Macros -->
@@ -22,7 +23,7 @@
         <div class="phrases">
         </div>
     </script>
-    
+
 	<script id="board_template" type="text/html">
         <div class="board">
         </div>
@@ -46,6 +47,11 @@
         <div class="grid_18 puzzle_hint">{{ hint }}</div>
 	</script>
 
+     <script id="options_template" type="text/html">
+        <div class="grid_18"><span> Buy A Vowel </span></div>
+	</script>
+
+
 	<script id="alphabet_template" type="text/html">
         <div class="grid_18 alphabet"></div>
         </script>
@@ -62,9 +68,12 @@
         <canvas id="canvas" width="{{ size }}" height="{{ size }}"></canvas>
         </script>
 
+
+
 	<script src="js/jquery-2.1.0.min.js"></script>
     <script src="js/jquery.schedule.js"></script>
     <script src="js/jquery.timer.js"></script>
+	<script src="js/state-machine.min.js"></script>
 	<script src="js/icanhaz.min.js"></script>
 	<script src="js/howler.min.js"></script>
 	<script src="js/gtp.js"></script>
