@@ -5,9 +5,19 @@
     ////////////// GAME VARIABLES /////////////////////////////
     ///////////////////////////////////////////////////////////
 
-    var players = 0;
+    var players = 3;
+    var playerScore = new Array(players);
+    playerScore[0] = 1000; //Temporary values
+    playerScore[1] = 1000;
+    playerScore[2] = 1000;
     var currentPlayer = 0;
+
+    var rounds = 1;
     var currentRound  = 0;
+
+    var isPuzzleSolved = false;
+    var allVowelsFound = false;
+
 
     ///////////////////////////////////////////////////////////
     ////////////// GAME STATE MACHINE /////////////////////////
@@ -40,9 +50,47 @@
 
       callbacks: {
         onenterinitGame:  function(event, from, to) { buildBoard(); },
-        onenterinitRound: function(event, from, to) { alert(" init and pickplayer"); /*TODO: If another round exists...*/ currentPlayer = Math.floor((Math.random()*players)); showStartingPlayer(); gsm.initTurn(); },
-        onenterinitTurn:  function(event, from, to) { /*TODO: If puzzle is unsolved, prompt */ alert("Spin or solve?"); },
-        onentersuccess:   function(event, from, to) { /*TODO: If puzzle is unsolved, prompt (iff vowels available & player has > $250, incude vowel option) */ alert("Buy a vowel, spin or solve?"); },
+        onenterinitRound: function(event, from, to) {
+		
+		/*If there are more rounds to play, start by randomizing the start player and start the player's turn. */		
+		if (currentRound < rounds) {
+    		currentPlayer = Math.floor((Math.random()*players));
+	    	showStartingPlayer();
+	    	gsm.initTurn();
+		} else { 
+	    	gsm.stop();
+		}
+
+		},
+        onenterinitTurn:  function(event, from, to) { 
+
+        //TODO: Lock out letters and buy a vowel button
+
+        if (!isPuzzleSolved) {
+            alert("Spin or solve?");
+        } else {
+            console.log("Error: Puzzle cannot be solved at the beginning of a turn because it is the previous player's win");
+        }
+
+        },
+        onentersuccess:   function(event, from, to) {
+
+        /*If puzzle is unsolved, prompt (iff vowels available & player has > $250, incude vowel option) */ 
+        if (!isPuzzleSolved && !allVowelsFound && playerScore[currentPlayer] > 250){
+            alert("Buy a vowel, spin or solve?");
+        }
+        else if (!isPuzzleSolved){
+            alert("Spin or solve?");
+        }
+        else if (isPuzzleSolved){
+            alert("Please read out the completed phrase");
+        }
+        else {
+            console.log("Error: isPuzzleSolved:" + isPuzzleSolved + " allVowelsFound:" + allVowelsFound + " currentPlayerScore:" + playerScore[currentPlayer]);
+        }
+
+
+        },
         onenterconsonant: function(event, from, to) { /*TODO: Enable only consonant letters, prompt for consonant*/ alert("Please call a consonant.");},
         onentervowel:     function(event, from, to) { /*TODO: Enable only vowel letters, prompt for vowel (iff vowels available & player has > $250) else reject */ alert("Please call a vowel."); },
         onentertermTurn:  function(event, from, to) { /*Go to next player and start turn. */ currentPlayer = currentPlayer++ % players; gsm.initTurn(); },
