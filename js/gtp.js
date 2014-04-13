@@ -101,7 +101,7 @@
     });
 
     var showStartingPlayer = function(){
-      //TODO: Visualize starting player for this round
+      alert("Player " + (currentPlayer + 1) + " will start this round.");  /* Uses 1->n rather than 0->(n-1)*/
     }
 
     ///////////////////////////////////////////////////////////
