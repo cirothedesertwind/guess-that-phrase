@@ -5,11 +5,17 @@
     ////////////// GAME VARIABLES /////////////////////////////
     ///////////////////////////////////////////////////////////
 
+
     var players = 3;
+    var playerTotalScore = new Array(players);
+    playerTotalScore[0] = 0;
+    playerTotalScore[1] = 0;
+    playerTotalScore[2] = 0;
+
     var playerScore = new Array(players);
-    playerScore[0] = 1000; //Temporary values
-    playerScore[1] = 1000;
-    playerScore[2] = 1000;
+    playerScore[0] = 0;
+    playerScore[1] = 0;
+    playerScore[2] = 0;
     var currentPlayer = 0;
 
     var rounds = 1;
@@ -44,7 +50,8 @@
 
     var updateScore = function(){
       scoreboard.children().each(function(i) { 
-    	$(this).text(currency + playerScore[i]);
+    	$(this).children().first().text(currency + playerScore[i]);
+	$(this).children().last().text(currency + playerTotalScore[i]);
       });
     }
 
@@ -75,7 +82,7 @@
         //Terminate round when solved
         { name: 'solvePuzzle', from: ['initTurn', 'success'], to: 'termRound'  },
         //End game when all rounds end
-        { name: 'stop', from: 'termRound', to: 'term'}
+        { name: 'stop', from: 'termROund', to: 'term'}
       ],
 
       callbacks: {
@@ -85,6 +92,14 @@
 		
 		/*If there are more rounds to play, start by randomizing the start player and start the player's turn. */		
 		if (currentRound < rounds) {
+
+                //Clear out old round scores
+    		playerScore[0] = 0;
+    		playerScore[1] = 0;
+    		playerScore[2] = 0;
+
+                updateScore();
+
     		currentPlayer = Math.floor((Math.random()*players));
 	    	showStartingPlayer();
 	    	gsm.initTurn();
@@ -129,6 +144,10 @@
                 gsm.initTurn(); //Init next turn.
         },
         onentertermRound: function(event, from, to) { /*Go to next round and start. */ 
+		
+		//Add point totals of winning player to total score
+		playerTotalScore[currentPlayer] += playerScore[currentPlayer];
+
 		currentRound = currentRound + 1;
 		gsm.initRound();  //Init next round
         },
@@ -973,7 +992,6 @@
 	  PUNCTUATION_REGEX = /[\.\,\?\!\@\#\$\%\^\&\*\(\)\<\>\:\;\']/g;
     ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     VOWELS_REGEX = /[AEIOU]/g;
-
 
     gsm.initGame();
     gsm.initRound();

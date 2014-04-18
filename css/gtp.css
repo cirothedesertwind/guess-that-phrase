@@ -45,6 +45,10 @@ span.letter {
     background: blue;
 }
 
+.score span.total {
+   font-size: 0.5em;
+}
+
 
 
 /*Cell flip animation ----------------------------- */
