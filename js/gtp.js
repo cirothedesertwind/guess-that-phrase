@@ -19,6 +19,36 @@
     var allVowelsFound = false;
     var vowelsRemaining = 5;
 
+    var currency = "$";
+
+      ///////////////////////////////////////////////////////////
+      ///////////////// SCOREBOARD SETUP ////////////////////////
+      ///////////////////////////////////////////////////////////
+
+
+      scoreboard = ich.scoreboard_template();
+
+      for (var p = 0; p < players; p++){
+         scoreboard.append(ich.score_template());
+      }
+
+      scoreboard.children().first().addClass("alpha");
+      scoreboard.children().last().addClass("omega");
+
+
+      ///////////////////////////////////////////////////////////
+      ////////////// END SCOREBOARD SETUP ///////////////////////
+      ///////////////////////////////////////////////////////////
+    
+   // Update Score Function (uses scoreboard
+
+    var updateScore = function(){
+      scoreboard.children().each(function(i) { 
+    	$(this).text(currency + playerScore[i]);
+      });
+    }
+
+
     ///////////////////////////////////////////////////////////
     ////////////// GAME STATE MACHINE /////////////////////////
     ///////////////////////////////////////////////////////////
@@ -49,6 +79,7 @@
       ],
 
       callbacks: {
+        onenterstate:     function(event, from, to) { updateScore(); },
         onenterinitGame:  function(event, from, to) { buildBoard(); },
         onenterinitRound: function(event, from, to) {
 		
@@ -227,8 +258,6 @@
         { value :  -1, alt : "BANKRUPT", color : '#000000', formatting : bankruptFormat, callback : null}
       ],
 
-      currency : "$",
-
       lineHeight : 22,
 
       innerLineWidth : 1,
@@ -346,7 +375,7 @@
 
             var str = null;
             if (WHEEL.slices[index].alt.length == 0){
-              str = WHEEL.currency + WHEEL.slices[index].value.toString();
+              str = currency + WHEEL.slices[index].value.toString();
             } else {
               str = WHEEL.slices[index].alt;
             }
@@ -813,6 +842,11 @@
 
 
       //reveal punctuation marks (apostrophes,hyphens, question marks and exclamation marks)
+
+      
+      //Append scoreboard
+      game.append(scoreboard);
+
 
       ///////////////////////////////////////////////////////////
       /////////////////// END PHRASE SETUP //////////////////////
