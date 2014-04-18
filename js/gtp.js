@@ -91,8 +91,9 @@
 
 
         },
-        onenterconsonant: function(event, from, to) { /*TODO: Enable only consonant letters, prompt for consonant*/ alert("Please call a consonant.");},
-        onentervowel:     function(event, from, to) { /*TODO: Enable only vowel letters, prompt for vowel (iff vowels available & player has > $250) else reject */ alert("Please call a vowel."); },
+        onenterconsonant: function(event, from, to) { /*TODO: Enable only consonant letters, prompt for consonant*/ alert("Please call a consonant."); alert("Consonants are clickable.");},
+        onentervowel:     function(event, from, to) { /*TODO: Enable only vowel letters, prompt for vowel (iff vowels available & player has > $250) else reject */ alert("Please call a vowel."); alert("Vowels are clickable.");},
+        //onleavevowel:     function(event, from, to) { /*TODO: Disable only vowel letters, */   alert("Vowels are UNclickable."); },
         onentertermTurn:  function(event, from, to) { /*Go to next player and start turn. */ currentPlayer = currentPlayer++ % players; gsm.initTurn(); },
         onentertermRound: function(event, from, to) { /*Go to next round and start. */ currentRound = currentRound++; gsm.initRound(); },
         onenterterm:      function(event, from, to) { alert("The game has ended."); },
@@ -824,7 +825,7 @@
     //---------------------------------------------------------------------
 
 		onLetterClick = function(event) {
-			if (!isSpinning){
+      if ((!isSpinning) && (gsm.is("vowel") || gsm.is("consonant"))){
 
 	    		var letter = event.data.letter;
 	    		var words = event.data.words;
@@ -843,11 +844,7 @@
 			    if (count > 0){
 				    $(".letter_"+letter).addClass("letter_called");
 
-            if (VOWELS_REGEX.test(letter)){
-              //TODO: Deduct $250 from score
-            } else { /*Consonant */
-              //TODO: Add count * value of slice to score of current player
-            }
+            helperLetterChoose();
 
             //Successful selection
             gsm.success();
@@ -874,10 +871,23 @@
 	 PUNCTUATION_REGEX = /[\.\,\?\!\@\#\$\%\^\&\*\(\)\<\>\:\;\']/g
     ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     VOWELS_REGEX = /AEIOU/g
-
+    CONSONANTS_REGEX = "/BCDFGHJKLMNPQRSTVWXYZ/g";
 
     gsm.initGame();
     gsm.initRound();
 
 	});
+
+  function helperLetterChoose(letter) {
+    if (VOWELS_REGEX.test(letter) && gsm.is("vowel")){
+      //TODO: Deduct $250 from score
+      alert("CORRECT VOWEL STATE");
+    } else if ( CONSONANTS_REGEX.test(letter) && gsm.is("consonant")){
+      //TODO: Add count * value of slice to score of current player
+      alert("CORRECT CONSONANT STATE");
+    } else {
+      helperLetterChoose(letter);
+    }
+  }
+
 })(jQuery);
