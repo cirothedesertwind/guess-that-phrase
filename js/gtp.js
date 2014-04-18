@@ -94,10 +94,16 @@
         },
         onenterconsonant: function(event, from, to) { /*TODO: Enable only consonant letters, prompt for consonant*/ alert("Please call a consonant."); alert("Consonants are clickable.");},
         onentervowel:     function(event, from, to) { /*TODO: Enable only vowel letters, prompt for vowel (iff vowels available & player has > $250) else reject */ alert("Please call a vowel."); alert("Vowels are clickable.");},
-        onentertermTurn:  function(event, from, to) { /*Go to next player and start turn. */ currentPlayer = currentPlayer++ % players; gsm.initTurn(); },
-        onentertermRound: function(event, from, to) { /*Go to next round and start. */ currentRound = currentRound++; gsm.initRound(); },
+        onentertermTurn:  function(event, from, to) { /*Go to next player and start turn. */
+		currentPlayer = currentPlayer + 1;
+		currentPlayer = currentPlayer % players;
+                gsm.initTurn(); //Init next turn.
+        },
+        onentertermRound: function(event, from, to) { /*Go to next round and start. */ 
+		currentRound = currentRound + 1;
+		gsm.initRound();  //Init next round
+        },
         onenterterm:      function(event, from, to) { alert("The game has ended."); },
-        onenterlooseTurn: function(event, from, to) { currentPlayer = currentPlayer++ % players; }
       }
 
     });
