@@ -119,7 +119,7 @@
                   {id: 2, label: 'Solve',      val: 'solvePuzzle'}],
                 callback: function(val) { 
                   if      (val === 'buyVowel')    { gsm.buyVowel(); } 
-                  else if (val === 'spin')        { gsm.spin(); } 
+                  else if (val === 'spin')        { gsm.initTurn(); } 
                   else if (val === 'solvePuzzle') { gsm.solvePuzzle(); }
                   else                            { alert("How did you get here?"); }
                 }
@@ -133,7 +133,7 @@
                   {id: 0, label: 'Spin', val: 'spin', class: 'btn-danger'}, 
                   {id: 1, label: 'Solve',      val: 'solvePuzzle'}],
                 callback: function(val) { 
-                  if      (val === 'spin')        { gsm.spin(); } 
+                  if      (val === 'spin')        { gsm.initTurn(); } 
                   else if (val === 'solvePuzzle') { gsm.solvePuzzle(); }
                   else                            { alert("How did you get here?"); }
                 }
