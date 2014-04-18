@@ -17,7 +17,7 @@
 
     var isPuzzleSolved = false;
     var allVowelsFound = false;
-    var vowelsRemaining = 5;
+    var numberOfVowelsRemaining = 0;
 
     ///////////////////////////////////////////////////////////
     ////////////// GAME STATE MACHINE /////////////////////////
@@ -499,6 +499,9 @@
       ///////////////// BEGIN PHRASE SETUP //////////////////////
       ///////////////////////////////////////////////////////////
 
+      // we need to set which vowels are in the phrase
+      countVowels(phrase);
+
       //Checks phrase for length
       if (phrase.length > TOTAL_TILES) {
         window.alert("Phrase is too long for the board.");
@@ -863,60 +866,86 @@
 
     //---------------------------------------------------------------------
 
+    var noMoreVowelsAlert = function() {
+        alert('All the vowels in the phrase have been called out.');
+        // new Messi('All the vowels in the phrase have been called out.', 
+        //          {title: 'No more vowels!', 
+        //           titleClass: 'anim warning', 
+        //           buttons: [{id: 0, label: 'Close', val: 'X'}],
+        //           modal: true});
+    }
+
+    var countVowels = function(phrase) {
+        
+        vowels = ['A', 'E', 'I', 'O', 'U'];
+
+        // for every vowel...
+        for (var i = 0; i != vowels.length; i++) {    
+            
+            // if the vowel is in our phrase...
+            if (phrase.indexOf(vowels[i]) !== -1) {
+
+                // we need to incrememnt numberOfVowelsRemaining
+                numberOfVowelsRemaining++;
+            }
+        }
+    }
+
 		onLetterClick = function(event) {
       
-      // we clicked a letter
-      // we need to see if we were allowed to click that letter
+        // we clicked a letter
+        // we need to see if we were allowed to click that letter
 
-      var letter = event.data.letter;
-      var vowelChosen = ['A', 'E', 'I', 'O', 'U'].indexOf(letter) !== -1;
-      //var vowelChosen = VOWELS_REGEX.test(letter);
-      var consonantChosen = !vowelChosen;
-      var vowelState = gsm.is("vowel");
-      var consonantState = gsm.is("consonant");
-      var isGray = $(".letter_"+letter).hasClass("letter_called");
-      var isRed = $(".letter_"+letter).hasClass("letter_called_none");
-      var isWhite = !(isGray || isRed);
+        var letter = event.data.letter;
+        var vowelChosen = ['A', 'E', 'I', 'O', 'U'].indexOf(letter) !== -1;
+        //var vowelChosen = VOWELS_REGEX.test(letter);
+        var consonantChosen = !vowelChosen;
+        var vowelState = gsm.is("vowel");
+        var consonantState = gsm.is("consonant");
+        var isGray = $(".letter_"+letter).hasClass("letter_called");
+        var isRed = $(".letter_"+letter).hasClass("letter_called_none");
+        var isWhite = !(isGray || isRed);
 
-      if ( ((vowelState && vowelChosen) || (consonantState && consonantChosen)) && isWhite ) {
+        if ( ((vowelState && vowelChosen) || (consonantState && consonantChosen)) && isWhite ) {
 
-	    		var words = event.data.words;
-		    	var wordIndex = event.data.wordIndex;
-		    	var count = 0;
+            var words = event.data.words;
+    	    	var wordIndex = event.data.wordIndex;
+    	    	var count = 0;
 
-      			for (var word = 0; word < words.length; word++){
-       				 for (var c = 0; c < words[word].length; c++){
-		        		   if (words[word].charAt(c) == letter){
-		        			   $('div.cell_'+(wordIndex[word]+c)).addClass("flip");
-		        			   count++;
-		        		   }
+      			for (var word = 0; word < words.length; word++) {
+       				  for (var c = 0; c < words[word].length; c++) {
+            		    if (words[word].charAt(c) == letter) {
+            			      $('div.cell_'+(wordIndex[word]+c)).addClass("flip");
+            			      count++;
+            		    }
       				  }
-    			 }
+        		}
 
-			    if (count > 0){
-				    $(".letter_"+letter).addClass("letter_called");
+      		  if (count > 0) {
+      			    $(".letter_"+letter).addClass("letter_called");
 
-            if (vowelChosen){
-              vowelsRemaining -= 1;
-              if (vowelsRemaining == 0) {
-                allVowelsFound = true;
-              }
-              //TODO: Deduct $250 from score
-            } else { /*Consonant */
-              //TODO: Add count * value of slice to score of current player
+                if (vowelChosen) {
+                    numberOfVowelsRemaining -= 1;
+                    if (numberOfVowelsRemaining == 0) {
+                        allVowelsFound = true;
+                        noMoreVowelsAlert();
+                    }
+                  //TODO: Deduct $250 from score
+                } else { /*Consonant */
+                  //TODO: Add count * value of slice to score of current player
+                }
+
+                //Successful selection
+                gsm.success();
+
+            } else { /*Count == 0 */
+      			    $(".letter_"+letter).addClass("letter_called_none");
+
+                //There were no instances of that letter therefore player looses turn
+                gsm.looseTurn();
             }
 
-            //Successful selection
-            gsm.success();
-
-          }else{ /*Count == 0 */
-				    $(".letter_"+letter).addClass("letter_called_none");
-
-            //There were no instances of that letter therefore player looses turn
-            gsm.looseTurn();
-          }
-
-			}
+    		}
 		};
 
 		onCellClick = function(event) {
