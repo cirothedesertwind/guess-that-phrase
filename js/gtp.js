@@ -17,7 +17,7 @@
 
     var isPuzzleSolved = false;
     var allVowelsFound = false;
-
+    var vowelsRemaining = 5;
 
     ///////////////////////////////////////////////////////////
     ////////////// GAME STATE MACHINE /////////////////////////
@@ -67,7 +67,7 @@
         //TODO: Lock out letters and buy a vowel button
 
         if (!isPuzzleSolved) {
-            alert("Spin or solve?");
+            spinSolveDialog();
         } else {
             console.log("Error: Puzzle cannot be solved at the beginning of a turn because it is the previous player's win");
         }
@@ -77,10 +77,11 @@
 
         /*If puzzle is unsolved, prompt (iff vowels available & player has > $250, incude vowel option) */ 
         if (!isPuzzleSolved && !allVowelsFound && playerScore[currentPlayer] > 250){
-            alert("Buy a vowel, spin or solve?");
+            //alert("Buy a vowel, spin or solve?");
+            vowelSpinSolveDialog();
         }
         else if (!isPuzzleSolved){
-            alert("Spin or solve?");
+            spinSolveDialog();
         }
         else if (isPuzzleSolved){
             alert("Please read out the completed phrase");
@@ -91,11 +92,12 @@
 
 
         },
-        onenterconsonant: function(event, from, to) { /*TODO: Enable only consonant letters, prompt for consonant*/ alert("Please call a consonant.");},
-        onentervowel:     function(event, from, to) { /*TODO: Enable only vowel letters, prompt for vowel (iff vowels available & player has > $250) else reject */ alert("Please call a vowel."); },
+        onenterconsonant: function(event, from, to) { /*TODO: Enable only consonant letters, prompt for consonant*/ alert("Please call a consonant."); alert("Consonants are clickable.");},
+        onentervowel:     function(event, from, to) { /*TODO: Enable only vowel letters, prompt for vowel (iff vowels available & player has > $250) else reject */ alert("Please call a vowel."); alert("Vowels are clickable.");},
         onentertermTurn:  function(event, from, to) { /*Go to next player and start turn. */ currentPlayer = currentPlayer++ % players; gsm.initTurn(); },
         onentertermRound: function(event, from, to) { /*Go to next round and start. */ currentRound = currentRound++; gsm.initRound(); },
         onenterterm:      function(event, from, to) { alert("The game has ended."); },
+        onenterlooseTurn: function(event, from, to) { currentPlayer = currentPlayer++ % players; }
       }
 
     });
@@ -103,6 +105,44 @@
     var showStartingPlayer = function(){
       alert("Player " + (currentPlayer + 1) + " will start this round.");  /* Uses 1->n rather than 0->(n-1)*/
     }
+
+    ///////////////////////////////////////////////////////////
+    ////////////// DIALOG START ///////////////////////////////
+    ///////////////////////////////////////////////////////////
+
+    var vowelSpinSolveDialog = function(){
+      new Messi('Player ' + (currentPlayer + 1) + ', would you like to buy a vowel, spin the wheel, or solve the puzzle?', 
+               {title: 'Buttons', 
+                buttons: [
+                  {id: 0, label: 'Buy Vowel',  val: 'buyVowel', class: 'btn-success'}, 
+                  {id: 1, label: 'Spin Again', val: 'spin', class: 'btn-danger'}, 
+                  {id: 2, label: 'Solve',      val: 'solvePuzzle'}],
+                callback: function(val) { 
+                  if      (val === 'buyVowel')    { gsm.buyVowel(); } 
+                  else if (val === 'spin')        { gsm.spin(); } 
+                  else if (val === 'solvePuzzle') { gsm.solvePuzzle(); }
+                  else                            { alert("How did you get here?"); }
+                }
+              });
+    }
+
+    var spinSolveDialog = function(){
+      new Messi('Player ' + (currentPlayer + 1) + ', would you like to spin the wheel or solve the puzzle?', 
+               {title: 'Buttons', 
+                buttons: [
+                  {id: 0, label: 'Spin', val: 'spin', class: 'btn-danger'}, 
+                  {id: 1, label: 'Solve',      val: 'solvePuzzle'}],
+                callback: function(val) { 
+                  if      (val === 'spin')        { gsm.spin(); } 
+                  else if (val === 'solvePuzzle') { gsm.solvePuzzle(); }
+                  else                            { alert("How did you get here?"); }
+                }
+              });
+    }
+
+    ///////////////////////////////////////////////////////////
+    ////////////// DIALOG FINISH //////////////////////////////
+    ///////////////////////////////////////////////////////////
 
     ///////////////////////////////////////////////////////////
     ////////////// WHEEL START ////////////////////////////////
@@ -195,7 +235,7 @@
       outerCircleStroke : '#000000',
 
       rotations : 25.1327412287, //Math.PI * 8
-      spinDuration : 6000,
+      spinDuration : 600,
 
       ///////////////////////////////////////////////////////////
       /////////////// INTERNAL VARS /////////////////////////////
@@ -824,9 +864,22 @@
     //---------------------------------------------------------------------
 
 		onLetterClick = function(event) {
-			if (!isSpinning){
+      
+      // we clicked a letter
+      // we need to see if we were allowed to click that letter
 
-	    		var letter = event.data.letter;
+      var letter = event.data.letter;
+      var vowelChosen = ['A', 'E', 'I', 'O', 'U'].indexOf(letter) !== -1;
+      //var vowelChosen = VOWELS_REGEX.test(letter);
+      var consonantChosen = !vowelChosen;
+      var vowelState = gsm.is("vowel");
+      var consonantState = gsm.is("consonant");
+      var isGray = $(".letter_"+letter).hasClass("letter_called");
+      var isRed = $(".letter_"+letter).hasClass("letter_called_none");
+      var isWhite = !(isGray || isRed);
+
+      if ( ((vowelState && vowelChosen) || (consonantState && consonantChosen)) && isWhite ) {
+
 	    		var words = event.data.words;
 		    	var wordIndex = event.data.wordIndex;
 		    	var count = 0;
@@ -843,7 +896,11 @@
 			    if (count > 0){
 				    $(".letter_"+letter).addClass("letter_called");
 
-            if (VOWELS_REGEX.test(letter)){
+            if (vowelChosen){
+              vowelsRemaining -= 1;
+              if (vowelsRemaining == 0) {
+                allVowelsFound = true;
+              }
               //TODO: Deduct $250 from score
             } else { /*Consonant */
               //TODO: Add count * value of slice to score of current player
@@ -871,9 +928,9 @@
     ROW12_TILES = 12;
     ROW14_TILES = 14;
     TOTAL_TILES = ROW12_TILES * 2 + ROW14_TILES * 2;
-	 PUNCTUATION_REGEX = /[\.\,\?\!\@\#\$\%\^\&\*\(\)\<\>\:\;\']/g
+	  PUNCTUATION_REGEX = /[\.\,\?\!\@\#\$\%\^\&\*\(\)\<\>\:\;\']/g;
     ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    VOWELS_REGEX = /AEIOU/g
+    VOWELS_REGEX = /[AEIOU]/g;
 
 
     gsm.initGame();
