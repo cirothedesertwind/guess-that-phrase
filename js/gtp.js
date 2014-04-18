@@ -939,9 +939,13 @@
               if (vowelsRemaining == 0) {
                 allVowelsFound = true;
               }
-              //TODO: Deduct $250 from score
+
+              //Deduct $250 from score
+	      playerScore[currentPlayer] -= 250;
             } else { /*Consonant */
-              //TODO: Add count * value of slice to score of current player
+
+              //TODO: Add count * value of slice to score of current player (currently adds 500 arbitrarily)
+              playerScore[currentPlayer] += 500 * count;
             }
 
             //Successful selection
