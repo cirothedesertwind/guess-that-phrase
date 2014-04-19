@@ -82,7 +82,7 @@
         //Terminate round when solved
         { name: 'solvePuzzle', from: ['initTurn', 'success'], to: 'termRound'  },
         //End game when all rounds end
-        { name: 'stop', from: 'termROund', to: 'term'}
+        { name: 'stop', from: 'termRound', to: 'term'}
       ],
 
       callbacks: {
