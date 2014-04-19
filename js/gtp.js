@@ -335,7 +335,7 @@
            wheelSpinTimer.set({ time : WHEEL.REFRESH_RATE, autostart : false });
         }
 
-        if (!isSpinning){
+        if (!isSpinning && (gsm.is('initTurn') || gsm.is('success'))){
           isSpinning = true;
           spinDuration = WHEEL.spinDuration;
           countTime = 0;
