@@ -78,7 +78,7 @@
         //Loose your turn by incorrectly calling a letter or vowel,
         //landing on bankrupt or loose your turn, or incorrectly
         //solving the puzzle (triggered by facilitator clicking button)
-        { name: 'looseTurn', from: ['consonant', 'vowel', 'spin'], to: 'termTurn' },
+        { name: 'loseTurn', from: ['consonant', 'vowel', 'spin'], to: 'termTurn' },
         //Terminate round when solved
         { name: 'solvePuzzle', from: ['initTurn', 'success'], to: 'termRound'  },
         //End game when all rounds end
@@ -1003,7 +1003,7 @@
       			    $(".letter_"+letter).addClass("letter_called_none");
 
                 //There were no instances of that letter therefore player looses turn
-                gsm.looseTurn();
+                gsm.loseTurn();
             }
 
     		}
