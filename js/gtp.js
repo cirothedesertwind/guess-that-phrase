@@ -5,6 +5,12 @@
         ////////////// GAME VARIABLES /////////////////////////////
         ///////////////////////////////////////////////////////////
 
+        ROW12_TILES = 12;
+        ROW14_TILES = 14;
+        TOTAL_TILES = ROW12_TILES * 2 + ROW14_TILES * 2;
+        PUNCTUATION_REGEX = /[\.\,\?\!\@\#\$\%\^\&\*\(\)\<\>\:\;\']/g;
+        ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        VOWELS_REGEX = /[AEIOU]/g;
 
         var players = 3;
         var playerTotalScore = new Array(players);
@@ -1031,13 +1037,7 @@
             var board = event.data.board;
         };
 
-        //Initialization of board----------------------------------------------
-        ROW12_TILES = 12;
-        ROW14_TILES = 14;
-        TOTAL_TILES = ROW12_TILES * 2 + ROW14_TILES * 2;
-        PUNCTUATION_REGEX = /[\.\,\?\!\@\#\$\%\^\&\*\(\)\<\>\:\;\']/g;
-        ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        VOWELS_REGEX = /[AEIOU]/g;
+        //GAME INIT
 
         gsm.initGame();
         gsm.initRound();
