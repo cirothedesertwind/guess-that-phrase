@@ -53,7 +53,7 @@
                 $(this).children().first().text(currency + playerScore[i]);
                 $(this).children().last().text(currency + playerTotalScore[i]);
             });
-        }
+        };
 
 
         ///////////////////////////////////////////////////////////
@@ -156,14 +156,14 @@
                 },
                 onenterterm: function(event, from, to) {
                     alert("The game has ended.");
-                },
+                }
             }
 
         });
 
         var showStartingPlayer = function() {
             alert("Player " + (currentPlayer + 1) + " will start this round.");  /* Uses 1->n rather than 0->(n-1)*/
-        }
+        };
 
         ///////////////////////////////////////////////////////////
         ////////////// DIALOG START ///////////////////////////////
@@ -190,7 +190,7 @@
                             }
                         }
                     });
-        }
+        };
 
         var spinSolveDialog = function() {
             new Messi('Player ' + (currentPlayer + 1) + ', would you like to spin the wheel or solve the puzzle?',
@@ -209,7 +209,7 @@
                             }
                         }
                     });
-        }
+        };
 
         ///////////////////////////////////////////////////////////
         ////////////// DIALOG FINISH //////////////////////////////
@@ -247,7 +247,7 @@
             context.textBaseline = "middle";
             context.textAlign = "center";
             context.font = "1em Arial";
-        }
+        };
 
         ///////////////////////////////////////////////////////////
         ////////// WHEEL CALLBACK FUNCTIONS ///////////////////////
@@ -449,8 +449,8 @@
 
                 context.stroke();
                 context.fill();
-            },
-        }
+            }
+        };
 
         ///////////////////////////////////////////////////////////
         //////////////////////  START /////////////////////////////
@@ -925,7 +925,7 @@
             ///////////////////////////////////////////////////////////
             /////////////////// END WHEEL SETUP ///////////////////////
             ///////////////////////////////////////////////////////////
-        }
+        };
 
 
         //---------------------------------------------------------------------
@@ -947,7 +947,7 @@
             //           titleClass: 'anim warning', 
             //           buttons: [{id: 0, label: 'Close', val: 'X'}],
             //           modal: true});
-        }
+        };
 
         var countVowels = function(phrase) {
 
@@ -963,7 +963,7 @@
                     numberOfVowelsRemaining++;
                 }
             }
-        }
+        };
 
         onLetterClick = function(event) {
 
