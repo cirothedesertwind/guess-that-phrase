@@ -838,22 +838,10 @@
 
             // here we set the indent variable
             var indent;
-            if ((max_line_len == 12) || (max_line_len == 13)) {
-                indent = 0;
-            } else if ((max_line_len == 10) || (max_line_len == 11)) {
-                indent = 1;
-            } else if ((max_line_len == 8) || (max_line_len == 9)) {
-                indent = 2;
-            } else if ((max_line_len == 6) || (max_line_len == 7)) {
-                indent = 3;
-            } else if ((max_line_len == 4) || (max_line_len == 5)) {
-                indent = 4;
-            } else if ((max_line_len == 2) || (max_line_len == 3)) {
-                indent = 5;
-            } else if ((max_line_len == 1)) {
-                indent = 6;
-            }
-
+            if (max_line_len >= 14 || max_line_len < 1)
+                console.log("Error: max line length is too large ( >= 14) or less than 1.");
+            
+            indent = Math.ceil(-0.5 * max_line_len + 6);
 
             // since we have our best choice, we have to now set the indices to place the words on the board
             var count = 0;
