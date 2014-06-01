@@ -1,73 +1,73 @@
 <!DOCTYPE html>
 <head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-	<title>Guess That Phrase</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Guess That Phrase</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <link rel="stylesheet" href="css/grid.css">
-	<link rel="stylesheet" href="css/animate.min.css">
+    <link rel="stylesheet" href="css/animate.min.css">
     <link rel="stylesheet/less" type="text/css" href="css/gtp.less" />
-	<link rel="stylesheet" type="text/css" href="css/gtp.css">
+    <link rel="stylesheet" type="text/css" href="css/gtp.css">
     <link rel="stylesheet" type="text/css" href="css/gtp.presentation.css">
     <link rel="stylesheet" type="text/css" href="css/messi.min.css">
     <script src="js/less-1.7.0.min.js" type="text/javascript"></script>
 </head>
 <body>
-	<div class="container_18 game">
+    <div class="container_18 game">
 
-	</div>
+    </div>
 
-	<!-- ICanHaz Macros -->
+    <!-- ICanHaz Macros -->
 
-        <!-- Board Macros -->
+    <!-- Board Macros -->
     <script id="phrases_template" type="text/html">
         <div class="phrases">
         </div>
     </script>
 
-	<script id="board_template" type="text/html">
+    <script id="board_template" type="text/html">
         <div class="board">
         </div>
-	</script>
+    </script>
 
     <script id="board_row_template" type="text/html">
         <div class="row">
         </div>
-	</script>
+    </script>
 
     <script id="board_cell_template" type="text/html">
         <div class="grid_1 cell flip-container">
-          <div class="flipper">
-            <div class="front"></div>
-            <div class="back"><p class="letter"></p></div>
-          </div>
+            <div class="flipper">
+                <div class="front"></div>
+                <div class="back"><p class="letter"></p></div>
+            </div>
         </div>
-	</script>
+    </script>
 
     <script id="puzzle_hint_template" type="text/html">
         <div class="grid_18 puzzle_hint">{{ hint }}</div>
-	</script>
+    </script>
 
-     <script id="options_template" type="text/html">
+    <script id="options_template" type="text/html">
         <div class="grid_18"><span id="solve_button">Puzzle Solved Correctly</span></div>
-	</script>
+    </script>
 
 
-	<script id="alphabet_template" type="text/html">
+    <script id="alphabet_template" type="text/html">
         <div class="grid_18 alphabet"></div>
-        </script>
+    </script>
 
-	<script id="letter_template" type="text/html">
+    <script id="letter_template" type="text/html">
         <span class="letter letter_{{ letter }}">{{ letter }}</span>
-        </script>
+    </script>
 
     <script id="wheel_container_template" type="text/html">
         <div class="wheel"></div>
-        </script>
+    </script>
 
     <script id="wheel_canvas_template" type="text/html">
         <canvas id="canvas" width="{{ size }}" height="{{ size }}"></canvas>
-        </script>
+    </script>
 
     <script id="scoreboard_template" type="text/html">
         <div class="scoreboad grid_18"></div>
@@ -77,14 +77,14 @@
         <div class="score grid_6"><span>-1</span></br><span class="total">-1</span></div>
     </script>
 
-	<script src="js/vendor/jquery-2.1.0.min.js"></script>
+    <script src="js/vendor/jquery-2.1.0.min.js"></script>
     <script src="js/vendor/jquery.schedule.js"></script>
     <script src="js/vendor/jquery.timer.js"></script>
-	<script src="js/vendor/state-machine.min.js"></script>
-	<script src="js/vendor/icanhaz.min.js"></script>
-	<script src="js/vendor/howler.min.js"></script>
+    <script src="js/vendor/state-machine.min.js"></script>
+    <script src="js/vendor/icanhaz.min.js"></script>
+    <script src="js/vendor/howler.min.js"></script>
     <script src="js/vendor/messi.min.js"></script>
-	<script src="js/gtp.js"></script>
+    <script src="js/gtp.js"></script>
 
 
 </body>
