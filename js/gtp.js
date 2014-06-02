@@ -590,7 +590,6 @@
             MIN = 0;            // for each line, we can minimally choose 0 words to display...
             MAX = words.length; // for each line, we can maximally choose "words.length" words to display...
 
-            var string = "";
             var len;
             var words_per_line = new Array();
             var len_per_line = new Array();
