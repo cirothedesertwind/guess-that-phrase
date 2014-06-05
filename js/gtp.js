@@ -1029,7 +1029,7 @@
         gsm.initGame();
         gsm.initRound();
         
-        
+        var wheel = $.WHEEL();
 
     });
 })(jQuery);

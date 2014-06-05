@@ -24,6 +24,7 @@
 
             base.options = $.extend({}, $.WHEEL.defaultOptions, options);
 
+            alert("Hello World!");
             // Put your initialization code here
             $("html").append("<canvas id='myCanvas' width='" + WHEEL.size + "' height='" + WHEEL.size + "'style='border:1px solid #000000;'></canvas>");
         };
