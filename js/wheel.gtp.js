@@ -27,6 +27,8 @@
             // Put your initialization code here
             $("html").append("<canvas id='myCanvas' width='" + WHEEL.size + "' height='" + WHEEL.size + "'style='border:1px solid #000000;'></canvas>");
         };
+        
+        
 
         // Sample Function, Uncomment to use
          base.functionName = function(paramaters){
@@ -36,7 +38,18 @@
         // Run initializer
         base.init();
     };
-
+    
+    //Formatting for different slices
+    var bankruptFormat = function(context) {
+            context.lineWidth = 1;
+            context.fillStyle = '#FFFFFF';
+            context.textBaseline = "middle";
+            context.textAlign = "center";
+            context.font = "1em Arial";
+        };
+       
+       
+    //Options for wheel
     $.WHEEL.defaultOptions = {
         size: 600,
         radius: 290,
