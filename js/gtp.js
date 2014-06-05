@@ -266,7 +266,7 @@
         ////////////////// WHEEL DATA /////////////////////////////
         ///////////////////////////////////////////////////////////
 
-        var WHEEL = {
+        var WHEEL2 = {
             size: 600,
             radius: 290,
             slices: [
@@ -323,7 +323,7 @@
                 return c * ((t = t / d - 1) * t * t + 1) + b;
             },
             onTimerTick: function() {
-                countTime += WHEEL.REFRESH_RATE;
+                countTime += WHEEL2.REFRESH_RATE;
 
                 if (countTime >= spinDuration) {
                     isSpinning = false;
@@ -338,21 +338,21 @@
                     gsm.spin();
                 }
                 else {
-                    wheelAngle = WHEEL.easeOutCubic(countTime, 0, 1, spinDuration) * WHEEL.rotations * spinRandomFactor;
+                    wheelAngle = WHEEL2.easeOutCubic(countTime, 0, 1, spinDuration) * WHEEL2.rotations * spinRandomFactor;
                 }
 
-                WHEEL.draw(canvasContext, wheelAngle);
+                WHEEL2.draw(canvasContext, wheelAngle);
 
             },
             spin: function() {
                 if (wheelSpinTimer == null) { //Initialize timer first time
-                    wheelSpinTimer = $.timer(WHEEL.onTimerTick);
-                    wheelSpinTimer.set({time: WHEEL.REFRESH_RATE, autostart: false});
+                    wheelSpinTimer = $.timer(WHEEL2.onTimerTick);
+                    wheelSpinTimer.set({time: WHEEL2.REFRESH_RATE, autostart: false});
                 }
 
                 if (!isSpinning && (gsm.is('initTurn') || gsm.is('success'))) {
                     isSpinning = true;
-                    spinDuration = WHEEL.spinDuration;
+                    spinDuration = WHEEL2.spinDuration;
                     countTime = 0;
 
                     spinRandomFactor = 0.90 + 0.1 * Math.random();
@@ -361,10 +361,10 @@
                 }
             },
             draw: function(context, angleOffset) {
-                WHEEL.clear(context);
-                WHEEL.drawSlices(context, angleOffset);
-                WHEEL.drawCircles(context);
-                WHEEL.drawPointer(context);
+                WHEEL2.clear(context);
+                WHEEL2.drawSlices(context, angleOffset);
+                WHEEL2.drawCircles(context);
+                WHEEL2.drawPointer(context);
             },
             clear: function(context) {
                 context.clearRect(0, 0, context.width, context.height);
@@ -376,45 +376,45 @@
                 context.textAlign = "center";
                 context.font = "1.4em Arial";
 
-                sliceAngle = (2 * Math.PI) / WHEEL.slices.length;
+                sliceAngle = (2 * Math.PI) / WHEEL2.slices.length;
 
-                for (var i = 0; i < WHEEL.slices.length; i++) {
-                    WHEEL.drawSlice(context, i, angleOffset + sliceAngle * i, sliceAngle);
+                for (var i = 0; i < WHEEL2.slices.length; i++) {
+                    WHEEL2.drawSlice(context, i, angleOffset + sliceAngle * i, sliceAngle);
                 }
             },
             drawSlice: function(context, index, angle, sliceAngle) {
                 context.save();
                 context.beginPath();
 
-                context.moveTo(WHEEL.size / 2, WHEEL.size / 2);
-                context.arc(WHEEL.size / 2, WHEEL.size / 2, WHEEL.radius + WHEEL.outerLineWidth / 2, angle, angle + sliceAngle, false); // Draw a arc around the edge
-                context.lineTo(WHEEL.size / 2, WHEEL.size / 2);
+                context.moveTo(WHEEL2.size / 2, WHEEL2.size / 2);
+                context.arc(WHEEL2.size / 2, WHEEL2.size / 2, WHEEL2.radius + WHEEL2.outerLineWidth / 2, angle, angle + sliceAngle, false); // Draw a arc around the edge
+                context.lineTo(WHEEL2.size / 2, WHEEL2.size / 2);
                 context.closePath();
 
-                context.fillStyle = WHEEL.slices[index].color;
+                context.fillStyle = WHEEL2.slices[index].color;
                 context.fill();
                 context.stroke();
 
                 // Draw the text verticaly
-                context.translate(WHEEL.size / 2, WHEEL.size / 2);
+                context.translate(WHEEL2.size / 2, WHEEL2.size / 2);
                 context.rotate((angle + angle + sliceAngle) / 2);
-                context.translate(0.85 * WHEEL.radius, 0);
+                context.translate(0.85 * WHEEL2.radius, 0);
                 context.rotate(Math.PI / 2);
 
                 context.fillStyle = '#000000';
 
                 var str = null;
-                if (WHEEL.slices[index].alt.length == 0) {
-                    str = currency + WHEEL.slices[index].value.toString();
+                if (WHEEL2.slices[index].alt.length == 0) {
+                    str = currency + WHEEL2.slices[index].value.toString();
                 } else {
-                    str = WHEEL.slices[index].alt;
+                    str = WHEEL2.slices[index].alt;
                 }
 
-                if (WHEEL.slices[index].formatting != null)
-                    WHEEL.slices[index].formatting(context);
+                if (WHEEL2.slices[index].formatting != null)
+                    WHEEL2.slices[index].formatting(context);
 
                 for (var i = 0; i < str.length; i++) {
-                    context.fillText(str.charAt(i), 0, WHEEL.lineHeight * i);
+                    context.fillText(str.charAt(i), 0, WHEEL2.lineHeight * i);
                 }
 
                 context.restore();
@@ -422,22 +422,22 @@
             drawCircles: function(context) {
                 //Draw inner circle to conceal Moire pattern
                 context.beginPath();
-                context.arc(WHEEL.size / 2, WHEEL.size / 2, 20, 0, 2 * Math.PI, false);
+                context.arc(WHEEL2.size / 2, WHEEL2.size / 2, 20, 0, 2 * Math.PI, false);
                 context.closePath();
 
-                context.fillStyle = WHEEL.innerCircleFill;
-                context.strokeStyle = WHEEL.innerCircleStroke;
+                context.fillStyle = WHEEL2.innerCircleFill;
+                context.strokeStyle = WHEEL2.innerCircleStroke;
                 context.fill();
                 context.stroke();
 
                 // Draw outer circle to conceal jaggy edges
                 // TODO: This circle aliases pretty bad.
                 context.beginPath();
-                context.arc(WHEEL.size / 2, WHEEL.size / 2, WHEEL.radius, 0, 2 * Math.PI, false);
+                context.arc(WHEEL2.size / 2, WHEEL2.size / 2, WHEEL2.radius, 0, 2 * Math.PI, false);
                 context.closePath();
 
-                context.lineWidth = WHEEL.outerLineWidth;
-                context.strokeStyle = WHEEL.outerCircleStroke;
+                context.lineWidth = WHEEL2.outerLineWidth;
+                context.strokeStyle = WHEEL2.outerCircleStroke;
                 context.stroke();
             },
             drawPointer: function(context) {
@@ -448,9 +448,9 @@
 
                 context.beginPath();
 
-                context.moveTo(WHEEL.size / 2, 40);
-                context.lineTo(WHEEL.size / 2 - 10, 0);
-                context.lineTo(WHEEL.size / 2 + 10, 0);
+                context.moveTo(WHEEL2.size / 2, 40);
+                context.lineTo(WHEEL2.size / 2 - 10, 0);
+                context.lineTo(WHEEL2.size / 2 + 10, 0);
                 context.closePath();
 
                 context.stroke();
@@ -904,16 +904,16 @@
             ///////////////////////////////////////////////////////////
 
             wheelContainer = ich.wheel_container_template();
-            wheelCanvas = ich.wheel_canvas_template({size: WHEEL.size});
+            wheelCanvas = ich.wheel_canvas_template({size: WHEEL2.size});
 
             wheelContainer.append(wheelCanvas);
             game.append(wheelContainer);
 
             canvas = wheelCanvas.get(0);
-            canvas.addEventListener("click", WHEEL.spin);
+            canvas.addEventListener("click", WHEEL2.spin);
             canvasContext = canvas.getContext("2d");
 
-            WHEEL.draw(canvasContext, wheelAngle);
+            WHEEL2.draw(canvasContext, wheelAngle);
 
             ///////////////////////////////////////////////////////////
             /////////////////// END WHEEL SETUP ///////////////////////
@@ -1028,6 +1028,8 @@
 
         gsm.initGame();
         gsm.initRound();
+        
+        
 
     });
 })(jQuery);
