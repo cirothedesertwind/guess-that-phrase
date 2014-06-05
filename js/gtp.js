@@ -6,7 +6,7 @@
         ///////////////////////////////////////////////////////////
 
         ROW12_TILES = 12;
-        ROW14_TILES = 14;
+        ROW14_TILES = ROW12_TILES+2;
         TOTAL_TILES = ROW12_TILES * 2 + ROW14_TILES * 2;
         PUNCTUATION_REGEX = /[\.\,\?\!\@\#\$\%\^\&\*\(\)\<\>\:\;\']/g;
         ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -840,7 +840,7 @@
             if (max_line_len >= 14 || max_line_len < 1)
                 console.log("Error: max line length is too large ( >= 14) or less than 1.");
             
-            indent = Math.ceil(-0.5 * max_line_len + 6);
+            indent = Math.ceil(-0.5 * max_line_len + ROW12_TILES/2);
 
             // since we have our best choice, we have to now set the indices to place the words on the board
             var count = 0;
