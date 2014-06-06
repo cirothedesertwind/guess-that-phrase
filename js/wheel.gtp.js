@@ -110,6 +110,8 @@
             
             canvasContext = canvasCtx;
             wheelAngle = wheelAng;
+            
+            plugin.draw(canvasContext, wheelAngle);
 
         }
 

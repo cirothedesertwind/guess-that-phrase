@@ -522,10 +522,6 @@
             //canvas.addEventListener("click", alert("I've been clicked!"));
             // get the value of a public property
             console.log(wheel.settings.REFRESH_RATE);
-    
-            wheel.draw(canvasCtx, 0);
-            
-            
 
             ///////////////////////////////////////////////////////////
             /////////////////// END WHEEL SETUP ///////////////////////
