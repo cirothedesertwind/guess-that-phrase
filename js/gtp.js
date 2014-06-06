@@ -1029,7 +1029,14 @@
         gsm.initGame();
         gsm.initRound();
         
-        var wheel = $.WHEEL();
+         // create a new instance of the plugin
+    var wheel = new $.WHEEL($('html'));
+
+    // call a public method
+    wheel.foo_public_method();
+
+    // get the value of a public property
+    console.log(wheel.settings.propertyName);
 
     });
 })(jQuery);

@@ -1,104 +1,88 @@
-//Modeled code structure after http://starter.pixelgraphics.us/
-(function($) {
-    $.WHEEL = function(el, onTimerTick, spin, draw, clear, drawSlices, drawSlice, drawCircles, drawPointer, options) {
-        // To avoid scope issues, use 'base' instead of 'this'
-        // to reference this class from internal events and functions.
-        var base = this;
+// jQuery Plugin Boilerplate
+// A boilerplate for jumpstarting jQuery plugins development
+// version 2.0, July 8th, 2011
+// by Stefan Gabos
 
-        // Access to jQuery and DOM versions of element
-        base.$el = $(el);
-        base.el = el;
+// remember to change every instance of "pluginName" to the name of your plugin!
+// the semicolon at the beginning is there on purpose in order to protect the integrity 
+// of your scripts when mixed with incomplete objects, arrays, etc.
+;(function($) {
 
-        // Add a reverse reference to the DOM object
-        base.$el.data("WHEEL", base);
+    // we need attach the plugin to jQuery's namespace or otherwise it would not be
+    // available outside this function's scope
+    // "el" should be a jQuery object or a collection of jQuery objects as returned by
+    // jQuery's selector engine
+    $.WHEEL = function(el, options) {
 
-        base.init = function() {
-            base.onTimerTick = onTimerTick;
-            base.spin = spin;
-            base.draw = draw;
-            base.clear = clear;
-            base.drawSlices = drawSlices;
-            base.drawSlice = drawSlice;
-            base.drawCircles = drawCircles;
-            base.drawPointer = drawPointer;
+        // plugin's default options
+        // this is private property and is accessible only from inside the plugin
+        var defaults = {
 
-            base.options = $.extend({}, $.WHEEL.defaultOptions, options);
+            propertyName: 'value',
 
-            alert("Hello World!");
-            // Put your initialization code here
-            $("html").append("<canvas id='myCanvas' width='" + WHEEL.size + "' height='" + WHEEL.size + "'style='border:1px solid #000000;'></canvas>");
-        };
-        
-        
+            // if your plugin is event-driven, you may provide callback capabilities 
+            // for its events. call these functions before or after events of your 
+            // plugin, so that users may "hook" custom functions to those particular 
+            // events without altering the plugin's code
+            onSomeEvent: function() {}
 
-        // Sample Function, Uncomment to use
-         base.functionName = function(paramaters){
-        
-         };
+        }
 
-        // Run initializer
-        base.init();
-    };
-    
-    //Formatting for different slices
-    var bankruptFormat = function(context) {
-            context.lineWidth = 1;
-            context.fillStyle = '#FFFFFF';
-            context.textBaseline = "middle";
-            context.textAlign = "center";
-            context.font = "1em Arial";
-        };
-       
-       
-    //Options for wheel
-    $.WHEEL.defaultOptions = {
-        size: 600,
-        radius: 290,
-        slices: [
-            {value: 100, alt: "", color: '#cc0000', formatting: null, callback: null},
-            {value: 100, alt: "", color: '#00cc00', formatting: null, callback: null},
-            {value: 100, alt: "", color: '#0000cc', formatting: null, callback: null},
-            {value: -1, alt: "BANKRUPT", color: '#000000', formatting: bankruptFormat, callback: null},
-            {value: 100, alt: "", color: '#cc0000', formatting: null, callback: null},
-            {value: 100, alt: "", color: '#00cc00', formatting: null, callback: null},
-            {value: 100, alt: "", color: '#0000cc', formatting: null, callback: null},
-            {value: -1, alt: "BANKRUPT", color: '#000000', formatting: bankruptFormat, callback: null},
-            {value: 100, alt: "", color: '#cc0000', formatting: null, callback: null},
-            {value: 100, alt: "", color: '#00cc00', formatting: null, callback: null},
-            {value: 100, alt: "", color: '#0000cc', formatting: null, callback: null},
-            {value: -1, alt: "BANKRUPT", color: '#000000', formatting: bankruptFormat, callback: null},
-            {value: 100, alt: "", color: '#cc0000', formatting: null, callback: null},
-            {value: 100, alt: "", color: '#00cc00', formatting: null, callback: null},
-            {value: 100, alt: "", color: '#0000cc', formatting: null, callback: null},
-            {value: -1, alt: "BANKRUPT", color: '#000000', formatting: bankruptFormat, callback: null},
-            {value: 100, alt: "", color: '#cc0000', formatting: null, callback: null},
-            {value: 100, alt: "", color: '#00cc00', formatting: null, callback: null},
-            {value: 100, alt: "", color: '#0000cc', formatting: null, callback: null},
-            {value: -1, alt: "BANKRUPT", color: '#000000', formatting: bankruptFormat, callback: null},
-            {value: 100, alt: "", color: '#cc0000', formatting: null, callback: null},
-            {value: 100, alt: "", color: '#00cc00', formatting: null, callback: null},
-            {value: 100, alt: "", color: '#0000cc', formatting: null, callback: null},
-            {value: -1, alt: "BANKRUPT", color: '#000000', formatting: bankruptFormat, callback: null},
-            {value: 100, alt: "", color: '#cc0000', formatting: null, callback: null},
-            {value: 100, alt: "", color: '#00cc00', formatting: null, callback: null},
-            {value: 100, alt: "", color: '#0000cc', formatting: null, callback: null},
-            {value: -1, alt: "BANKRUPT", color: '#000000', formatting: bankruptFormat, callback: null}
-        ],
-        lineHeight: 22,
-        innerLineWidth: 1,
-        innerCircleFill: '#ffffff',
-        innerCircleStroke: '#000000',
-        outerLineWidth: 4,
-        outerCircleStroke: '#000000',
-        rotations: 25.1327412287,
-        spinDuration: 600,
-        REFRESH_RATE: 15
-    };
+        // to avoid confusions, use "plugin" to reference the
+        // current instance of the  object
+        var plugin = this;
 
-    $.fn.WHEEL = function(onTimerTick, spin, draw, clear, drawSlices, drawSlice, drawCircles, drawPointer, options) {
-        return this.each(function() {
-            (new $.WHEEL(this, onTimerTick, spin, draw, clear, drawSlices, drawSlice, drawCircles, drawPointer, options));
-        });
-    };
+        // this will hold the merged default, and user-provided options
+        // plugin's properties will be accessible like:
+        // plugin.settings.propertyName from inside the plugin or
+        // myplugin.settings.propertyName from outside the plugin
+        // where "myplugin" is an instance of the plugin
+        plugin.settings = {}
+
+        // the "constructor" method that gets called when the object is created
+        // this is a private method, it can be called only from inside the plugin
+        var init = function() {
+
+            // the plugin's final properties are the merged default and 
+            // user-provided options (if any)
+            plugin.settings = $.extend({}, defaults, options);
+
+            // make the collection of target elements available throughout the plugin
+            // by making it a public property
+            plugin.el = el;
+
+            // code goes here
+
+        }
+
+        // public methods
+        // these methods can be called like:
+        // plugin.methodName(arg1, arg2, ... argn) from inside the plugin or
+        // myplugin.publicMethod(arg1, arg2, ... argn) from outside the plugin
+        // where "myplugin" is an instance of the plugin
+
+        // a public method. for demonstration purposes only - remove it!
+        plugin.foo_public_method = function() {
+
+            // code goes here
+            console.log("a public method executed this.");
+
+        }
+
+        // private methods
+        // these methods can be called only from inside the plugin like:
+        // methodName(arg1, arg2, ... argn)
+
+        // a private method. for demonstration purposes only - remove it!
+        var foo_private_method = function() {
+
+            // code goes here
+
+        }
+
+        // call the "constructor" method
+        init();
+
+    }
 
 })(jQuery);
