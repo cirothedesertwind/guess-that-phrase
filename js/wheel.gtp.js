@@ -111,7 +111,7 @@
             canvasContext = canvasCtx;
             wheelAngle = wheelAng;
             
-            plugin.draw(canvasContext, wheelAngle);
+            draw(canvasContext, wheelAngle);
 
         }
 
@@ -121,7 +121,7 @@
         // myplugin.publicMethod(arg1, arg2, ... argn) from outside the plugin
         // where "myplugin" is an instance of the plugin
         
-        plugin.onTimerTick = function() {
+        onTimerTick = function() {
                 countTime += plugin.settings.REFRESH_RATE;
 
                 if (countTime >= spinDuration) {
@@ -138,13 +138,13 @@
                             plugin.settings.rotations * spinRandomFactor;
                 }
 
-                plugin.draw(canvasContext, wheelAngle);
+                draw(canvasContext, wheelAngle);
             };
             
             plugin.spin = function() {
                 
                 if (wheelSpinTimer == null) { //Initialize timer first time
-                    wheelSpinTimer = $.timer(plugin.onTimerTick);
+                    wheelSpinTimer = $.timer(onTimerTick);
                     wheelSpinTimer.set({time: plugin.settings.REFRESH_RATE, autostart: false});
                 }
 
@@ -161,16 +161,16 @@
                 }
             };
             
-            plugin.draw = function(context, angleOffset) {
-                plugin.clear(context);
-                plugin.drawSlices(context, angleOffset);
-                plugin.drawCircles(context);
-                plugin.drawPointer(context);
+            draw = function(context, angleOffset) {
+                clear(context);
+                drawSlices(context, angleOffset);
+                drawCircles(context);
+                drawPointer(context);
             };
-            plugin.clear = function(context) {
+            clear = function(context) {
                 context.clearRect(0, 0, context.width, context.height);
             };
-            plugin.drawSlices = function(context, angleOffset) {
+            drawSlices = function(context, angleOffset) {
                 context.lineWidth = 1;
                 context.strokeStyle = '#000000';
                 context.textBaseline = "middle";
@@ -180,10 +180,10 @@
                 sliceAngle = (2 * Math.PI) / plugin.settings.slices.length;
 
                 for (var i = 0; i < plugin.settings.slices.length; i++) {
-                    plugin.drawSlice(context, i, angleOffset + sliceAngle * i, sliceAngle);
+                    drawSlice(context, i, angleOffset + sliceAngle * i, sliceAngle);
                 }
             };
-            plugin.drawSlice = function(context, index, angle, sliceAngle) {
+            drawSlice = function(context, index, angle, sliceAngle) {
                 context.save();
                 context.beginPath();
 
@@ -220,7 +220,7 @@
 
                 context.restore();
             };
-            plugin.drawCircles = function(context) {
+            drawCircles = function(context) {
                 //Draw inner circle to conceal Moire pattern
                 context.beginPath();
                 context.arc(plugin.settings.size / 2, plugin.settings.size / 2, 20, 0, 2 * Math.PI, false);
@@ -241,7 +241,7 @@
                 context.strokeStyle = plugin.settings.outerCircleStroke;
                 context.stroke();
             };
-            plugin.drawPointer = function(context) {
+            drawPointer = function(context) {
 
                 context.lineWidth = 2;
                 context.strokeStyle = '#000000';
