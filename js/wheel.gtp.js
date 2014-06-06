@@ -17,8 +17,51 @@
         // plugin's default options
         // this is private property and is accessible only from inside the plugin
         var defaults = {
+             size: 600,
+            radius: 290,
+            slices: [
+                {value: 100, alt: "", color: '#cc0000', formatting: null, callback: null},
+                {value: 100, alt: "", color: '#00cc00', formatting: null, callback: null},
+                {value: 100, alt: "", color: '#0000cc', formatting: null, callback: null},
+                {value: -1, alt: "BANKRUPT", color: '#000000', formatting: bankruptFormat, callback: null},
+                {value: 100, alt: "", color: '#cc0000', formatting: null, callback: null},
+                {value: 100, alt: "", color: '#00cc00', formatting: null, callback: null},
+                {value: 100, alt: "", color: '#0000cc', formatting: null, callback: null},
+                {value: -1, alt: "BANKRUPT", color: '#000000', formatting: bankruptFormat, callback: null},
+                {value: 100, alt: "", color: '#cc0000', formatting: null, callback: null},
+                {value: 100, alt: "", color: '#00cc00', formatting: null, callback: null},
+                {value: 100, alt: "", color: '#0000cc', formatting: null, callback: null},
+                {value: -1, alt: "BANKRUPT", color: '#000000', formatting: bankruptFormat, callback: null},
+                {value: 100, alt: "", color: '#cc0000', formatting: null, callback: null},
+                {value: 100, alt: "", color: '#00cc00', formatting: null, callback: null},
+                {value: 100, alt: "", color: '#0000cc', formatting: null, callback: null},
+                {value: -1, alt: "BANKRUPT", color: '#000000', formatting: bankruptFormat, callback: null},
+                {value: 100, alt: "", color: '#cc0000', formatting: null, callback: null},
+                {value: 100, alt: "", color: '#00cc00', formatting: null, callback: null},
+                {value: 100, alt: "", color: '#0000cc', formatting: null, callback: null},
+                {value: -1, alt: "BANKRUPT", color: '#000000', formatting: bankruptFormat, callback: null},
+                {value: 100, alt: "", color: '#cc0000', formatting: null, callback: null},
+                {value: 100, alt: "", color: '#00cc00', formatting: null, callback: null},
+                {value: 100, alt: "", color: '#0000cc', formatting: null, callback: null},
+                {value: -1, alt: "BANKRUPT", color: '#000000', formatting: bankruptFormat, callback: null},
+                {value: 100, alt: "", color: '#cc0000', formatting: null, callback: null},
+                {value: 100, alt: "", color: '#00cc00', formatting: null, callback: null},
+                {value: 100, alt: "", color: '#0000cc', formatting: null, callback: null},
+                {value: -1, alt: "BANKRUPT", color: '#000000', formatting: bankruptFormat, callback: null}
+            ],
+            lineHeight: 22,
+            innerLineWidth: 1,
+            innerCircleFill: '#ffffff',
+            innerCircleStroke: '#000000',
+            outerLineWidth: 4,
+            outerCircleStroke: '#000000',
+            rotations: 25.1327412287, //Math.PI * 8
+            spinDuration: 600,
+            ///////////////////////////////////////////////////////////
+            /////////////// INTERNAL VARS /////////////////////////////
+            ///////////////////////////////////////////////////////////
 
-            propertyName: 'value',
+            REFRESH_RATE: 15,
 
             // if your plugin is event-driven, you may provide callback capabilities 
             // for its events. call these functions before or after events of your 
@@ -72,6 +115,14 @@
         // private methods
         // these methods can be called only from inside the plugin like:
         // methodName(arg1, arg2, ... argn)
+
+        var bankruptFormat = function(context) {
+            context.lineWidth = 1;
+            context.fillStyle = '#FFFFFF';
+            context.textBaseline = "middle";
+            context.textAlign = "center";
+            context.font = "1em Arial";
+        };
 
         // a private method. for demonstration purposes only - remove it!
         var foo_private_method = function() {

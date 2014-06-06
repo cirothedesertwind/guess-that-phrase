@@ -1036,7 +1036,7 @@
     wheel.foo_public_method();
 
     // get the value of a public property
-    console.log(wheel.settings.propertyName);
+    console.log(wheel.settings.REFRESH_RATE);
 
     });
 })(jQuery);
