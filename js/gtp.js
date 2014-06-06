@@ -31,7 +31,7 @@
         var allVowelsFound = false;
         var numberOfVowelsRemaining = 0;
 
-        var currency = "$";
+        var currency = '$';
 
         ///////////////////////////////////////////////////////////
         ///////////////// SCOREBOARD SETUP ////////////////////////
@@ -62,407 +62,7 @@
         };
 
 
-        ///////////////////////////////////////////////////////////
-        ////////////// GAME STATE MACHINE /////////////////////////
-        ///////////////////////////////////////////////////////////
-
-        var gsm = StateMachine.create({
-            initial: 'init',
-            events: [
-                //Init the game
-                {name: 'initGame', from: 'init', to: 'initGame'},
-                //Init round when either start or end of last round
-                {name: 'initRound', from: ['initGame', 'termRound'], to: 'initRound'},
-                //Start the game with the randomized starting player
-                {name: 'initTurn', from: ['initRound', 'termTurn'], to: 'initTurn'},
-                //Spin a wheel at the start of the turn, or after sucessfully calling a consonant or buying a vowel.
-                {name: 'spin', from: ['initTurn', 'success'], to: 'consonant'},
-                //Buy a vowel only after spinning the wheel and calling a consonant or buying another vowel previously
-                {name: 'buyVowel', from: 'success', to: 'vowel'},
-                //On a sucessful selection, prompt for next action
-                {name: 'success', from: ['consonant', 'vowel'], to: 'success'},
-                //Loose your turn by incorrectly calling a letter or vowel,
-                //landing on bankrupt or loose your turn, or incorrectly
-                //solving the puzzle (triggered by facilitator clicking button)
-                {name: 'loseTurn', from: ['consonant', 'vowel', 'spin'], to: 'termTurn'},
-                //Terminate round when solved
-                {name: 'solvePuzzle', from: ['initTurn', 'success'], to: 'termRound'},
-                //End game when all rounds end
-                {name: 'stop', from: 'termRound', to: 'term'}
-            ],
-            callbacks: {
-                onenterstate: function(event, from, to) {
-                    updateScore();
-                },
-                onenterinitGame: function(event, from, to) {
-                    buildBoard();
-                },
-                onenterinitRound: function(event, from, to) {
-
-                    /*If there are more rounds to play, start by randomizing the start player and start the player's turn. */
-                    if (currentRound < rounds) {
-
-                        //Clear out old round scores
-                        playerScore[0] = 0;
-                        playerScore[1] = 0;
-                        playerScore[2] = 0;
-
-                        updateScore();
-
-                        currentPlayer = Math.floor((Math.random() * players));
-                        showStartingPlayer();
-                        gsm.initTurn();
-                    } else {
-                        gsm.stop();
-                    }
-
-                },
-                onenterinitTurn: function(event, from, to) {
-
-                    //TODO: Lock out letters and buy a vowel button
-
-                    if (!isPuzzleSolved) {
-                        spinSolveDialog();
-                    } else {
-                        console.log("Error: Puzzle cannot be solved at the beginning of a turn because it is the previous player's win");
-                    }
-
-                },
-                onentersuccess: function(event, from, to) {
-
-                    /*If puzzle is unsolved, prompt (iff vowels available & player has > $250, incude vowel option) */
-                    if (!isPuzzleSolved && !allVowelsFound && playerScore[currentPlayer] > 250) {
-                        //alert("Buy a vowel, spin or solve?");
-                        vowelSpinSolveDialog();
-                    }
-                    else if (!isPuzzleSolved) {
-                        spinSolveDialog();
-                    }
-                    else if (isPuzzleSolved) {
-                        alert("Please read out the completed phrase");
-                    }
-                    else {
-                        console.log("Error: isPuzzleSolved:" + isPuzzleSolved + " allVowelsFound:" + allVowelsFound + " currentPlayerScore:" + playerScore[currentPlayer]);
-                    }
-
-
-                },
-                onentertermTurn: function(event, from, to) { /*Go to next player and start turn. */
-                    currentPlayer = currentPlayer + 1;
-                    currentPlayer = currentPlayer % players;
-                    gsm.initTurn(); //Init next turn.
-                },
-                onentertermRound: function(event, from, to) { /*Go to next round and start. */
-
-                    //Add point totals of winning player to total score
-                    playerTotalScore[currentPlayer] += playerScore[currentPlayer];
-
-                    currentRound = currentRound + 1;
-                    gsm.initRound();  //Init next round
-                },
-                onenterterm: function(event, from, to) {
-                    alert("The game has ended.");
-                }
-            }
-
-        });
-
-        var showStartingPlayer = function() {
-            alert("Player " + (currentPlayer + 1) + " will start this round.");  /* Uses 1->n rather than 0->(n-1)*/
-        };
-
-        ///////////////////////////////////////////////////////////
-        ////////////// DIALOG START ///////////////////////////////
-        ///////////////////////////////////////////////////////////
-
-        var vowelSpinSolveDialog = function() {
-            new Messi('Player ' + (currentPlayer + 1) + ', would you like to buy a vowel, spin the wheel, or solve the puzzle?',
-                    {title: 'Buttons',
-                        buttons: [
-                            {id: 0, label: 'Buy Vowel', val: 'buyVowel', class: 'btn-success'},
-                            {id: 1, label: 'Spin Again', val: 'spin', class: 'btn-danger'},
-                            {id: 2, label: 'Solve', val: 'solvePuzzle'}],
-                        callback: function(val) {
-                            if (val === 'buyVowel') {
-                                gsm.buyVowel();
-                            }
-                            else if (val === 'spin') {
-                            }
-                            else if (val === 'solvePuzzle') {
-                                gsm.solvePuzzle();
-                            }
-                            else {
-                                alert("How did you get here?");
-                            }
-                        }
-                    });
-        };
-
-        var spinSolveDialog = function() {
-            new Messi('Player ' + (currentPlayer + 1) + ', would you like to spin the wheel or solve the puzzle?',
-                    {title: 'Buttons',
-                        buttons: [
-                            {id: 0, label: 'Spin', val: 'spin', class: 'btn-danger'},
-                            {id: 1, label: 'Solve', val: 'solvePuzzle'}],
-                        callback: function(val) {
-                            if (val === 'spin') {
-                            }
-                            else if (val === 'solvePuzzle') {
-                                gsm.solvePuzzle();
-                            }
-                            else {
-                                alert("How did you get here?");
-                            }
-                        }
-                    });
-        };
-
-        ///////////////////////////////////////////////////////////
-        ////////////// DIALOG FINISH //////////////////////////////
-        ///////////////////////////////////////////////////////////
-
-        ///////////////////////////////////////////////////////////
-        ////////////// WHEEL START ////////////////////////////////
-        ///////////////////////////////////////////////////////////
-
-        //Inspired by http://bramp.net/blog/2011/07/27/html5-canvas-lunch-wheel/
-
-        ///////////////////////////////////////////////////////////
-        ////////// WHEEL VARIABLES ////////////////////////////////
-        ///////////////////////////////////////////////////////////
-
-        var canvasContext = null;
-        var wheelSpinTimer = null;
-
-        var isSpinning = false;
-        var spinDuration = 0;
-        var countTime = 0;
-
-        var wheelAngle = 0;
-        var spinRandomFactor = 0;
-
-        ///////////////////////////////////////////////////////////
-        ////////// WHEEL FORMATTING FUNCTIONS /////////////////////
-        ///////////////////////////////////////////////////////////
-
-        //Formatting functions should only have a context argument
-
-        var bankruptFormat = function(context) {
-            context.lineWidth = 1;
-            context.fillStyle = '#FFFFFF';
-            context.textBaseline = "middle";
-            context.textAlign = "center";
-            context.font = "1em Arial";
-        };
-
-        ///////////////////////////////////////////////////////////
-        ////////// WHEEL CALLBACK FUNCTIONS ///////////////////////
-        ///////////////////////////////////////////////////////////
-
-        //Callbacks are used to change gameplay eg. bankrupt
-        //and loose your turn.
-
-        ///////////////////////////////////////////////////////////
-        ////////////////// WHEEL DATA /////////////////////////////
-        ///////////////////////////////////////////////////////////
-
-        var WHEEL2 = {
-            size: 600,
-            radius: 290,
-            slices: [
-                {value: 100, alt: "", color: '#cc0000', formatting: null, callback: null},
-                {value: 100, alt: "", color: '#00cc00', formatting: null, callback: null},
-                {value: 100, alt: "", color: '#0000cc', formatting: null, callback: null},
-                {value: -1, alt: "BANKRUPT", color: '#000000', formatting: bankruptFormat, callback: null},
-                {value: 100, alt: "", color: '#cc0000', formatting: null, callback: null},
-                {value: 100, alt: "", color: '#00cc00', formatting: null, callback: null},
-                {value: 100, alt: "", color: '#0000cc', formatting: null, callback: null},
-                {value: -1, alt: "BANKRUPT", color: '#000000', formatting: bankruptFormat, callback: null},
-                {value: 100, alt: "", color: '#cc0000', formatting: null, callback: null},
-                {value: 100, alt: "", color: '#00cc00', formatting: null, callback: null},
-                {value: 100, alt: "", color: '#0000cc', formatting: null, callback: null},
-                {value: -1, alt: "BANKRUPT", color: '#000000', formatting: bankruptFormat, callback: null},
-                {value: 100, alt: "", color: '#cc0000', formatting: null, callback: null},
-                {value: 100, alt: "", color: '#00cc00', formatting: null, callback: null},
-                {value: 100, alt: "", color: '#0000cc', formatting: null, callback: null},
-                {value: -1, alt: "BANKRUPT", color: '#000000', formatting: bankruptFormat, callback: null},
-                {value: 100, alt: "", color: '#cc0000', formatting: null, callback: null},
-                {value: 100, alt: "", color: '#00cc00', formatting: null, callback: null},
-                {value: 100, alt: "", color: '#0000cc', formatting: null, callback: null},
-                {value: -1, alt: "BANKRUPT", color: '#000000', formatting: bankruptFormat, callback: null},
-                {value: 100, alt: "", color: '#cc0000', formatting: null, callback: null},
-                {value: 100, alt: "", color: '#00cc00', formatting: null, callback: null},
-                {value: 100, alt: "", color: '#0000cc', formatting: null, callback: null},
-                {value: -1, alt: "BANKRUPT", color: '#000000', formatting: bankruptFormat, callback: null},
-                {value: 100, alt: "", color: '#cc0000', formatting: null, callback: null},
-                {value: 100, alt: "", color: '#00cc00', formatting: null, callback: null},
-                {value: 100, alt: "", color: '#0000cc', formatting: null, callback: null},
-                {value: -1, alt: "BANKRUPT", color: '#000000', formatting: bankruptFormat, callback: null}
-            ],
-            lineHeight: 22,
-            innerLineWidth: 1,
-            innerCircleFill: '#ffffff',
-            innerCircleStroke: '#000000',
-            outerLineWidth: 4,
-            outerCircleStroke: '#000000',
-            rotations: 25.1327412287, //Math.PI * 8
-            spinDuration: 600,
-            ///////////////////////////////////////////////////////////
-            /////////////// INTERNAL VARS /////////////////////////////
-            ///////////////////////////////////////////////////////////
-
-            REFRESH_RATE: 15,
-            ///////////////////////////////////////////////////////////
-            ////////////////// WHEEL FXNS /////////////////////////////
-            ///////////////////////////////////////////////////////////
-
-            /* Easing Equation from
-             jQuery Easing v1.3. BSD License. Copyright © 2008 George McGinley Smith
-             t: current time, b: beginning value, c: change In value, d: duration  */
-            easeOutCubic: function(t, b, c, d) {
-                return c * ((t = t / d - 1) * t * t + 1) + b;
-            },
-            onTimerTick: function() {
-                countTime += WHEEL2.REFRESH_RATE;
-
-                if (countTime >= spinDuration) {
-                    isSpinning = false;
-                    wheelSpinTimer.stop();
-
-                    //Simplify the wheel angle after each spin
-                    while (wheelAngle >= Math.PI * 2) {
-                        wheelAngle -= Math.PI * 2;
-                    }
-
-                    //Declare spin was decision made by player
-                    gsm.spin();
-                }
-                else {
-                    wheelAngle = WHEEL2.easeOutCubic(countTime, 0, 1, spinDuration) * WHEEL2.rotations * spinRandomFactor;
-                }
-
-                WHEEL2.draw(canvasContext, wheelAngle);
-
-            },
-            spin: function() {
-                if (wheelSpinTimer == null) { //Initialize timer first time
-                    wheelSpinTimer = $.timer(WHEEL2.onTimerTick);
-                    wheelSpinTimer.set({time: WHEEL2.REFRESH_RATE, autostart: false});
-                }
-
-                if (!isSpinning && (gsm.is('initTurn') || gsm.is('success'))) {
-                    isSpinning = true;
-                    spinDuration = WHEEL2.spinDuration;
-                    countTime = 0;
-
-                    spinRandomFactor = 0.90 + 0.1 * Math.random();
-
-                    wheelSpinTimer.play();
-                }
-            },
-            draw: function(context, angleOffset) {
-                WHEEL2.clear(context);
-                WHEEL2.drawSlices(context, angleOffset);
-                WHEEL2.drawCircles(context);
-                WHEEL2.drawPointer(context);
-            },
-            clear: function(context) {
-                context.clearRect(0, 0, context.width, context.height);
-            },
-            drawSlices: function(context, angleOffset) {
-                context.lineWidth = 1;
-                context.strokeStyle = '#000000';
-                context.textBaseline = "middle";
-                context.textAlign = "center";
-                context.font = "1.4em Arial";
-
-                sliceAngle = (2 * Math.PI) / WHEEL2.slices.length;
-
-                for (var i = 0; i < WHEEL2.slices.length; i++) {
-                    WHEEL2.drawSlice(context, i, angleOffset + sliceAngle * i, sliceAngle);
-                }
-            },
-            drawSlice: function(context, index, angle, sliceAngle) {
-                context.save();
-                context.beginPath();
-
-                context.moveTo(WHEEL2.size / 2, WHEEL2.size / 2);
-                context.arc(WHEEL2.size / 2, WHEEL2.size / 2, WHEEL2.radius + WHEEL2.outerLineWidth / 2, angle, angle + sliceAngle, false); // Draw a arc around the edge
-                context.lineTo(WHEEL2.size / 2, WHEEL2.size / 2);
-                context.closePath();
-
-                context.fillStyle = WHEEL2.slices[index].color;
-                context.fill();
-                context.stroke();
-
-                // Draw the text verticaly
-                context.translate(WHEEL2.size / 2, WHEEL2.size / 2);
-                context.rotate((angle + angle + sliceAngle) / 2);
-                context.translate(0.85 * WHEEL2.radius, 0);
-                context.rotate(Math.PI / 2);
-
-                context.fillStyle = '#000000';
-
-                var str = null;
-                if (WHEEL2.slices[index].alt.length == 0) {
-                    str = currency + WHEEL2.slices[index].value.toString();
-                } else {
-                    str = WHEEL2.slices[index].alt;
-                }
-
-                if (WHEEL2.slices[index].formatting != null)
-                    WHEEL2.slices[index].formatting(context);
-
-                for (var i = 0; i < str.length; i++) {
-                    context.fillText(str.charAt(i), 0, WHEEL2.lineHeight * i);
-                }
-
-                context.restore();
-            },
-            drawCircles: function(context) {
-                //Draw inner circle to conceal Moire pattern
-                context.beginPath();
-                context.arc(WHEEL2.size / 2, WHEEL2.size / 2, 20, 0, 2 * Math.PI, false);
-                context.closePath();
-
-                context.fillStyle = WHEEL2.innerCircleFill;
-                context.strokeStyle = WHEEL2.innerCircleStroke;
-                context.fill();
-                context.stroke();
-
-                // Draw outer circle to conceal jaggy edges
-                // TODO: This circle aliases pretty bad.
-                context.beginPath();
-                context.arc(WHEEL2.size / 2, WHEEL2.size / 2, WHEEL2.radius, 0, 2 * Math.PI, false);
-                context.closePath();
-
-                context.lineWidth = WHEEL2.outerLineWidth;
-                context.strokeStyle = WHEEL2.outerCircleStroke;
-                context.stroke();
-            },
-            drawPointer: function(context) {
-
-                context.lineWidth = 2;
-                context.strokeStyle = '#000000';
-                context.fileStyle = '#ffffff';
-
-                context.beginPath();
-
-                context.moveTo(WHEEL2.size / 2, 40);
-                context.lineTo(WHEEL2.size / 2 - 10, 0);
-                context.lineTo(WHEEL2.size / 2 + 10, 0);
-                context.closePath();
-
-                context.stroke();
-                context.fill();
-            }
-        };
-
-        ///////////////////////////////////////////////////////////
-        //////////////////////  START /////////////////////////////
-        ///////////////////////////////////////////////////////////
-
-
+         
         //build a board
         buildBoard = function() {
             var game = $(".game");
@@ -903,22 +503,207 @@
             ////////////////// BEGIN WHEEL SETUP //////////////////////
             ///////////////////////////////////////////////////////////
 
+                  // create a new instance of the plugin
+  
+
+    
+
             wheelContainer = ich.wheel_container_template();
-            wheelCanvas = ich.wheel_canvas_template({size: WHEEL2.size});
+            wheelCanvas = ich.wheel_canvas_template({size: 600});
 
             wheelContainer.append(wheelCanvas);
             game.append(wheelContainer);
 
             canvas = wheelCanvas.get(0);
-            canvas.addEventListener("click", WHEEL2.spin);
-            canvasContext = canvas.getContext("2d");
+            canvasCtx = canvas.getContext("2d");
 
-            WHEEL2.draw(canvasContext, wheelAngle);
+            wheel = new $.WHEEL(canvasCtx, 0);
+            
+            //canvas.addEventListener("click", alert("I've been clicked!"));
+            // get the value of a public property
+            console.log(wheel.settings.REFRESH_RATE);
+    
+            wheel.draw(canvasCtx, 0);
+            
+            
 
             ///////////////////////////////////////////////////////////
             /////////////////// END WHEEL SETUP ///////////////////////
             ///////////////////////////////////////////////////////////
         };
+
+         ///////////////////////////////////////////////////////////
+        ////////////// GAME STATE MACHINE /////////////////////////
+        ///////////////////////////////////////////////////////////
+
+        var gsm = StateMachine.create({
+            initial: 'init',
+            events: [
+                //Init the game
+                {name: 'initGame', from: 'init', to: 'initGame'},
+                //Init round when either start or end of last round
+                {name: 'initRound', from: ['initGame', 'termRound'], to: 'initRound'},
+                //Start the game with the randomized starting player
+                {name: 'initTurn', from: ['initRound', 'termTurn'], to: 'initTurn'},
+                //Spin a wheel at the start of the turn, or after sucessfully calling a consonant or buying a vowel.
+                {name: 'spin', from: ['initTurn', 'success'], to: 'consonant'},
+                //Buy a vowel only after spinning the wheel and calling a consonant or buying another vowel previously
+                {name: 'buyVowel', from: 'success', to: 'vowel'},
+                //On a sucessful selection, prompt for next action
+                {name: 'success', from: ['consonant', 'vowel'], to: 'success'},
+                //Loose your turn by incorrectly calling a letter or vowel,
+                //landing on bankrupt or loose your trn, or incorrectly
+                //solving the puzzle (triggered by facilitator clicking button)
+                {name: 'loseTurn', from: ['consonant', 'vowel', 'spin'], to: 'termTurn'},
+                //Terminate round when solved
+                {name: 'solvePuzzle', from: ['initTurn', 'success'], to: 'termRound'},
+                //End game when all rounds end
+                {name: 'stop', from: 'termRound', to: 'term'}
+            ],
+            callbacks: {
+                onenterstate: function(event, from, to) {
+                    updateScore();
+                },
+                onenterinitGame: function(event, from, to) {
+                    buildBoard();
+                },
+                onenterinitRound: function(event, from, to) {
+
+                    /*If there are more rounds to play, start by randomizing the start player and start the player's turn. */
+                    if (currentRound < rounds) {
+
+                        //Clear out old round scores
+                        playerScore[0] = 0;
+                        playerScore[1] = 0;
+                        playerScore[2] = 0;
+
+                        updateScore();
+
+                        currentPlayer = Math.floor((Math.random() * players));
+                        showStartingPlayer();
+                        gsm.initTurn();
+                    } else {
+                        gsm.stop();
+                    }
+
+                },
+                onenterinitTurn: function(event, from, to) {
+
+                    //TODO: Lock out letters and buy a vowel button
+
+                    if (!isPuzzleSolved) {
+                        spinSolveDialog();
+                    } else {
+                        console.log("Error: Puzzle cannot be solved at the beginning of a turn because it is the previous player's win");
+                    }
+
+                },
+                onenterconsonant: function(event, from, to){
+                    wheel.spin();
+                },
+                onentersuccess: function(event, from, to) {
+
+                    /*If puzzle is unsolved, prompt (iff vowels available & player has > $250, incude vowel option) */
+                    if (!isPuzzleSolved && !allVowelsFound && playerScore[currentPlayer] > 250) {
+                        //alert("Buy a vowel, spin or solve?");
+                        vowelSpinSolveDialog();
+                    }
+                    else if (!isPuzzleSolved) {
+                        spinSolveDialog();
+                    }
+                    else if (isPuzzleSolved) {
+                        alert("Please read out the completed phrase");
+                    }
+                    else {
+                        console.log("Error: isPuzzleSolved:" + isPuzzleSolved + " allVowelsFound:" + allVowelsFound + " currentPlayerScore:" + playerScore[currentPlayer]);
+                    }
+
+
+                },
+                onentertermTurn: function(event, from, to) { /*Go to next player and start turn. */
+                    currentPlayer = currentPlayer + 1;
+                    currentPlayer = currentPlayer % players;
+                    gsm.initTurn(); //Init next turn.
+                },
+                onentertermRound: function(event, from, to) { /*Go to next round and start. */
+
+                    //Add point totals of winning player to total score
+                    playerTotalScore[currentPlayer] += playerScore[currentPlayer];
+
+                    currentRound = currentRound + 1;
+                    gsm.initRound();  //Init next round
+                },
+                onenterterm: function(event, from, to) {
+                    alert("The game has ended.");
+                }
+            }
+
+        });
+
+       
+       
+
+        var showStartingPlayer = function() {
+            alert("Player " + (currentPlayer + 1) + " will start this round.");  /* Uses 1->n rather than 0->(n-1)*/
+        };
+
+        ///////////////////////////////////////////////////////////
+        ////////////// DIALOG START ///////////////////////////////
+        ///////////////////////////////////////////////////////////
+
+        var vowelSpinSolveDialog = function() {
+            new Messi('Player ' + (currentPlayer + 1) + ', would you like to buy a vowel, spin the wheel, or solve the puzzle?',
+                    {title: 'Buttons',
+                        buttons: [
+                            {id: 0, label: 'Buy Vowel', val: 'buyVowel', class: 'btn-success'},
+                            {id: 1, label: 'Spin Again', val: 'spin', class: 'btn-danger'},
+                            {id: 2, label: 'Solve', val: 'solvePuzzle'}],
+                        callback: function(val) {
+                            if (val === 'buyVowel') {
+                                gsm.buyVowel();
+                            }
+                            else if (val === 'spin') {
+                                gsm.spin();
+                            }
+                            else if (val === 'solvePuzzle') {
+                                gsm.solvePuzzle();
+                            }
+                            else {
+                                alert("How did you get here?");
+                            }
+                        }
+                    });
+        };
+
+        var spinSolveDialog = function() {
+            new Messi('Player ' + (currentPlayer + 1) + ', would you like to spin the wheel or solve the puzzle?',
+                    {title: 'Buttons',
+                        buttons: [
+                            {id: 0, label: 'Spin', val: 'spin', class: 'btn-danger'},
+                            {id: 1, label: 'Solve', val: 'solvePuzzle'}],
+                        callback: function(val) {
+                            if (val === 'spin') {
+                                gsm.spin();
+                            }
+                            else if (val === 'solvePuzzle') {
+                                gsm.solvePuzzle();
+                            }
+                            else {
+                                alert("How did you get here?");
+                            }
+                        }
+                    });
+        };
+
+        ///////////////////////////////////////////////////////////
+        ////////////// DIALOG FINISH //////////////////////////////
+        ///////////////////////////////////////////////////////////
+
+        ///////////////////////////////////////////////////////////
+        //////////////////////  START /////////////////////////////
+        ///////////////////////////////////////////////////////////
+
+
 
 
         //---------------------------------------------------------------------
@@ -1029,14 +814,7 @@
         gsm.initGame();
         gsm.initRound();
         
-         // create a new instance of the plugin
-    var wheel = new $.WHEEL($('html'));
-
-    // call a public method
-    wheel.foo_public_method();
-
-    // get the value of a public property
-    console.log(wheel.settings.REFRESH_RATE);
+   
 
     });
 })(jQuery);

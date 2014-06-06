@@ -12,7 +12,7 @@
     // available outside this function's scope
     // "el" should be a jQuery object or a collection of jQuery objects as returned by
     // jQuery's selector engine
-    $.WHEEL = function(el, options) {
+    $.WHEEL = function(canvasCtx, wheelAng, options) {
 
         // plugin's default options
         // this is private property and is accessible only from inside the plugin
@@ -62,6 +62,8 @@
             ///////////////////////////////////////////////////////////
 
             REFRESH_RATE: 15,
+            
+            currency: '$',
 
             // if your plugin is event-driven, you may provide callback capabilities 
             // for its events. call these functions before or after events of your 
@@ -70,6 +72,20 @@
             onSomeEvent: function() {}
 
         }
+
+        ///////////////////////////////////////////////////////////
+        ////////// WHEEL VARIABLES ////////////////////////////////
+        ///////////////////////////////////////////////////////////
+
+        var canvasContext = null;
+        var wheelSpinTimer = null;
+
+        var isSpinning = false;
+        var spinDuration = 0;
+        var countTime = 0;
+
+        var wheelAngle = 0;
+        var spinRandomFactor = 0;
 
         // to avoid confusions, use "plugin" to reference the
         // current instance of the  object
@@ -90,11 +106,10 @@
             // user-provided options (if any)
             plugin.settings = $.extend({}, defaults, options);
 
-            // make the collection of target elements available throughout the plugin
-            // by making it a public property
-            plugin.el = el;
-
             // code goes here
+            
+            canvasContext = canvasCtx;
+            wheelAngle = wheelAng;
 
         }
 
@@ -103,14 +118,144 @@
         // plugin.methodName(arg1, arg2, ... argn) from inside the plugin or
         // myplugin.publicMethod(arg1, arg2, ... argn) from outside the plugin
         // where "myplugin" is an instance of the plugin
+        
+        plugin.onTimerTick = function() {
+                countTime += plugin.settings.REFRESH_RATE;
 
-        // a public method. for demonstration purposes only - remove it!
-        plugin.foo_public_method = function() {
+                if (countTime >= spinDuration) {
+                    isSpinning = false;
+                    wheelSpinTimer.stop();
 
-            // code goes here
-            console.log("a public method executed this.");
+                    //Simplify the wheel angle after each spin
+                    while (wheelAngle >= Math.PI * 2) {
+                        wheelAngle -= Math.PI * 2;
+                    }
+                }
+                else {
+                    wheelAngle = easeOutCubic(countTime, 0, 1, spinDuration) * 
+                            plugin.settings.rotations * spinRandomFactor;
+                }
 
-        }
+                plugin.draw(canvasContext, wheelAngle);
+            };
+            
+            plugin.spin = function() {
+                
+                if (wheelSpinTimer == null) { //Initialize timer first time
+                    wheelSpinTimer = $.timer(plugin.onTimerTick);
+                    wheelSpinTimer.set({time: plugin.settings.REFRESH_RATE, autostart: false});
+                }
+
+                if (!isSpinning) {
+                    isSpinning = true;
+                    spinDuration = plugin.settings.spinDuration;
+                    countTime = 0;
+
+                    spinRandomFactor = 0.90 + 0.1 * Math.random();
+
+                    wheelSpinTimer.play();
+                    
+                 
+                }
+            };
+            
+            plugin.draw = function(context, angleOffset) {
+                plugin.clear(context);
+                plugin.drawSlices(context, angleOffset);
+                plugin.drawCircles(context);
+                plugin.drawPointer(context);
+            };
+            plugin.clear = function(context) {
+                context.clearRect(0, 0, context.width, context.height);
+            };
+            plugin.drawSlices = function(context, angleOffset) {
+                context.lineWidth = 1;
+                context.strokeStyle = '#000000';
+                context.textBaseline = "middle";
+                context.textAlign = "center";
+                context.font = "1.4em Arial";
+
+                sliceAngle = (2 * Math.PI) / plugin.settings.slices.length;
+
+                for (var i = 0; i < plugin.settings.slices.length; i++) {
+                    plugin.drawSlice(context, i, angleOffset + sliceAngle * i, sliceAngle);
+                }
+            };
+            plugin.drawSlice = function(context, index, angle, sliceAngle) {
+                context.save();
+                context.beginPath();
+
+                context.moveTo(plugin.settings.size / 2, plugin.settings.size / 2);
+                context.arc(plugin.settings.size / 2, plugin.settings.size / 2, plugin.settings.radius + plugin.settings.outerLineWidth / 2, angle, angle + sliceAngle, false); // Draw a arc around the edge
+                context.lineTo(plugin.settings.size / 2, plugin.settings.size / 2);
+                context.closePath();
+
+                context.fillStyle = plugin.settings.slices[index].color;
+                context.fill();
+                context.stroke();
+
+                // Draw the text verticaly
+                context.translate(plugin.settings.size / 2, plugin.settings.size / 2);
+                context.rotate((angle + angle + sliceAngle) / 2);
+                context.translate(0.85 * plugin.settings.radius, 0);
+                context.rotate(Math.PI / 2);
+
+                context.fillStyle = '#000000';
+
+                var str = null;
+                if (plugin.settings.slices[index].alt.length == 0) {
+                    str = plugin.settings.currency + plugin.settings.slices[index].value.toString();
+                } else {
+                    str = plugin.settings.slices[index].alt;
+                }
+
+                if (plugin.settings.slices[index].formatting != null)
+                    plugin.settings.slices[index].formatting(context);
+
+                for (var i = 0; i < str.length; i++) {
+                    context.fillText(str.charAt(i), 0, plugin.settings.lineHeight * i);
+                }
+
+                context.restore();
+            };
+            plugin.drawCircles = function(context) {
+                //Draw inner circle to conceal Moire pattern
+                context.beginPath();
+                context.arc(plugin.settings.size / 2, plugin.settings.size / 2, 20, 0, 2 * Math.PI, false);
+                context.closePath();
+
+                context.fillStyle = plugin.settings.innerCircleFill;
+                context.strokeStyle = plugin.settings.innerCircleStroke;
+                context.fill();
+                context.stroke();
+
+                // Draw outer circle to conceal jaggy edges
+                // TODO: This circle aliases pretty bad.
+                context.beginPath();
+                context.arc(plugin.settings.size / 2, plugin.settings.size / 2, plugin.settings.radius, 0, 2 * Math.PI, false);
+                context.closePath();
+
+                context.lineWidth = plugin.settings.outerLineWidth;
+                context.strokeStyle = plugin.settings.outerCircleStroke;
+                context.stroke();
+            };
+            plugin.drawPointer = function(context) {
+
+                context.lineWidth = 2;
+                context.strokeStyle = '#000000';
+                context.fileStyle = '#ffffff';
+
+                context.beginPath();
+
+                context.moveTo(plugin.settings.size / 2, 40);
+                context.lineTo(plugin.settings.size / 2 - 10, 0);
+                context.lineTo(plugin.settings.size / 2 + 10, 0);
+                context.closePath();
+
+                context.stroke();
+                context.fill();
+            };
+        
 
         // private methods
         // these methods can be called only from inside the plugin like:
@@ -124,12 +269,9 @@
             context.font = "1em Arial";
         };
 
-        // a private method. for demonstration purposes only - remove it!
-        var foo_private_method = function() {
-
-            // code goes here
-
-        }
+        var easeOutCubic = function(t, b, c, d) {
+                return c * ((t = t / d - 1) * t * t + 1) + b;
+        };
 
         // call the "constructor" method
         init();
