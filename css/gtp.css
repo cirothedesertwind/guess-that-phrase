@@ -29,28 +29,6 @@ span.letter {
     color: white;
 }
 
-.score {
-    font-weight: bold;
-    font-size: 2em;
-    color: white;
-    text-align: center;
-    background: yellow;
-}
-
-.score:first-child {
-    background: red;
-}
-
-.score:last-child {
-    background: blue;
-}
-
-.score span.total {
-   font-size: 0.5em;
-}
-
-
-
 /*Cell flip animation ----------------------------- */
 /*Based on tutorial by David Walsh */
 
