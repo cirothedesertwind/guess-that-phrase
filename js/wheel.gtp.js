@@ -6,7 +6,8 @@
 // remember to change every instance of "pluginName" to the name of your plugin!
 // the semicolon at the beginning is there on purpose in order to protect the integrity 
 // of your scripts when mixed with incomplete objects, arrays, etc.
-;(function($) {
+;
+(function($) {
 
     // we need attach the plugin to jQuery's namespace or otherwise it would not be
     // available outside this function's scope
@@ -17,7 +18,7 @@
         // plugin's default options
         // this is private property and is accessible only from inside the plugin
         var defaults = {
-             size: 600,
+            size: 600,
             radius: 290,
             slices: [
                 {value: 100, alt: "", color: '#cc0000', formatting: null, callback: null},
@@ -62,14 +63,13 @@
             ///////////////////////////////////////////////////////////
 
             REFRESH_RATE: 15,
-            
             currency: '$',
-
             // if your plugin is event-driven, you may provide callback capabilities 
             // for its events. call these functions before or after events of your 
             // plugin, so that users may "hook" custom functions to those particular 
             // events without altering the plugin's code
-            onSomeEvent: function() {}
+            onSomeEvent: function() {
+            }
 
         }
 
@@ -107,10 +107,10 @@
             plugin.settings = $.extend({}, defaults, options);
 
             // code goes here
-            
+
             canvasContext = canvasCtx;
             wheelAngle = wheelAng;
-            
+
             draw(canvasContext, wheelAngle);
 
         }
@@ -120,144 +120,144 @@
         // plugin.methodName(arg1, arg2, ... argn) from inside the plugin or
         // myplugin.publicMethod(arg1, arg2, ... argn) from outside the plugin
         // where "myplugin" is an instance of the plugin
-        
+
         onTimerTick = function() {
-                countTime += plugin.settings.REFRESH_RATE;
+            countTime += plugin.settings.REFRESH_RATE;
 
-                if (countTime >= spinDuration) {
-                    isSpinning = false;
-                    wheelSpinTimer.stop();
+            if (countTime >= spinDuration) {
+                isSpinning = false;
+                wheelSpinTimer.stop();
 
-                    //Simplify the wheel angle after each spin
-                    while (wheelAngle >= Math.PI * 2) {
-                        wheelAngle -= Math.PI * 2;
-                    }
+                //Simplify the wheel angle after each spin
+                while (wheelAngle >= Math.PI * 2) {
+                    wheelAngle -= Math.PI * 2;
                 }
-                else {
-                    wheelAngle = easeOutCubic(countTime, 0, 1, spinDuration) * 
-                            plugin.settings.rotations * spinRandomFactor;
-                }
+            }
+            else {
+                wheelAngle = easeOutCubic(countTime, 0, 1, spinDuration) *
+                        plugin.settings.rotations * spinRandomFactor;
+            }
 
-                draw(canvasContext, wheelAngle);
-            };
-            
-            plugin.spin = function() {
-                
-                if (wheelSpinTimer == null) { //Initialize timer first time
-                    wheelSpinTimer = $.timer(onTimerTick);
-                    wheelSpinTimer.set({time: plugin.settings.REFRESH_RATE, autostart: false});
-                }
+            draw(canvasContext, wheelAngle);
+        };
 
-                if (!isSpinning) {
-                    isSpinning = true;
-                    spinDuration = plugin.settings.spinDuration;
-                    countTime = 0;
+        plugin.spin = function() {
 
-                    spinRandomFactor = 0.90 + 0.1 * Math.random();
+            if (wheelSpinTimer == null) { //Initialize timer first time
+                wheelSpinTimer = $.timer(onTimerTick);
+                wheelSpinTimer.set({time: plugin.settings.REFRESH_RATE, autostart: false});
+            }
 
-                    wheelSpinTimer.play();
-                    
-                 
-                }
-            };
-            
-            draw = function(context, angleOffset) {
-                clear(context);
-                drawSlices(context, angleOffset);
-                drawCircles(context);
-                drawPointer(context);
-            };
-            clear = function(context) {
-                context.clearRect(0, 0, context.width, context.height);
-            };
-            drawSlices = function(context, angleOffset) {
-                context.lineWidth = 1;
-                context.strokeStyle = '#000000';
-                context.textBaseline = "middle";
-                context.textAlign = "center";
-                context.font = "1.4em Arial";
+            if (!isSpinning) {
+                isSpinning = true;
+                spinDuration = plugin.settings.spinDuration;
+                countTime = 0;
 
-                sliceAngle = (2 * Math.PI) / plugin.settings.slices.length;
+                spinRandomFactor = 0.90 + 0.1 * Math.random();
 
-                for (var i = 0; i < plugin.settings.slices.length; i++) {
-                    drawSlice(context, i, angleOffset + sliceAngle * i, sliceAngle);
-                }
-            };
-            drawSlice = function(context, index, angle, sliceAngle) {
-                context.save();
-                context.beginPath();
+                wheelSpinTimer.play();
 
-                context.moveTo(plugin.settings.size / 2, plugin.settings.size / 2);
-                context.arc(plugin.settings.size / 2, plugin.settings.size / 2, plugin.settings.radius + plugin.settings.outerLineWidth / 2, angle, angle + sliceAngle, false); // Draw a arc around the edge
-                context.lineTo(plugin.settings.size / 2, plugin.settings.size / 2);
-                context.closePath();
 
-                context.fillStyle = plugin.settings.slices[index].color;
-                context.fill();
-                context.stroke();
+            }
+        };
 
-                // Draw the text verticaly
-                context.translate(plugin.settings.size / 2, plugin.settings.size / 2);
-                context.rotate((angle + angle + sliceAngle) / 2);
-                context.translate(0.85 * plugin.settings.radius, 0);
-                context.rotate(Math.PI / 2);
+        draw = function(context, angleOffset) {
+            clear(context);
+            drawSlices(context, angleOffset);
+            drawCircles(context);
+            drawPointer(context);
+        };
+        clear = function(context) {
+            context.clearRect(0, 0, context.width, context.height);
+        };
+        drawSlices = function(context, angleOffset) {
+            context.lineWidth = 1;
+            context.strokeStyle = '#000000';
+            context.textBaseline = "middle";
+            context.textAlign = "center";
+            context.font = "1.4em Arial";
 
-                context.fillStyle = '#000000';
+            sliceAngle = (2 * Math.PI) / plugin.settings.slices.length;
 
-                var str = null;
-                if (plugin.settings.slices[index].alt.length == 0) {
-                    str = plugin.settings.currency + plugin.settings.slices[index].value.toString();
-                } else {
-                    str = plugin.settings.slices[index].alt;
-                }
+            for (var i = 0; i < plugin.settings.slices.length; i++) {
+                drawSlice(context, i, angleOffset + sliceAngle * i, sliceAngle);
+            }
+        };
+        drawSlice = function(context, index, angle, sliceAngle) {
+            context.save();
+            context.beginPath();
 
-                if (plugin.settings.slices[index].formatting != null)
-                    plugin.settings.slices[index].formatting(context);
+            context.moveTo(plugin.settings.size / 2, plugin.settings.size / 2);
+            context.arc(plugin.settings.size / 2, plugin.settings.size / 2, plugin.settings.radius + plugin.settings.outerLineWidth / 2, angle, angle + sliceAngle, false); // Draw a arc around the edge
+            context.lineTo(plugin.settings.size / 2, plugin.settings.size / 2);
+            context.closePath();
 
-                for (var i = 0; i < str.length; i++) {
-                    context.fillText(str.charAt(i), 0, plugin.settings.lineHeight * i);
-                }
+            context.fillStyle = plugin.settings.slices[index].color;
+            context.fill();
+            context.stroke();
 
-                context.restore();
-            };
-            drawCircles = function(context) {
-                //Draw inner circle to conceal Moire pattern
-                context.beginPath();
-                context.arc(plugin.settings.size / 2, plugin.settings.size / 2, 20, 0, 2 * Math.PI, false);
-                context.closePath();
+            // Draw the text verticaly
+            context.translate(plugin.settings.size / 2, plugin.settings.size / 2);
+            context.rotate((angle + angle + sliceAngle) / 2);
+            context.translate(0.85 * plugin.settings.radius, 0);
+            context.rotate(Math.PI / 2);
 
-                context.fillStyle = plugin.settings.innerCircleFill;
-                context.strokeStyle = plugin.settings.innerCircleStroke;
-                context.fill();
-                context.stroke();
+            context.fillStyle = '#000000';
 
-                // Draw outer circle to conceal jaggy edges
-                // TODO: This circle aliases pretty bad.
-                context.beginPath();
-                context.arc(plugin.settings.size / 2, plugin.settings.size / 2, plugin.settings.radius, 0, 2 * Math.PI, false);
-                context.closePath();
+            var str = null;
+            if (plugin.settings.slices[index].alt.length == 0) {
+                str = plugin.settings.currency + plugin.settings.slices[index].value.toString();
+            } else {
+                str = plugin.settings.slices[index].alt;
+            }
 
-                context.lineWidth = plugin.settings.outerLineWidth;
-                context.strokeStyle = plugin.settings.outerCircleStroke;
-                context.stroke();
-            };
-            drawPointer = function(context) {
+            if (plugin.settings.slices[index].formatting != null)
+                plugin.settings.slices[index].formatting(context);
 
-                context.lineWidth = 2;
-                context.strokeStyle = '#000000';
-                context.fileStyle = '#ffffff';
+            for (var i = 0; i < str.length; i++) {
+                context.fillText(str.charAt(i), 0, plugin.settings.lineHeight * i);
+            }
 
-                context.beginPath();
+            context.restore();
+        };
+        drawCircles = function(context) {
+            //Draw inner circle to conceal Moire pattern
+            context.beginPath();
+            context.arc(plugin.settings.size / 2, plugin.settings.size / 2, 20, 0, 2 * Math.PI, false);
+            context.closePath();
 
-                context.moveTo(plugin.settings.size / 2, 40);
-                context.lineTo(plugin.settings.size / 2 - 10, 0);
-                context.lineTo(plugin.settings.size / 2 + 10, 0);
-                context.closePath();
+            context.fillStyle = plugin.settings.innerCircleFill;
+            context.strokeStyle = plugin.settings.innerCircleStroke;
+            context.fill();
+            context.stroke();
 
-                context.stroke();
-                context.fill();
-            };
-        
+            // Draw outer circle to conceal jaggy edges
+            // TODO: This circle aliases pretty bad.
+            context.beginPath();
+            context.arc(plugin.settings.size / 2, plugin.settings.size / 2, plugin.settings.radius, 0, 2 * Math.PI, false);
+            context.closePath();
+
+            context.lineWidth = plugin.settings.outerLineWidth;
+            context.strokeStyle = plugin.settings.outerCircleStroke;
+            context.stroke();
+        };
+        drawPointer = function(context) {
+
+            context.lineWidth = 2;
+            context.strokeStyle = '#000000';
+            context.fileStyle = '#ffffff';
+
+            context.beginPath();
+
+            context.moveTo(plugin.settings.size / 2, 40);
+            context.lineTo(plugin.settings.size / 2 - 10, 0);
+            context.lineTo(plugin.settings.size / 2 + 10, 0);
+            context.closePath();
+
+            context.stroke();
+            context.fill();
+        };
+
 
         // private methods
         // these methods can be called only from inside the plugin like:
@@ -272,7 +272,7 @@
         };
 
         var easeOutCubic = function(t, b, c, d) {
-                return c * ((t = t / d - 1) * t * t + 1) + b;
+            return c * ((t = t / d - 1) * t * t + 1) + b;
         };
 
         // call the "constructor" method

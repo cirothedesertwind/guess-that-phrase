@@ -6,7 +6,7 @@
         ///////////////////////////////////////////////////////////
 
         ROW12_TILES = 12;
-        ROW14_TILES = ROW12_TILES+2;
+        ROW14_TILES = ROW12_TILES + 2;
         TOTAL_TILES = ROW12_TILES * 2 + ROW14_TILES * 2;
         PUNCTUATION_REGEX = /[\.\,\?\!\@\#\$\%\^\&\*\(\)\<\>\:\;\']/g;
         ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -62,7 +62,7 @@
         };
 
 
-         
+
         //build a board
         buildBoard = function() {
             var game = $(".game");
@@ -439,8 +439,8 @@
             var indent;
             if (max_line_len >= 14 || max_line_len < 1)
                 console.log("Error: max line length is too large ( >= 14) or less than 1.");
-            
-            indent = Math.ceil(-0.5 * max_line_len + ROW12_TILES/2);
+
+            indent = Math.ceil(-0.5 * max_line_len + ROW12_TILES / 2);
 
             // since we have our best choice, we have to now set the indices to place the words on the board
             var count = 0;
@@ -503,10 +503,10 @@
             ////////////////// BEGIN WHEEL SETUP //////////////////////
             ///////////////////////////////////////////////////////////
 
-                  // create a new instance of the plugin
-  
+            // create a new instance of the plugin
 
-    
+
+
 
             wheelContainer = ich.wheel_container_template();
             wheelCanvas = ich.wheel_canvas_template({size: 600});
@@ -518,7 +518,7 @@
             canvasCtx = canvas.getContext("2d");
 
             wheel = new $.WHEEL(canvasCtx, 0);
-            
+
             //canvas.addEventListener("click", alert("I've been clicked!"));
             // get the value of a public property
             console.log(wheel.settings.REFRESH_RATE);
@@ -528,7 +528,7 @@
             ///////////////////////////////////////////////////////////
         };
 
-         ///////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////
         ////////////// GAME STATE MACHINE /////////////////////////
         ///////////////////////////////////////////////////////////
 
@@ -594,7 +594,7 @@
                     }
 
                 },
-                onenterconsonant: function(event, from, to){
+                onenterconsonant: function(event, from, to) {
                     wheel.spin();
                 },
                 onentersuccess: function(event, from, to) {
@@ -636,8 +636,8 @@
 
         });
 
-       
-       
+
+
 
         var showStartingPlayer = function() {
             alert("Player " + (currentPlayer + 1) + " will start this round.");  /* Uses 1->n rather than 0->(n-1)*/
@@ -809,8 +809,8 @@
 
         gsm.initGame();
         gsm.initRound();
-        
-   
+
+
 
     });
 })(jQuery);
