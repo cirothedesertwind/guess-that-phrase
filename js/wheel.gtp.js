@@ -15,6 +15,14 @@
     // jQuery's selector engine
     $.WHEEL = function(canvasCtx, wheelAng, options) {
 
+         var bankruptFormat = function(context) {
+            context.lineWidth = 1;
+            context.fillStyle = '#FFFFFF';
+            context.textBaseline = "middle";
+            context.textAlign = "center";
+            context.font = "1em Arial";
+        };
+
         // plugin's default options
         // this is private property and is accessible only from inside the plugin
         var defaults = {
@@ -211,8 +219,12 @@
                 str = plugin.settings.slices[index].alt;
             }
 
-            if (plugin.settings.slices[index].formatting != null)
+            if (plugin.settings.slices[index].formatting != null){
+                
                 plugin.settings.slices[index].formatting(context);
+            }else{
+                console.log("not bankrupt flag");
+            }
 
             for (var i = 0; i < str.length; i++) {
                 context.fillText(str.charAt(i), 0, plugin.settings.lineHeight * i);
@@ -262,15 +274,6 @@
         // private methods
         // these methods can be called only from inside the plugin like:
         // methodName(arg1, arg2, ... argn)
-
-        var bankruptFormat = function(context) {
-            context.lineWidth = 1;
-            context.fillStyle = '#FFFFFF';
-            context.textBaseline = "middle";
-            context.textAlign = "center";
-            context.font = "1em Arial";
-        };
-
         var easeOutCubic = function(t, b, c, d) {
             return c * ((t = t / d - 1) * t * t + 1) + b;
         };
