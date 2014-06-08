@@ -13,15 +13,7 @@
         VOWELS_REGEX = /[AEIOU]/g;
 
         var players = 3;
-        var playerTotalScore = new Array(players);
-        playerTotalScore[0] = 0;
-        playerTotalScore[1] = 0;
-        playerTotalScore[2] = 0;
 
-        var playerScore = new Array(players);
-        playerScore[0] = 0;
-        playerScore[1] = 0;
-        playerScore[2] = 0;
         var currentPlayer = 0;
 
         var rounds = 1;
@@ -32,41 +24,18 @@
         var numberOfVowelsRemaining = 0;
 
         var currency = '$';
+       
+        var game = $(".game");
 
-        ///////////////////////////////////////////////////////////
-        ///////////////// SCOREBOARD SETUP ////////////////////////
-        ///////////////////////////////////////////////////////////
-
-
-        scoreboard = ich.scoreboard_template();
-
-        for (var p = 0; p < players; p++) {
-            scoreboard.append(ich.score_template());
-        }
-
-        scoreboard.children().first().addClass("alpha");
-        scoreboard.children().last().addClass("omega");
-
-
-        ///////////////////////////////////////////////////////////
-        ////////////// END SCOREBOARD SETUP ///////////////////////
-        ///////////////////////////////////////////////////////////
-
-        // Update Score Function (uses scoreboard
-
-        var updateScore = function() {
-            scoreboard.children().each(function(i) {
-                $(this).children().first().text(currency + playerScore[i]);
-                $(this).children().last().text(currency + playerTotalScore[i]);
-            });
-        };
-
-
+        var scorebd = new $.SCOREBOARD(game, players, currency);
+        
+        console.log(scorebd);
+        
+        //Append scoreboard
+        //put scoreboard here
 
         //build a board
         buildBoard = function() {
-            var game = $(".game");
-
             //create the forms to collect phrases
             var phrases_template = ich.phrases_template();
             game.append(phrases_template);
@@ -476,10 +445,6 @@
             //reveal punctuation marks (apostrophes,hyphens, question marks and exclamation marks)
 
 
-            //Append scoreboard
-            game.append(scoreboard);
-
-
             ///////////////////////////////////////////////////////////
             /////////////////// END PHRASE SETUP //////////////////////
             ///////////////////////////////////////////////////////////
@@ -502,11 +467,6 @@
             ///////////////////////////////////////////////////////////
             ////////////////// BEGIN WHEEL SETUP //////////////////////
             ///////////////////////////////////////////////////////////
-
-            // create a new instance of the plugin
-
-
-
 
             wheelContainer = ich.wheel_container_template();
             wheelCanvas = ich.wheel_canvas_template({size: 600});
@@ -558,7 +518,7 @@
             ],
             callbacks: {
                 onenterstate: function(event, from, to) {
-                    updateScore();
+                    scorebd.updateScore();
                 },
                 onenterinitGame: function(event, from, to) {
                     buildBoard();
@@ -568,12 +528,9 @@
                     /*If there are more rounds to play, start by randomizing the start player and start the player's turn. */
                     if (currentRound < rounds) {
 
-                        //Clear out old round scores
-                        playerScore[0] = 0;
-                        playerScore[1] = 0;
-                        playerScore[2] = 0;
+                        scorebd.newRound();
 
-                        updateScore();
+                        scorebd.updateScore();
 
                         currentPlayer = Math.floor((Math.random() * players));
                         showStartingPlayer();
@@ -600,7 +557,7 @@
                 onentersuccess: function(event, from, to) {
 
                     /*If puzzle is unsolved, prompt (iff vowels available & player has > $250, incude vowel option) */
-                    if (!isPuzzleSolved && !allVowelsFound && playerScore[currentPlayer] > 250) {
+                    if (!isPuzzleSolved && !allVowelsFound && scorebd.score(currentPlayer) > 250) {
                         //alert("Buy a vowel, spin or solve?");
                         vowelSpinSolveDialog();
                     }
@@ -611,7 +568,7 @@
                         alert("Please read out the completed phrase");
                     }
                     else {
-                        console.log("Error: isPuzzleSolved:" + isPuzzleSolved + " allVowelsFound:" + allVowelsFound + " currentPlayerScore:" + playerScore[currentPlayer]);
+                        console.log("Error: isPuzzleSolved:" + isPuzzleSolved + " allVowelsFound:" + allVowelsFound + " currentPlayerScore:" + scorebd.score(currentPlayer));
                     }
 
 
@@ -624,7 +581,7 @@
                 onentertermRound: function(event, from, to) { /*Go to next round and start. */
 
                     //Add point totals of winning player to total score
-                    playerTotalScore[currentPlayer] += playerScore[currentPlayer];
+                    scorebd.pushToTotalScore(currentPlayer);
 
                     currentRound = currentRound + 1;
                     gsm.initRound();  //Init next round
@@ -780,11 +737,10 @@
                         }
 
                         //Deduct $250 from score
-                        playerScore[currentPlayer] -= 250;
+                        scorebd.buyVowel(currentPlayer);
+                        
                     } else { /*Consonant */
-
-                        //TODO: Add count * value of slice to score of current player (currently adds 500 arbitrarily)
-                        playerScore[currentPlayer] += 500 * count;
+                        scorebd.earnConsonant(currentPlayer, count * 100);
                     }
 
                     //Successful selection
