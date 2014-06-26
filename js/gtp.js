@@ -11,6 +11,8 @@
         PUNCTUATION_REGEX = /[\.\,\?\!\@\#\$\%\^\&\*\(\)\<\>\:\;\']/g;
         ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         VOWELS_REGEX = /[AEIOU]/g;
+        VOWELS = "AEIOU";
+        CONSONANTS = "BCDFGHJKLMNPQRSTVWXYZ";
 
         phrases = new Array();
 
@@ -571,18 +573,24 @@
                     isPuzzleSolved = allVowelsFound && allConsonantsFound;
 
                     /*If puzzle is unsolved, prompt (iff vowels available & player has > $250, incude vowel option) */
-                    if (!isPuzzleSolved && !allVowelsFound && scorebd.score(currentPlayer) > 250) {
-                        vowelSpinSolveDialog();
-                    }
-                    else if (!isPuzzleSolved) {
-                        spinSolveDialog();
-                    }
-                    else if (isPuzzleSolved) {
+                    if (!isPuzzleSolved) {
+                        if (!allVowelsFound && !allConsonantsFound && scorebd.score(currentPlayer) > 250) {
+                            vowelSpinSolveDialog();
+                        }
+                        else if (!allVowelsFound && scorebd.score(currentPlayer) > 250) {
+                            vowelSolveDialog();
+                        }
+                        else if (!allConsonantsFound) {
+                            spinSolveDialog();
+                        } else {
+                            solveDialog();
+                        }
+                    } else {
                         alert("Please read out the completed phrase");
                     }
-                    else {
-                        console.log("Error: isPuzzleSolved:" + isPuzzleSolved + " allVowelsFound:" + allVowelsFound + " currentPlayerScore:" + scorebd.score(currentPlayer));
-                    }
+                    // else {
+                    //     console.log("Error: isPuzzleSolved:" + isPuzzleSolved + " allVowelsFound:" + allVowelsFound + " currentPlayerScore:" + scorebd.score(currentPlayer));
+                    // }
 
 
                 },
@@ -662,6 +670,42 @@
                     });
         };
 
+        var vowelSolveDialog = function() {
+            new Messi('Player ' + (currentPlayer + 1) + ', would you like to buy a vowel or solve the puzzle?',
+                    {title: 'Buttons',
+                        buttons: [
+                            {id: 0, label: 'Buy Vowel', val: 'buyVowel', class: 'btn-success'},
+                            {id: 1, label: 'Solve', val: 'solvePuzzle'}],
+                        callback: function(val) {
+                            if (val === 'buyVowel') {
+                                gsm.buyVowel();
+                            }
+                            else if (val === 'solvePuzzle') {
+                                gsm.solvePuzzle();
+                            }
+                            else {
+                                alert("How did you get here?"); console.log("How did you get here?");
+                            }
+                        }
+                    });
+        };
+
+        var solveDialog = function() {
+            new Messi('Player ' + (currentPlayer + 1) + ', you must solve the puzzle. What is your guess?',
+                    {title: 'Buttons',
+                        buttons: [
+                            {id: 0, label: 'My final answer', val: 'solvePuzzle'}],
+                        callback: function(val) {
+                            if (val === 'solvePuzzle') {
+                                gsm.solvePuzzle();
+                            }
+                            else {
+                                alert("How did you get here?"); console.log("How did you get here?");
+                            }
+                        }
+                    });
+        };
+
         ///////////////////////////////////////////////////////////
         ////////////// DIALOG FINISH //////////////////////////////
         ///////////////////////////////////////////////////////////
@@ -685,6 +729,22 @@
 
         //---------------------------------------------------------------------
 
+        var setRemainingConsonantsToRed = function() {
+            for (var i = 0; i != CONSONANTS.length; i++) {
+                if (!$(".letter_"+CONSONANTS[i]).hasClass("letter_called") && !$(".letter_"+CONSONANTS[i]).hasClass("letter_called_none")) {
+                    $(".letter_"+CONSONANTS[i]).addClass("letter_called_none");
+                }
+            }
+        }
+
+        var setRemainingVowelsToRed = function() {
+            for (var i = 0; i != VOWELS.length; i++) {
+                if (!$(".letter_"+VOWELS[i]).hasClass("letter_called") && !$(".letter_"+VOWELS[i]).hasClass("letter_called_none")) {
+                    $(".letter_"+VOWELS[i]).addClass("letter_called_none");
+                }
+            }
+        }
+
         var noMoreVowelsAlert = function() {
             alert('All the vowels in the phrase have been called out.');
             // new Messi('All the vowels in the phrase have been called out.', 
@@ -705,13 +765,11 @@
 
         var countVowels = function(phrase) {
 
-            vowels = "AEIOU";
-
             // for every vowel...
-            for (var i = 0; i != vowels.length; i++) {
+            for (var i = 0; i != VOWELS.length; i++) {
 
                 // if the vowel is in our phrase...
-                if (phrase.indexOf(vowels[i]) !== -1) {
+                if (phrase.indexOf(VOWELS[i]) !== -1) {
 
                     // we need to incrememnt numberOfVowelsRemaining
                     numberOfVowelsRemaining++;
@@ -721,13 +779,11 @@
 
         var countConsonants = function(phrase) {
 
-            consonants = "BCDFGHJKLMNPQRSTVWXYZ";
-
             // for every consonant...
-            for (var i = 0; i != consonants.length; i++) {
+            for (var i = 0; i != CONSONANTS.length; i++) {
 
                 // if the consonant is in our phrase...
-                if (phrase.indexOf(consonants[i]) !== -1) {
+                if (phrase.indexOf(CONSONANTS[i]) !== -1) {
 
                     // we need to incrememnt numberOfConsonantsRemaining
                     numberOfConsonantsRemaining++;
@@ -774,6 +830,7 @@
                         if (numberOfVowelsRemaining == 0) {
                             allVowelsFound = true;
                             noMoreVowelsAlert();
+                            setRemainingVowelsToRed();
                         }
 
                         //Deduct $250 from score
@@ -785,6 +842,7 @@
                         if (numberOfConsonantsRemaining == 0) {
                             allConsonantsFound = true;
                             noMoreConsonantsAlert();
+                            setRemainingConsonantsToRed();
                         }
 
                         scorebd.earnConsonant(currentPlayer, count * 100);
