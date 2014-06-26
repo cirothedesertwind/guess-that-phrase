@@ -12,16 +12,20 @@
         ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         VOWELS_REGEX = /[AEIOU]/g;
 
+        phrases = new Array();
+
         var players = 3;
 
         var currentPlayer = 0;
 
-        var rounds = 1;
+        var rounds = 5;
         var currentRound = 0;
 
         var isPuzzleSolved = false;
         var allVowelsFound = false;
         var numberOfVowelsRemaining = 0;
+        var allConsonantsFound = 0;
+        var numberOfConsonantsRemaining = 0;
 
         var currency = '$';
        
@@ -31,25 +35,22 @@
         
         console.log(scorebd);
         
+        phraseFormPopup = function() {
+            new Messi('<p>Please input the phrases you like to use in this game.</p> <form id="phrase_input" action="">Phrase 1: <input type="text" id="phrase1" name="phrase1"><br>Phrase 2: <input type="text" id="phrase2" name="phrase2"><br>Phrase 3: <input type="text" id="phrase3" name="phrase3"><br>Phrase 4: <input type="text" id="phrase4" name="phrase4"><br>Phrase 5: <input type="text" id="phrase5" name="phrase5"><br></form>',
+                    {title: 'Buttons',
+                        buttons: [{id: 0, label: 'Ok', val: 'Ok', class: 'btn-success'}],
+                        callback: function(val) {
+                            gsm.initGame();
+                            gsm.initRound();
+                        }
+                    });
+        };
+
         //Append scoreboard
         //put scoreboard here
 
         //build a board
         buildBoard = function() {
-            //create the forms to collect phrases
-            var phrases_template = ich.phrases_template();
-            game.append(phrases_template);
-
-            $(".phrases").append(
-                    "<form>First phrase: <input type=\"text\" id=\"phrase1\"><br>" +
-                    "<form>Second phrase: <input type=\"text\" id=\"phrase2\"><br>" +
-                    "<form>Third phrase: <input type=\"text\" id=\"phrase3\"><br>" +
-                    "<form>Fourth phrase: <input type=\"text\" id=\"phrase4\"><br>" +
-                    "<form>Fifth phrase: <input type=\"text\" id=\"phrase5\"><br>" +
-                    "<input type=\"submit\" value=\"Submit\">"
-                    );
-
-
             //TODO: Sanitize phrases and set to uppercase
 
             //prepare board
@@ -107,7 +108,7 @@
             // phrase = "BAKED POTATO WITH SOUR CREAM & CHIVES AWDAWD AWDAWD";
 
             // CANT FIT!!!!
-            phrase = "ICE'S CREAME SANDWICHES";
+            // phrase = "ICE'S CREAME SANDWICHES";
             // phrase = "BAKED POTATO WITH SOUR CREAM & CHIVES";
             // phrase = "THE LORD OF THE RINGS";
             // phrase = "LORD OF THE RINGS";
@@ -128,7 +129,10 @@
             ///////////////// BEGIN PHRASE SETUP //////////////////////
             ///////////////////////////////////////////////////////////
 
-            // we need to set which vowels are in the phrase
+            phrase = phrases[currentRound];
+
+            // we need to keep track of the number of consonants and vowels in the phrase
+            countConsonants(phrase);
             countVowels(phrase);
 
             //Checks phrase for length
@@ -495,9 +499,11 @@
         var gsm = StateMachine.create({
             initial: 'init',
             events: [
+                //Create the Phrases
+                {name: 'initPhrases', from: 'init', to: 'initPhrases'},
                 //Init the game
-                {name: 'initGame', from: 'init', to: 'initGame'},
-                //Init round when either start or end of last round
+                {name: 'initGame', from: 'initPhrases', to: 'initGame'},
+                //Init round when either starting the game or ending the last round
                 {name: 'initRound', from: ['initGame', 'termRound'], to: 'initRound'},
                 //Start the game with the randomized starting player
                 {name: 'initTurn', from: ['initRound', 'termTurn'], to: 'initTurn'},
@@ -507,7 +513,7 @@
                 {name: 'buyVowel', from: 'success', to: 'vowel'},
                 //On a sucessful selection, prompt for next action
                 {name: 'success', from: ['consonant', 'vowel'], to: 'success'},
-                //Loose your turn by incorrectly calling a letter or vowel,
+                //Lose your turn by incorrectly calling a letter or vowel,
                 //landing on bankrupt or loose your trn, or incorrectly
                 //solving the puzzle (triggered by facilitator clicking button)
                 {name: 'loseTurn', from: ['consonant', 'vowel', 'spin'], to: 'termTurn'},
@@ -520,6 +526,9 @@
                 onenterstate: function(event, from, to) {
                     scorebd.updateScore();
                 },
+                onenterinitPhrases: function(event, from, to) {
+                    phraseFormPopup();
+                },
                 onenterinitGame: function(event, from, to) {
                     buildBoard();
                 },
@@ -531,6 +540,8 @@
                         scorebd.newRound();
 
                         scorebd.updateScore();
+
+
 
                         currentPlayer = Math.floor((Math.random() * players));
                         showStartingPlayer();
@@ -556,9 +567,11 @@
                 },
                 onentersuccess: function(event, from, to) {
 
+                    // Check the status of the puzzle
+                    isPuzzleSolved = allVowelsFound && allConsonantsFound;
+
                     /*If puzzle is unsolved, prompt (iff vowels available & player has > $250, incude vowel option) */
                     if (!isPuzzleSolved && !allVowelsFound && scorebd.score(currentPlayer) > 250) {
-                        //alert("Buy a vowel, spin or solve?");
                         vowelSpinSolveDialog();
                     }
                     else if (!isPuzzleSolved) {
@@ -622,7 +635,7 @@
                                 gsm.solvePuzzle();
                             }
                             else {
-                                alert("How did you get here?");
+                                alert("How did you get here?"); console.log("How did you get here?");
                             }
                         }
                     });
@@ -635,6 +648,7 @@
                             {id: 0, label: 'Spin', val: 'spin', class: 'btn-danger'},
                             {id: 1, label: 'Solve', val: 'solvePuzzle'}],
                         callback: function(val) {
+                            console.log(val);
                             if (val === 'spin') {
                                 gsm.spin();
                             }
@@ -642,7 +656,7 @@
                                 gsm.solvePuzzle();
                             }
                             else {
-                                alert("How did you get here?");
+                                alert("How did you get here?"); console.log("How did you get here?");
                             }
                         }
                     });
@@ -680,9 +694,18 @@
             //           modal: true});
         };
 
+        var noMoreConsonantsAlert = function() {
+            alert('All the consonants in the phrase have been called out.');
+            // new Messi('All the consonants in the phrase have been called out.', 
+            //          {title: 'No more consonants!', 
+            //           titleClass: 'anim warning', 
+            //           buttons: [{id: 0, label: 'Close', val: 'X'}],
+            //           modal: true});
+        };
+
         var countVowels = function(phrase) {
 
-            vowels = ['A', 'E', 'I', 'O', 'U'];
+            vowels = "AEIOU";
 
             // for every vowel...
             for (var i = 0; i != vowels.length; i++) {
@@ -692,6 +715,22 @@
 
                     // we need to incrememnt numberOfVowelsRemaining
                     numberOfVowelsRemaining++;
+                }
+            }
+        };
+
+        var countConsonants = function(phrase) {
+
+            consonants = "BCDFGHJKLMNPQRSTVWXYZ";
+
+            // for every consonant...
+            for (var i = 0; i != consonants.length; i++) {
+
+                // if the consonant is in our phrase...
+                if (phrase.indexOf(consonants[i]) !== -1) {
+
+                    // we need to incrememnt numberOfConsonantsRemaining
+                    numberOfConsonantsRemaining++;
                 }
             }
         };
@@ -729,6 +768,7 @@
                 if (count > 0) {
                     $(".letter_" + letter).addClass("letter_called");
 
+                    // handle choosing an unselected vowel 
                     if (vowelChosen) {
                         numberOfVowelsRemaining -= 1;
                         if (numberOfVowelsRemaining == 0) {
@@ -738,8 +778,15 @@
 
                         //Deduct $250 from score
                         scorebd.buyVowel(currentPlayer);
-                        
-                    } else { /*Consonant */
+
+                    // handle choosing an unselected consonant
+                    } else {
+                        numberOfConsonantsRemaining -= 1;
+                        if (numberOfConsonantsRemaining == 0) {
+                            allConsonantsFound = true;
+                            noMoreConsonantsAlert();
+                        }
+
                         scorebd.earnConsonant(currentPlayer, count * 100);
                     }
 
@@ -762,11 +809,7 @@
         };
 
         //GAME INIT
-
-        gsm.initGame();
-        gsm.initRound();
-
-
+        gsm.initPhrases();
 
     });
 })(jQuery);

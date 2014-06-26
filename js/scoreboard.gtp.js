@@ -81,11 +81,11 @@
         }
 
         plugin.buyVowel = function(player) {
-            playerTotalScore[player] -= 250;
+            playerScore[player] -= 250;
         }
 
         plugin.earnConsonant = function(player, value) {
-            playerTotalScore[player] += value;
+            playerScore[player] += value;
         }
 
         plugin.updateScore = function() {
