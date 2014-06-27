@@ -521,7 +521,11 @@
                 //solving the puzzle (triggered by facilitator clicking button)
                 {name: 'loseTurn', from: ['consonant', 'vowel', 'spin'], to: 'termTurn'},
                 //Terminate round when solved
-                {name: 'solvePuzzle', from: ['initTurn', 'success'], to: 'termRound'},
+                {name: 'solvePuzzle', from: ['initTurn', 'success'], to: 'guess'},
+                //when correctly guessed, terminate round
+                {name: 'guessCorrectly', from: 'guess', to: 'termRound'},
+                //when guessed incorrectly terminate round
+                {name: 'guessIncorrectly', from: 'guess', to: 'termTurn'},
                 //End game when all rounds end
                 {name: 'stop', from: 'termRound', to: 'term'}
             ],
@@ -868,6 +872,14 @@
             var game = event.data.game;
             var board = event.data.board;
         };
+        
+        guessCorrectlyHTML = function(){
+            gsm.guessCorrectly();
+        }
+        
+        guessIncorrectlyHTML = function(){
+            gsm.guessIncorrectly();
+        }
 
         //GAME INIT
         gsm.initPhrases();
