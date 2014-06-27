@@ -91,6 +91,9 @@
                 row.children().last().addClass("omega");
 
             }
+
+            // finally, we create the hint template
+            board.append(ich.puzzle_hint_template({hint: ""}));
         }
 
 
@@ -450,7 +453,8 @@
             //reveal punctuation marks (apostrophes,hyphens, question marks and exclamation marks)
 
             // finally, we display the hint for the players
-            board.append(ich.puzzle_hint_template({hint: "Phrase"}));
+            $(".puzzle_hint").text("PHRASE");
+
 
             ///////////////////////////////////////////////////////////
             /////////////////// END PHRASE SETUP //////////////////////
