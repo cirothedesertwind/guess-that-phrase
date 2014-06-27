@@ -32,7 +32,7 @@
         var currency = '$';
        
         var game = $(".game");
-
+        var board;
         var scorebd = new $.SCOREBOARD(game, players, currency);
         
         console.log(scorebd);
@@ -56,7 +56,7 @@
             //TODO: Sanitize phrases and set to uppercase
 
             //prepare board
-            var board = ich.board_template();
+            board = ich.board_template();
             game.append(board);
 
             board.disableSelection();
@@ -91,12 +91,12 @@
                 row.children().last().addClass("omega");
 
             }
+        }
 
-
-            board.append(ich.puzzle_hint_template({hint: "Phrase"}));
 
             /*end board setup*/
 
+        populateBoard = function() {
             //Phrase setup----------------------------------------------
             //This is alpha quality
 
@@ -131,6 +131,7 @@
             ///////////////// BEGIN PHRASE SETUP //////////////////////
             ///////////////////////////////////////////////////////////
 
+            // here, we'll set the new phrase at the beginning of each round
             phrase = phrases[currentRound];
 
             // we need to keep track of the number of consonants and vowels in the phrase
@@ -446,10 +447,10 @@
                 }
             }
 
-
-
             //reveal punctuation marks (apostrophes,hyphens, question marks and exclamation marks)
 
+            // finally, we display the hint for the players
+            board.append(ich.puzzle_hint_template({hint: "Phrase"}));
 
             ///////////////////////////////////////////////////////////
             /////////////////// END PHRASE SETUP //////////////////////
@@ -535,6 +536,8 @@
                     buildBoard();
                 },
                 onenterinitRound: function(event, from, to) {
+
+                    populateBoard();
 
                     /*If there are more rounds to play, start by randomizing the start player and start the player's turn. */
                     if (currentRound < rounds) {
