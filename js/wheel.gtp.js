@@ -22,6 +22,22 @@
             context.textAlign = "center";
             context.font = "1em Arial";
         };
+        
+         var addConsonantValue = function(context) {
+            context.lineWidth = 1;
+            context.fillStyle = '#FFFFFF';
+            context.textBaseline = "middle";
+            context.textAlign = "center";
+            context.font = "1em Arial";
+        };
+        
+        var bankruptify = function(context) {
+            context.lineWidth = 1;
+            context.fillStyle = '#FFFFFF';
+            context.textBaseline = "middle";
+            context.textAlign = "center";
+            context.font = "1em Arial";
+        };
 
         // plugin's default options
         // this is private property and is accessible only from inside the plugin
@@ -29,33 +45,33 @@
             size: 600,
             radius: 290,
             slices: [
-                {value: 100, alt: "", color: '#cc0000', formatting: null, callback: null},
+                {value: 0, alt: "", color: '#cc0000', formatting: null, callback: null},
                 {value: 100, alt: "", color: '#00cc00', formatting: null, callback: null},
-                {value: 100, alt: "", color: '#0000cc', formatting: null, callback: null},
+                {value: 200, alt: "", color: '#0000cc', formatting: null, callback: null},
+                {value: 3, alt: "BANKRUPT", color: '#000000', formatting: bankruptFormat, callback: null},
+                {value: 400, alt: "", color: '#cc0000', formatting: null, callback: null},
+                {value: 500, alt: "", color: '#00cc00', formatting: null, callback: null},
+                {value: 600, alt: "", color: '#0000cc', formatting: null, callback: null},
+                {value: 7, alt: "BANKRUPT", color: '#000000', formatting: bankruptFormat, callback: null},
+                {value: 800, alt: "", color: '#cc0000', formatting: null, callback: null},
+                {value: 900, alt: "", color: '#00cc00', formatting: null, callback: null},
+                {value: 10, alt: "", color: '#0000cc', formatting: null, callback: null},
+                {value: 11, alt: "BANKRUPT", color: '#000000', formatting: bankruptFormat, callback: null},
+                {value: 120, alt: "", color: '#cc0000', formatting: null, callback: null},
+                {value: 130, alt: "", color: '#00cc00', formatting: null, callback: null},
+                {value: 140, alt: "", color: '#0000cc', formatting: null, callback: null},
                 {value: -1, alt: "BANKRUPT", color: '#000000', formatting: bankruptFormat, callback: null},
-                {value: 100, alt: "", color: '#cc0000', formatting: null, callback: null},
-                {value: 100, alt: "", color: '#00cc00', formatting: null, callback: null},
-                {value: 100, alt: "", color: '#0000cc', formatting: null, callback: null},
+                {value: 160, alt: "", color: '#cc0000', formatting: null, callback: null},
+                {value: 170, alt: "", color: '#00cc00', formatting: null, callback: null},
+                {value: 180, alt: "", color: '#0000cc', formatting: null, callback: null},
                 {value: -1, alt: "BANKRUPT", color: '#000000', formatting: bankruptFormat, callback: null},
-                {value: 100, alt: "", color: '#cc0000', formatting: null, callback: null},
-                {value: 100, alt: "", color: '#00cc00', formatting: null, callback: null},
-                {value: 100, alt: "", color: '#0000cc', formatting: null, callback: null},
+                {value: 200, alt: "", color: '#cc0000', formatting: null, callback: null},
+                {value: 210, alt: "", color: '#00cc00', formatting: null, callback: null},
+                {value: 220, alt: "", color: '#0000cc', formatting: null, callback: null},
                 {value: -1, alt: "BANKRUPT", color: '#000000', formatting: bankruptFormat, callback: null},
-                {value: 100, alt: "", color: '#cc0000', formatting: null, callback: null},
-                {value: 100, alt: "", color: '#00cc00', formatting: null, callback: null},
-                {value: 100, alt: "", color: '#0000cc', formatting: null, callback: null},
-                {value: -1, alt: "BANKRUPT", color: '#000000', formatting: bankruptFormat, callback: null},
-                {value: 100, alt: "", color: '#cc0000', formatting: null, callback: null},
-                {value: 100, alt: "", color: '#00cc00', formatting: null, callback: null},
-                {value: 100, alt: "", color: '#0000cc', formatting: null, callback: null},
-                {value: -1, alt: "BANKRUPT", color: '#000000', formatting: bankruptFormat, callback: null},
-                {value: 100, alt: "", color: '#cc0000', formatting: null, callback: null},
-                {value: 100, alt: "", color: '#00cc00', formatting: null, callback: null},
-                {value: 100, alt: "", color: '#0000cc', formatting: null, callback: null},
-                {value: -1, alt: "BANKRUPT", color: '#000000', formatting: bankruptFormat, callback: null},
-                {value: 100, alt: "", color: '#cc0000', formatting: null, callback: null},
-                {value: 100, alt: "", color: '#00cc00', formatting: null, callback: null},
-                {value: 100, alt: "", color: '#0000cc', formatting: null, callback: null},
+                {value: 240, alt: "", color: '#cc0000', formatting: null, callback: null},
+                {value: 250, alt: "", color: '#00cc00', formatting: null, callback: null},
+                {value: 260, alt: "", color: '#0000cc', formatting: null, callback: null},
                 {value: -1, alt: "BANKRUPT", color: '#000000', formatting: bankruptFormat, callback: null}
             ],
             lineHeight: 22,
@@ -140,6 +156,23 @@
                 while (wheelAngle >= Math.PI * 2) {
                     wheelAngle -= Math.PI * 2;
                 }
+                
+                SLICES = plugin.settings.slices.length;
+                //ListPlot[{{0,3/4*pi*2},{1/4*pi*2,1/2*pi*2},{1/2*pi*2,1/4*pi*2},{3/4*pi*2,0},{pi*2,1/4*pi*2}}]
+                //ListPlot[{{0-1/2*pi,3/4*pi*2},{1/4*pi*2-1/2*pi,1/2*pi*2},{1/2*pi*2-1/2*pi,1/4*pi*2},{3/4*pi*2-1/2*pi,0},{pi*2-1/2*pi,1/4*pi*2}}]
+                // angle -= 1/2 * pi
+                // then angle = abs(-angle + pi)
+                a = wheelAngle;
+                a -= 1/2 * Math.PI;
+                a = Math.abs(-a + Math.PI);
+                slice =  Math.floor((a / (Math.PI * 2))*SLICES);
+                
+                if (wheelAngle > (0.75*Math.PI*2))
+                    slice = SLICES - slice-1;
+                        
+                alert(slice);
+                
+                
             }
             else {
                 wheelAngle = easeOutCubic(countTime, 0, 1, spinDuration) *

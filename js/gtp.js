@@ -547,7 +547,8 @@
 
                     populateBoard();
 
-                    /*If there are more rounds to play, start by randomizing the start player and start the player's turn. */
+                    /*If there are more rounds to play, start by randomizing the
+                onenterstate: function(event, from, to start player and start the player's turn. */
                     if (currentRound < rounds) {
 
                         scorebd.newRound();
