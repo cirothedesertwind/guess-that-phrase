@@ -9,6 +9,7 @@
         ROW14_TILES = ROW12_TILES + 2;
         TOTAL_TILES = ROW12_TILES * 2 + ROW14_TILES * 2;
         PUNCTUATION_REGEX = /[\.\,\?\!\@\#\$\%\^\&\*\(\)\<\>\:\;\']/g;
+        PRHASE_REGEX = "^[A-Z\\s\\.\\,\\?\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\<\\>\\:\\;\\']+$"; //This is a string to use with parsley.js
         ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         VOWELS_REGEX = /[AEIOU]/g;
         VOWELS = "AEIOU";
@@ -49,7 +50,7 @@
         
         
         phraseFormPopup = function() {
-            new Messi('<p>Please input the phrases you like to use in this game.</p> <form id="phrase_input" action="">Phrase 1: <input type="text" id="phrase1" name="phrase1"><br>Phrase 2: <input type="text" id="phrase2" name="phrase2"><br>Phrase 3: <input type="text" id="phrase3" name="phrase3"><br>Phrase 4: <input type="text" id="phrase4" name="phrase4"><br>Phrase 5: <input type="text" id="phrase5" name="phrase5"><br></form>',
+            new Messi('<p>Please input the phrases you like to use in this game.</p><form id="phrase_input" action="" data-parsley-validate>Phrase 1: <input type="text" id="phrase1" name="phrase1" required data-parsley-length="[1, 50]" pattern="'+PRHASE_REGEX+'"><br>Phrase 2: <input type="text" id="phrase2" name="phrase2" data-parsley-length="[1, 50]" pattern="'+PRHASE_REGEX+'"><br>Phrase 3: <input type="text" id="phrase3" name="phrase3" data-parsley-length="[1, 50]" pattern="'+PRHASE_REGEX+'"><br>Phrase 4: <input type="text" id="phrase4" name="phrase4" data-parsley-length="[1, 50]" pattern="'+PRHASE_REGEX+'"><br>Phrase 5: <input type="text" id="phrase5" name="phrase5" data-parsley-length="[1, 50]" pattern="'+PRHASE_REGEX+'"><br></form>',
                     {title: 'Buttons',
                         buttons: [{id: 0, label: 'Ok', val: 'Ok', class: 'btn-success'}],
                         callback: function(val) {
@@ -906,6 +907,7 @@
 
         //GAME INIT
         gsm.initPhrases();
+        
 
     });
 })(jQuery);
