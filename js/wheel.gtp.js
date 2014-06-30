@@ -22,22 +22,6 @@
             context.textAlign = "center";
             context.font = "1em Arial";
         };
-        
-         var addConsonantValue = function(context) {
-            context.lineWidth = 1;
-            context.fillStyle = '#FFFFFF';
-            context.textBaseline = "middle";
-            context.textAlign = "center";
-            context.font = "1em Arial";
-        };
-        
-        var bankruptify = function(context) {
-            context.lineWidth = 1;
-            context.fillStyle = '#FFFFFF';
-            context.textBaseline = "middle";
-            context.textAlign = "center";
-            context.font = "1em Arial";
-        };
 
         // plugin's default options
         // this is private property and is accessible only from inside the plugin
@@ -110,6 +94,7 @@
 
         var wheelAngle = 0;
         var spinRandomFactor = 0;
+        var currentSlice = -1;
 
         // to avoid confusions, use "plugin" to reference the
         // current instance of the  object
@@ -166,13 +151,13 @@
                 a -= 1/2 * Math.PI;
                 a = Math.abs(-a + Math.PI);
                 slice =  Math.floor((a / (Math.PI * 2))*SLICES);
-                
+                //past North it needs to be inverted.
                 if (wheelAngle > (0.75*Math.PI*2))
                     slice = SLICES - slice-1;
                         
-                alert(slice);
+                currentSlice = slice;
                 
-                
+                plugin.settings.slices[slice].callback();
             }
             else {
                 wheelAngle = easeOutCubic(countTime, 0, 1, spinDuration) *
@@ -200,6 +185,15 @@
 
 
             }
+        };
+        
+        plugin.getValue = function() {
+            return plugin.settings.slices[currentSlice].value;
+        };
+        
+        plugin.setAllCallbacks = function(callback){
+            for (var i = 0; i < plugin.settings.slices.length; i++)
+                plugin.settings.slices[i].callback = callback;
         };
 
         draw = function(context, angleOffset) {

@@ -34,8 +34,18 @@
         var game = $(".game");
         var board;
         var scorebd = new $.SCOREBOARD(game, players, currency);
+        var currentSliceValue = -1;
         
         console.log(scorebd);
+        
+         var addConsonantValue = function(context) {
+            currentSliceValue = wheel.getValue();
+        }
+        
+        var bankruptify = function(context) {
+           //TODO: not implemented
+        };
+        
         
         phraseFormPopup = function() {
             new Messi('<p>Please input the phrases you like to use in this game.</p> <form id="phrase_input" action="">Phrase 1: <input type="text" id="phrase1" name="phrase1"><br>Phrase 2: <input type="text" id="phrase2" name="phrase2"><br>Phrase 3: <input type="text" id="phrase3" name="phrase3"><br>Phrase 4: <input type="text" id="phrase4" name="phrase4"><br>Phrase 5: <input type="text" id="phrase5" name="phrase5"><br></form>',
@@ -493,6 +503,9 @@
             //canvas.addEventListener("click", alert("I've been clicked!"));
             // get the value of a public property
             console.log(wheel.settings.REFRESH_RATE);
+            
+            wheel.setAllCallbacks(addConsonantValue);
+            //TODO: Set bankrupt callbacks
 
             ///////////////////////////////////////////////////////////
             /////////////////// END WHEEL SETUP ///////////////////////
@@ -578,6 +591,7 @@
                 },
                 onenterconsonant: function(event, from, to) {
                     wheel.spin();
+                    
                 },
                 onentersuccess: function(event, from, to) {
 
@@ -857,7 +871,7 @@
                             setRemainingConsonantsToRed();
                         }
 
-                        scorebd.earnConsonant(currentPlayer, count * 100);
+                        scorebd.earnConsonant(currentPlayer, count * currentSliceValue);
                     }
 
                     //Successful selection
