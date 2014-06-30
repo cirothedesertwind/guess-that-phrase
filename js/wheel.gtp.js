@@ -195,6 +195,10 @@
             for (var i = 0; i < plugin.settings.slices.length; i++)
                 plugin.settings.slices[i].callback = callback;
         };
+        
+        plugin.setCallback = function(index, callback){
+            plugin.settings.slices[index].callback = callback;
+        };
 
         draw = function(context, angleOffset) {
             clear(context);

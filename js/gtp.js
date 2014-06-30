@@ -38,12 +38,13 @@
         
         console.log(scorebd);
         
-         var addConsonantValue = function(context) {
+        var addConsonantValue = function(context) {
             currentSliceValue = wheel.getValue();
-        }
+        };
         
         var bankruptify = function(context) {
-           //TODO: not implemented
+            scorebd.setScore(currentPlayer, 0);
+            gsm.loseTurn();
         };
         
         
@@ -505,6 +506,14 @@
             console.log(wheel.settings.REFRESH_RATE);
             
             wheel.setAllCallbacks(addConsonantValue);
+            wheel.setCallback(20,bankruptify);
+            wheel.setCallback(21,bankruptify);
+            wheel.setCallback(22,bankruptify);
+            wheel.setCallback(23,bankruptify);
+            wheel.setCallback(24,bankruptify);
+            wheel.setCallback(25,bankruptify);
+            wheel.setCallback(26,bankruptify);
+            
             //TODO: Set bankrupt callbacks
 
             ///////////////////////////////////////////////////////////

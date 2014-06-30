@@ -74,6 +74,10 @@
         plugin.score = function(player) {
             return playerScore[player];
         }
+        
+        plugin.setScore = function(player, value){
+            playerScore[player] = value;
+        };
 
         plugin.pushToTotalScore = function(player) {
             //Add point totals of winning player to total score
