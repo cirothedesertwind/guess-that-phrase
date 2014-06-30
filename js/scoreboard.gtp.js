@@ -19,11 +19,11 @@
             propertyName: 'value',
             onSomeEvent: function() {
             }
-        }
+        };
 
         var plugin = this;
 
-        plugin.settings = {}
+        plugin.settings = {};
 
         var init = function() {
             plugin.settings = $.extend({}, defaults, options);
@@ -62,18 +62,18 @@
             ///////////////////////////////////////////////////////////
             ////////////// END SCOREBOARD SETUP ///////////////////////
             ///////////////////////////////////////////////////////////
-        }
+        };
 
         plugin.newRound = function() {
             //Clear out old round scores
             playerScore[0] = 0;
             playerScore[1] = 0;
             playerScore[2] = 0;
-        }
+        };
 
         plugin.score = function(player) {
             return playerScore[player];
-        }
+        };
         
         plugin.setScore = function(player, value){
             playerScore[player] = value;
@@ -82,25 +82,25 @@
         plugin.pushToTotalScore = function(player) {
             //Add point totals of winning player to total score
             playerTotalScore[player] += playerScore[player];
-        }
+        };
 
         plugin.buyVowel = function(player) {
             playerScore[player] -= 250;
-        }
+        };
 
         plugin.earnConsonant = function(player, value) {
             playerScore[player] += value;
-        }
+        };
 
         plugin.updateScore = function() {
             scoreboard.children().each(function(i) {
                 $(this).children().first().text(plugin.currency + playerScore[i]);
                 $(this).children().last().text(plugin.currency + playerTotalScore[i]);
-            })
+            });
         };
 
         init();
 
-    }
+    };
 
 })(jQuery);

@@ -312,6 +312,6 @@
         // call the "constructor" method
         init();
 
-    }
+    };
 
 })(jQuery);

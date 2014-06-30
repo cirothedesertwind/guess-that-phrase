@@ -770,7 +770,7 @@
                     $(".letter_"+CONSONANTS[i]).addClass("letter_called_none");
                 }
             }
-        }
+        };
 
         var setRemainingVowelsToRed = function() {
             for (var i = 0; i != VOWELS.length; i++) {
@@ -778,7 +778,7 @@
                     $(".letter_"+VOWELS[i]).addClass("letter_called_none");
                 }
             }
-        }
+        };
 
         var noMoreVowelsAlert = function() {
             alert('All the vowels in the phrase have been called out.');
@@ -895,19 +895,14 @@
 
             }
         };
-
-        onCellClick = function(event) {
-            var game = event.data.game;
-            var board = event.data.board;
-        };
         
         guessCorrectlyHTML = function(){
             gsm.guessCorrectly();
-        }
+        };
         
         guessIncorrectlyHTML = function(){
             gsm.guessIncorrectly();
-        }
+        };
 
         //GAME INIT
         gsm.initPhrases();
