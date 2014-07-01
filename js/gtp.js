@@ -637,6 +637,9 @@
                     gsm.initTurn(); //Init next turn.
                 },
                 onentertermRound: function(event, from, to) { /*Go to next round and start. */
+                    //Flip all tiles
+                    $(".contains_letter").addClass("flip");
+
 
                     //Add point totals of winning player to total score
                     scorebd.pushToTotalScore(currentPlayer);
@@ -899,8 +902,6 @@
         };
         
         guessCorrectlyHTML = function(){
-            //Flip all tiles
-            $(".contains_letter").addClass("flip");
             gsm.guessCorrectly();
         };
         
