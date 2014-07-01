@@ -899,6 +899,8 @@
         };
         
         guessCorrectlyHTML = function(){
+            //Flip all tiles
+            $(".contains_letter").addClass("flip");
             gsm.guessCorrectly();
         };
         
