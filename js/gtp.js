@@ -22,7 +22,7 @@
         var currentPlayer = 0;
 
         var rounds = 5;
-        var currentRound = 0;
+        var currentRound = -1;
 
         var isPuzzleSolved = false;
         var allVowelsFound = false;
@@ -522,6 +522,12 @@
             /////////////////// END WHEEL SETUP ///////////////////////
             ///////////////////////////////////////////////////////////
         };
+        
+        depopulateBoard = function() {
+            //Flip all tiles back to blank the board
+            $(".contains_letter").removeClass("flip");
+            $(".cell").removeClass("contains_letter");
+        };
 
         ///////////////////////////////////////////////////////////
         ////////////// GAME STATE MACHINE /////////////////////////
@@ -568,7 +574,8 @@
                     buildBoard();
                 },
                 onenterinitRound: function(event, from, to) {
-
+                    currentRound = currentRound + 1;
+                    
                     populateBoard();
 
                     /*If there are more rounds to play, start by randomizing the
@@ -643,9 +650,14 @@
 
                     //Add point totals of winning player to total score
                     scorebd.pushToTotalScore(currentPlayer);
-
-                    currentRound = currentRound + 1;
-                    gsm.initRound();  //Init next round
+                    
+                    
+                    var timer = $.timer(function() {
+                        depopulateBoard(); //Clear the board                    
+                        gsm.initRound();  //Init next round
+                    });
+                    timer.set({ time : 5000, autostart : true });
+                    
                 },
                 onenterterm: function(event, from, to) {
                     alert("The game has ended.");
