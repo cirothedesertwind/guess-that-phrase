@@ -22,6 +22,14 @@
             context.textAlign = "center";
             context.font = "1em Arial";
         };
+        
+        var looseTurnFormat = function(context) {
+            context.lineWidth = 1;
+            context.fillStyle = '#000000';
+            context.textBaseline = "middle";
+            context.textAlign = "center";
+            context.font = "1em Arial";
+        };
 
         // plugin's default options
         // this is private property and is accessible only from inside the plugin
@@ -29,34 +37,34 @@
             size: 600,
             radius: 290,
             slices: [
-                {value: 0, alt: "", color: '#cc0000', formatting: null, callback: null},
-                {value: 100, alt: "", color: '#00cc00', formatting: null, callback: null},
-                {value: 200, alt: "", color: '#0000cc', formatting: null, callback: null},
-                {value: 3, alt: "BANKRUPT", color: '#000000', formatting: bankruptFormat, callback: null},
-                {value: 400, alt: "", color: '#cc0000', formatting: null, callback: null},
-                {value: 500, alt: "", color: '#00cc00', formatting: null, callback: null},
-                {value: 600, alt: "", color: '#0000cc', formatting: null, callback: null},
-                {value: 7, alt: "BANKRUPT", color: '#000000', formatting: bankruptFormat, callback: null},
-                {value: 800, alt: "", color: '#cc0000', formatting: null, callback: null},
-                {value: 900, alt: "", color: '#00cc00', formatting: null, callback: null},
-                {value: 10, alt: "", color: '#0000cc', formatting: null, callback: null},
-                {value: 11, alt: "BANKRUPT", color: '#000000', formatting: bankruptFormat, callback: null},
-                {value: 120, alt: "", color: '#cc0000', formatting: null, callback: null},
-                {value: 130, alt: "", color: '#00cc00', formatting: null, callback: null},
-                {value: 140, alt: "", color: '#0000cc', formatting: null, callback: null},
-                {value: -1, alt: "BANKRUPT", color: '#000000', formatting: bankruptFormat, callback: null},
-                {value: 160, alt: "", color: '#cc0000', formatting: null, callback: null},
-                {value: 170, alt: "", color: '#00cc00', formatting: null, callback: null},
-                {value: 180, alt: "", color: '#0000cc', formatting: null, callback: null},
-                {value: -1, alt: "BANKRUPT", color: '#000000', formatting: bankruptFormat, callback: null},
-                {value: 200, alt: "", color: '#cc0000', formatting: null, callback: null},
-                {value: 210, alt: "", color: '#00cc00', formatting: null, callback: null},
-                {value: 220, alt: "", color: '#0000cc', formatting: null, callback: null},
-                {value: -1, alt: "BANKRUPT", color: '#000000', formatting: bankruptFormat, callback: null},
-                {value: 240, alt: "", color: '#cc0000', formatting: null, callback: null},
-                {value: 250, alt: "", color: '#00cc00', formatting: null, callback: null},
-                {value: 260, alt: "", color: '#0000cc', formatting: null, callback: null},
-                {value: -1, alt: "BANKRUPT", color: '#000000', formatting: bankruptFormat, callback: null}
+                {value: 250, alt: "", color: '#2E8B57', formatting: null, callback: null},//00
+                {value: 300, alt: "", color: '#FF8C00', formatting: null, callback: null},//01
+                {value: 500, alt: "", color: '#00BFFF', formatting: null, callback: null},//02
+                {value: 650, alt: "", color: '#FA8072', formatting: null, callback: null},//03
+                {value: 750, alt: "", color: '#808000', formatting: null, callback: null},//04
+                {value: 800, alt: "", color: '#CC0000', formatting: null, callback: null},//05
+                {value: 400, alt: "", color: '#9400D3', formatting: null, callback: null},//06
+                {value: 250, alt: "", color: '#2E8B57', formatting: null, callback: null},//07
+                {value: 350, alt: "", color: '#FFA500', formatting: null, callback: null},//08
+                {value: 500, alt: "", color: '#00BFFF', formatting: null, callback: null},//09
+                {value: -1, alt: "BANKRUPT", color: '#0A0A0A', formatting: bankruptFormat, callback: null},//10
+                {value: 1000, alt: "", color: '#DAA520', formatting: null, callback: null},//11
+                {value: 800, alt: "", color: '#CC0000', formatting: null, callback: null},//12
+                {value: 400, alt: "", color: '#9400D3', formatting: null, callback: null},//13
+                {value: 250, alt: "", color: '#2E8B57', formatting: null, callback: null},//14
+                {value: 350, alt: "", color: '#FFA500', formatting: null, callback: null},//15
+                {value: 500, alt: "", color: '#00BFFF', formatting: null, callback: null},//16
+                {value: 750, alt: "", color: '#808000', formatting: null, callback: null},//17
+                {value: 2500, alt: "", color: '#C0C0C0', formatting: null, callback: null},//18
+                {value: -1, alt: "BANKRUPT", color: '#0A0A0A', formatting: bankruptFormat, callback: null},//19
+                {value: 400, alt: "", color: '#9400D3', formatting: null, callback: null},//20
+                {value: 250, alt: "", color: '#2E8B57', formatting: null, callback: null},//21
+                {value: 300, alt: "", color: '#FF8C00', formatting: null, callback: null},//22
+                {value: 500, alt: "", color: '#00BFFF', formatting: null, callback: null},//23
+                {value: 650, alt: "", color: '#FA8072', formatting: null, callback: null},//24
+                {value: 750, alt: "", color: '#808000', formatting: null, callback: null},//25
+                {value: 400, alt: "", color: '#9400D3', formatting: null, callback: null},//26
+                {value: -1, alt: "L TURN", color: '#FFFFFF', formatting: looseTurnFormat, callback: null}//27
             ],
             lineHeight: 22,
             innerLineWidth: 1,
@@ -64,8 +72,8 @@
             innerCircleStroke: '#000000',
             outerLineWidth: 4,
             outerCircleStroke: '#000000',
-            rotations: 25.1327412287, //Math.PI * 8
-            spinDuration: 600,
+            rotations: 18.8495559215, //Math.PI * 6
+            spinDuration: 800,
             ///////////////////////////////////////////////////////////
             /////////////// INTERNAL VARS /////////////////////////////
             ///////////////////////////////////////////////////////////
@@ -179,7 +187,7 @@
                 spinDuration = plugin.settings.spinDuration;
                 countTime = 0;
 
-                spinRandomFactor = 0.90 + 0.1 * Math.random();
+                spinRandomFactor = 0.63 + 0.37 * Math.random();
 
                 wheelSpinTimer.play();
 

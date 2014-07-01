@@ -39,12 +39,16 @@
         
         console.log(scorebd);
         
-        var addConsonantValue = function(context) {
+        var setSliceValueOnWheel = function(context) {
             currentSliceValue = wheel.getValue();
         };
         
-        var bankruptify = function(context) {
+        var bankruptifyOnWheel = function(context) {
             scorebd.setScore(currentPlayer, 0);
+            gsm.loseTurn();
+        };
+        
+        var looseTurnOnWheel = function(context) {
             gsm.loseTurn();
         };
         
@@ -506,14 +510,11 @@
             // get the value of a public property
             console.log(wheel.settings.REFRESH_RATE);
             
-            wheel.setAllCallbacks(addConsonantValue);
-            wheel.setCallback(20,bankruptify);
-            wheel.setCallback(21,bankruptify);
-            wheel.setCallback(22,bankruptify);
-            wheel.setCallback(23,bankruptify);
-            wheel.setCallback(24,bankruptify);
-            wheel.setCallback(25,bankruptify);
-            wheel.setCallback(26,bankruptify);
+            //TODO: make this part of init in wheel
+            wheel.setAllCallbacks(setSliceValueOnWheel);
+            wheel.setCallback(10,bankruptifyOnWheel);
+            wheel.setCallback(19,bankruptifyOnWheel);
+            wheel.setCallback(27,looseTurnOnWheel);
             
             //TODO: Set bankrupt callbacks
 
