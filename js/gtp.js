@@ -873,6 +873,13 @@
                     }
                 }
 
+                // regardless if there are or aren't any selected vowels in 
+                // the phrase, we must deduct $250 from the current player's 
+                // score
+                if (vowelChosen) {
+                    scorebd.buyVowel(currentPlayer);
+                }
+
                 if (count > 0) {
                     $(".letter_" + letter).addClass("letter_called");
 
@@ -884,9 +891,6 @@
                             noMoreVowelsAlert();
                             setRemainingVowelsToRed();
                         }
-
-                        //Deduct $250 from score
-                        scorebd.buyVowel(currentPlayer);
 
                     // handle choosing an unselected consonant
                     } else {
