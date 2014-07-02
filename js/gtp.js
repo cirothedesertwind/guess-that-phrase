@@ -27,10 +27,10 @@
         var currentRound = -1;
 
         var isPuzzleSolved = false;
-        var allVowelsFound = false;
         var numberOfVowelsRemaining = 0;
-        var allConsonantsFound = 0;
+        var noMoreVowelsAlertDisplayed = false;
         var numberOfConsonantsRemaining = 0;
+        var noMoreConsonantsAlertDisplayed = false;
 
         var currency = '$';
        
@@ -69,13 +69,14 @@
                 var MessiStrHintContent = '<input type="text" id="hint'+phraseNum+'" name="hint'+phraseNum+'" required data-parsley-length="[1, 50]" pattern="'+PRHASE_REGEX+'">';
                 MessiStrContent += MessiStrPhraseLabel + MessiStrPhraseInput + space + MessiStrHintLabel + MessiStrHintContent;
                 
-                // add a new line after every 
+                // add a new line after every hint entry box
                 if (phraseNum != rounds) {
                     MessiStrContent += '<br>';
                 }
             }
             var MessiStrFormClosing = '</form>';
             var MessiStr = MessiStrExplanation + MessiStrFormOpening + MessiStrContent + MessiStrFormClosing;
+
             new Messi(MessiStr,
                     {title: 'Buttons',
                         buttons: [{id: 0, label: 'Ok', val: 'Ok', class: 'btn-success'}],
@@ -174,10 +175,6 @@
 
             // here, we'll set the new phrase at the beginning of each round
             phrase = phrases[currentRound];
-
-            // we need to keep track of the number of consonants and vowels in the phrase
-            countConsonants(phrase);
-            countVowels(phrase);
 
             //Checks phrase for length
             if (phrase.length > TOTAL_TILES) {
@@ -571,7 +568,7 @@
                 //Buy a vowel only after spinning the wheel and calling a consonant or buying another vowel previously
                 {name: 'buyVowel', from: 'success', to: 'vowel'},
                 //On a sucessful selection, prompt for next action
-                {name: 'success', from: ['consonant', 'vowel'], to: 'success'},
+                {name: 'success', from: ['consonant', 'vowel', 'initTurn'], to: 'success'},
                 //Lose your turn by incorrectly calling a letter or vowel,
                 //landing on bankrupt or loose your trn, or incorrectly
                 //solving the puzzle (triggered by facilitator clicking button)
@@ -608,7 +605,10 @@
 
                         scorebd.updateScore();
 
-
+                        // we should check if phrases with no consonants or no
+                        // vowels are introduced to the game
+                        countConsonants(phrase);
+                        countVowels(phrase);
 
                         currentPlayer = Math.floor((Math.random() * players));
                         showStartingPlayer();
@@ -622,11 +622,13 @@
 
                     //TODO: Lock out letters and buy a vowel button
 
-                    if (!isPuzzleSolved) {
-                        spinSolveDialog();
-                    } else {
-                        console.log("Error: Puzzle cannot be solved at the beginning of a turn because it is the previous player's win");
-                    }
+                    // if (!isPuzzleSolved) {
+                    //     spinSolveDialog();
+                    // } else {
+                    //     console.log("Error: Puzzle cannot be solved at the beginning of a turn because it is the previous player's win");
+                    // }
+
+                    gsm.success();
 
                 },
                 onenterconsonant: function(event, from, to) {
@@ -636,6 +638,25 @@
                 onentersuccess: function(event, from, to) {
 
                     // Check the status of the puzzle
+                    if (numberOfVowelsRemaining == 0) {
+                        allVowelsFound = true;
+                        if (!noMoreVowelsAlertDisplayed) {
+                            noMoreVowelsAlertDisplayed = true;
+                            noMoreVowelsAlert();
+                            setRemainingVowelsToRed();
+                        }
+                    } else {
+                        allVowelsFound = false;
+                    }
+                    if (numberOfConsonantsRemaining == 0) {
+                        allConsonantsFound = true;
+                        if (!noMoreConsonantsAlertDisplayed) {
+                            noMoreConsonantsAlert();
+                            setRemainingConsonantsToRed();
+                        }
+                    } else {
+                        allConsonantsFound = false;
+                    }
                     isPuzzleSolved = allVowelsFound && allConsonantsFound;
 
                     /*If puzzle is unsolved, prompt (iff vowels available & player has > $250, incude vowel option) */
@@ -654,10 +675,6 @@
                     } else {
                         alert("Please read out the completed phrase");
                     }
-                    // else {
-                    //     console.log("Error: isPuzzleSolved:" + isPuzzleSolved + " allVowelsFound:" + allVowelsFound + " currentPlayerScore:" + scorebd.score(currentPlayer));
-                    // }
-
 
                 },
                 onentertermTurn: function(event, from, to) { /*Go to next player and start turn. */
@@ -669,6 +686,11 @@
                     //Flip all tiles
                     $(".contains_letter").addClass("flip");
 
+                    // reset vowel and consonant dependent variables
+                    numberOfVowelsRemaining = 0;
+                    noMoreVowelsAlertDisplayed = false;
+                    numberOfConsonantsRemaining = 0;
+                    noMoreConsonantsAlertDisplayed = false;
 
                     //Add point totals of winning player to total score
                     scorebd.pushToTotalScore(currentPlayer);
@@ -859,7 +881,7 @@
                 // if the consonant is in our phrase...
                 if (phrase.indexOf(CONSONANTS[i]) !== -1) {
 
-                    // we need to incrememnt numberOfConsonantsRemaining
+                    // we need to increment numberOfConsonantsRemaining
                     numberOfConsonantsRemaining++;
                 }
             }
@@ -908,21 +930,10 @@
                     // handle choosing an unselected vowel 
                     if (vowelChosen) {
                         numberOfVowelsRemaining -= 1;
-                        if (numberOfVowelsRemaining == 0) {
-                            allVowelsFound = true;
-                            noMoreVowelsAlert();
-                            setRemainingVowelsToRed();
-                        }
 
                     // handle choosing an unselected consonant
                     } else {
                         numberOfConsonantsRemaining -= 1;
-                        if (numberOfConsonantsRemaining == 0) {
-                            allConsonantsFound = true;
-                            noMoreConsonantsAlert();
-                            setRemainingConsonantsToRed();
-                        }
-
                         scorebd.earnConsonant(currentPlayer, count * currentSliceValue);
                     }
 
