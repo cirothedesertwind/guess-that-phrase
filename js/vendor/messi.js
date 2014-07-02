@@ -121,14 +121,27 @@ Messi.prototype = {
         this.visible = true
     },
     hide: function (e) {
+        /////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////// BEGIN MODIFIED CODE ////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////
+        
+        // if there is a form inside the Messi message, we should process it
         if ($("form").length == 1) {
-          if ($("#phrase_input").length = 1) {
-            for (var phr = 1; phr != 6; phr++) {
-              phrases.push(document.forms["phrase_input"]["phrase"+phr].value);
+
+            // if we're looking at the phrase_input form specifically... 
+            if ($("#phrase_input").length = 1) {
+                
+                // let's store the phrases and their associated hints
+                for (var phr = 1; phr <= rounds; phr++) {
+                    phrases.push(document.forms["phrase_input"]["phrase"+phr].value);
+                    hints.push(document.forms["phrase_input"]["hint"+phr].value);
+                }
             }
-          }
         }
 
+        /////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////// END MODIFIED CODE /////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////
         if (!this.visible) return;
         var t = this;
         this.messi.animate({

@@ -15,13 +15,15 @@
         VOWELS = "AEIOU";
         CONSONANTS = "BCDFGHJKLMNPQRSTVWXYZ";
 
+        // Global Variables can't have var in front of them?
         phrases = new Array();
+        hints = new Array();
+        rounds = 5;
 
         var players = 3;
 
         var currentPlayer = 0;
 
-        var rounds = 5;
         var currentRound = -1;
 
         var isPuzzleSolved = false;
@@ -54,7 +56,24 @@
         
         
         phraseFormPopup = function() {
-            new Messi('<p>Please input the phrases you like to use in this game.</p><form id="phrase_input" action="" data-parsley-validate>Phrase 1: <input type="text" id="phrase1" name="phrase1" required data-parsley-length="[1, 50]" pattern="'+PRHASE_REGEX+'"><br>Phrase 2: <input type="text" id="phrase2" name="phrase2" data-parsley-length="[1, 50]" pattern="'+PRHASE_REGEX+'"><br>Phrase 3: <input type="text" id="phrase3" name="phrase3" data-parsley-length="[1, 50]" pattern="'+PRHASE_REGEX+'"><br>Phrase 4: <input type="text" id="phrase4" name="phrase4" data-parsley-length="[1, 50]" pattern="'+PRHASE_REGEX+'"><br>Phrase 5: <input type="text" id="phrase5" name="phrase5" data-parsley-length="[1, 50]" pattern="'+PRHASE_REGEX+'"><br></form>',
+            var MessiStrExplanation = '<p>Please input the phrases you like to use in this game.</p>';
+            var MessiStrFormOpening = '<form id="phrase_input" action="" data-parsley-validate>';
+            var MessiStrContent = "";
+            for (var phraseNum = 1; phraseNum <= rounds; phraseNum++) {
+                var MessiStrPhraseLabel = 'Phrase ' + phraseNum + ': ';
+                var MessiStrPhraseInput = '<input type="text" id="phrase'+phraseNum+'" name="phrase'+phraseNum+'" required data-parsley-length="[1, 50]" pattern="'+PRHASE_REGEX+'">';
+                var space = " ";
+                var MessiStrHintLabel = 'Hint ' + phraseNum + ': ';
+                var MessiStrHintContent = '<input type="text" id="hint'+phraseNum+'" name="hint'+phraseNum+'" required data-parsley-length="[1, 50]" pattern="'+PRHASE_REGEX+'">';
+                MessiStrContent += MessiStrPhraseLabel + MessiStrPhraseInput + space + MessiStrHintLabel + MessiStrHintContent;
+                if (phraseNum != rounds) {
+                    MessiStrContent += '<br>';
+                }
+            }
+            var MessiStrFormClosing = '</form>';
+            var MessiStr = MessiStrExplanation + MessiStrFormOpening + MessiStrContent + MessiStrFormClosing;
+            //new Messi('<p>Please input the phrases you like to use in this game.</p><form id="phrase_input" action="" data-parsley-validate>Phrase 1: <input type="text" id="phrase1" name="phrase1" required data-parsley-length="[1, 50]" pattern="'+PRHASE_REGEX+'"><br>Phrase 2: <input type="text" id="phrase2" name="phrase2" data-parsley-length="[1, 50]" pattern="'+PRHASE_REGEX+'"><br>Phrase 3: <input type="text" id="phrase3" name="phrase3" data-parsley-length="[1, 50]" pattern="'+PRHASE_REGEX+'"><br>Phrase 4: <input type="text" id="phrase4" name="phrase4" data-parsley-length="[1, 50]" pattern="'+PRHASE_REGEX+'"><br>Phrase 5: <input type="text" id="phrase5" name="phrase5" data-parsley-length="[1, 50]" pattern="'+PRHASE_REGEX+'"><br></form>',
+            new Messi(MessiStr,
                     {title: 'Buttons',
                         buttons: [{id: 0, label: 'Ok', val: 'Ok', class: 'btn-success'}],
                         callback: function(val) {
@@ -469,7 +488,7 @@
             //reveal punctuation marks (apostrophes,hyphens, question marks and exclamation marks)
 
             // finally, we display the hint for the players
-            $(".puzzle_hint").text("PHRASE");
+            $(".puzzle_hint").text(hints[currentRound]);
 
 
             ///////////////////////////////////////////////////////////
