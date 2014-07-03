@@ -66,7 +66,7 @@
                 var MessiStrPhraseInput = '<input type="text" id="phrase'+phraseNum+'" name="phrase'+phraseNum+'" required data-parsley-length="[1, 50]" pattern="'+PRHASE_REGEX+'">';
                 var space = " ";
                 var MessiStrHintLabel = 'Hint ' + phraseNum + ': ';
-                var MessiStrHintContent = '<input type="text" id="hint'+phraseNum+'" name="hint'+phraseNum+'" required data-parsley-length="[1, 50]" pattern="'+PRHASE_REGEX+'">';
+                var MessiStrHintContent = '<input type="text" id="hint'+phraseNum+'" name="hint'+phraseNum+'">';
                 MessiStrContent += MessiStrPhraseLabel + MessiStrPhraseInput + space + MessiStrHintLabel + MessiStrHintContent;
                 
                 // add a new line after every hint entry box
