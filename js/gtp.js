@@ -579,12 +579,15 @@
                 {name: 'guessCorrectly', from: 'guess', to: 'termRound'},
                 //when guessed incorrectly terminate round
                 {name: 'guessIncorrectly', from: 'guess', to: 'termTurn'},
+                //Allow the user to cancel their guess attempt. 
+                {name: 'cancelGuess', from: 'guess', to: 'success'},
                 //End game when all rounds end
                 {name: 'stop', from: 'termRound', to: 'term'}
             ],
             callbacks: {
                 onenterstate: function(event, from, to) {
                     scorebd.updateScore();
+                    console.log("|event:"+event+"|from:"+from+"|to:"+to+"|");
                 },
                 onenterinitPhrases: function(event, from, to) {
                     phraseFormPopup();
@@ -704,6 +707,16 @@
                     timer.once(5000);
                     
                 },
+                onenterguess: function(event, from, to) {
+                    console.log("Got Here");
+                    solveLockInDialog();
+                },
+                onenterguessCorrectly: function(event, from, to) {
+                    gsm.termround();
+                },
+                onenterguessIncorrectly: function(event, from, to) {
+                    gsm.loseTurn();
+                },
                 onenterterm: function(event, from, to) {
                     alert("The game has ended.");
                 }
@@ -721,6 +734,31 @@
         ///////////////////////////////////////////////////////////
         ////////////// DIALOG START ///////////////////////////////
         ///////////////////////////////////////////////////////////
+
+        // we display this dialog when the user chooses to solve the puzzle
+        var solveLockInDialog = function() {
+            new Messi('Did Player ' + (currentPlayer + 1) + ' guess the puzzle correctly?',
+                    {title: 'Buttons',
+                        buttons: [
+                            {id: 0, label: 'Correct', val: 'correct', class: 'btn-success'},
+                            {id: 1, label: 'Incorrect', val: 'incorrect', class: 'btn-danger'},
+                            {id: 2, label: 'Cancel', val: 'cancel'}],
+                        callback: function(val) {
+                            if (val === 'correct') {
+                                gsm.guessCorrectly();
+                            }
+                            else if (val === 'incorrect') {
+                                gsm.guessIncorrectly();
+                            }
+                            else if (val === 'cancel') {
+                                gsm.cancelGuess();
+                            }
+                            else {
+                                alert("How did you get here?"); console.log("How did you get here?");
+                            }
+                        }
+                    });
+        };
 
         var vowelSpinSolveDialog = function() {
             new Messi('Player ' + (currentPlayer + 1) + ', would you like to buy a vowel, spin the wheel, or solve the puzzle?',
@@ -810,7 +848,6 @@
         ///////////////////////////////////////////////////////////
         //////////////////////  START /////////////////////////////
         ///////////////////////////////////////////////////////////
-
 
 
 
