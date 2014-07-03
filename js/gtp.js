@@ -700,7 +700,7 @@
                         depopulateBoard(); //Clear the board                    
                         gsm.initRound();  //Init next round
                     });
-                    timer.set({ time : 5000, autostart : true });
+                    timer.once(5000);
                     
                 },
                 onenterterm: function(event, from, to) {
