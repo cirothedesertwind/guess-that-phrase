@@ -9,7 +9,7 @@
         ROW14_TILES = ROW12_TILES + 2;
         TOTAL_TILES = ROW12_TILES * 2 + ROW14_TILES * 2;
         PUNCTUATION_REGEX = /[\.\,\?\!\@\#\$\%\^\&\*\(\)\<\>\:\;\']/g;
-        PRHASE_REGEX = "^[A-Z\\s\\.\\,\\?\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\<\\>\\:\\;\\']+$"; //This is a string to use with parsley.js
+        PRHASE_REGEX = "^[A-Za-z\\s\\.\\,\\?\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\<\\>\\:\\;\\']+$"; //This is a string to use with parsley.js
         ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         VOWELS_REGEX = /[AEIOU]/g;
         VOWELS = "AEIOU";

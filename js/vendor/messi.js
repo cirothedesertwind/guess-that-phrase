@@ -132,9 +132,20 @@ Messi.prototype = {
             if ($("#phrase_input").length = 1) {
                 
                 // let's store the phrases and their associated hints
-                for (var phr = 1; phr <= rounds; phr++) {
-                    phrases.push(document.forms["phrase_input"]["phrase"+phr].value);
-                    hints.push(document.forms["phrase_input"]["hint"+phr].value);
+                for (var count = 1; count <= rounds; count++) {
+
+                    //sanitize phrases and hints
+                    var phrase = document.forms["phrase_input"]["phrase"+count].value;
+                    phrase = phrase.toUpperCase();
+                    phrase = phrase.trim();
+
+                    var hint = document.forms["phrase_input"]["hint"+count].value;
+                    hint = hint.toUpperCase();
+                    hint = hint.trim();
+
+                    // add them to our arrays
+                    phrases.push(phrase);
+                    hints.push(hint);
                 }
             }
         }
