@@ -651,6 +651,7 @@
                     if (numberOfConsonantsRemaining == 0) {
                         allConsonantsFound = true;
                         if (!noMoreConsonantsAlertDisplayed) {
+                            noMoreConsonantsAlertDisplayed = true;
                             noMoreConsonantsAlert();
                             setRemainingConsonantsToRed();
                         }
