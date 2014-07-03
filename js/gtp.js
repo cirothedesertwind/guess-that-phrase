@@ -573,7 +573,9 @@
                 //landing on bankrupt or loose your trn, or incorrectly
                 //solving the puzzle (triggered by facilitator clicking button)
                 {name: 'loseTurn', from: ['consonant', 'vowel', 'spin'], to: 'termTurn'},
-                //Terminate round when solved
+                //The user guessed the last letter correctly
+                {name: 'filledPuzzle', from: 'success', to: 'termRound'},
+                //The user has asked to solve the puzzle
                 {name: 'solvePuzzle', from: ['initTurn', 'success'], to: 'guess'},
                 //when correctly guessed, terminate round
                 {name: 'guessCorrectly', from: 'guess', to: 'termRound'},
@@ -676,8 +678,10 @@
                         } else {
                             solveDialog();
                         }
+                    //otherwise, the user has finished the puzzle
                     } else {
                         alert("Please read out the completed phrase");
+                        gsm.filledPuzzle();
                     }
 
                 },
