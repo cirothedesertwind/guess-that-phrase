@@ -548,6 +548,11 @@
             $(".cell").removeClass("contains_letter");
         };
 
+        resetAlphabet = function() {
+            //Set all the letters so they are uncalled
+            $(".letter").removeClass("letter_called letter_called_none");
+        }
+
         ///////////////////////////////////////////////////////////
         ////////////// GAME STATE MACHINE /////////////////////////
         ///////////////////////////////////////////////////////////
@@ -705,7 +710,8 @@
                     
                     
                     var timer = $.timer(function() {
-                        depopulateBoard(); //Clear the board                    
+                        depopulateBoard(); //Clear the board
+                        resetAlphabet(); // reset the alphabet
                         gsm.initRound();  //Init next round
                     });
                     timer.once(5000);
