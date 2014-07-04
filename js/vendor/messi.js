@@ -134,7 +134,15 @@ Messi.prototype = {
                 // let's store the phrases and their associated hints
                 for (var count = 1; count <= rounds; count++) {
 
-                    //sanitize phrases and hints
+                    // Parsley check 
+                    if ($('#phrase'+count).parsley().isValid() == false) {
+                        
+                        // do nothing
+                        return;
+                    }
+
+                    // it looks like our phrase passes the Parsley validation 
+                    // let's sanitize the phrases and hints...
                     var phrase = document.forms["phrase_input"]["phrase"+count].value;
                     phrase = phrase.toUpperCase();
                     phrase = phrase.trim();
@@ -143,7 +151,7 @@ Messi.prototype = {
                     hint = hint.toUpperCase();
                     hint = hint.trim();
 
-                    // add them to our arrays
+                    // ... and add them to our arrays
                     phrases.push(phrase);
                     hints.push(hint);
                 }
