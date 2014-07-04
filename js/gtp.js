@@ -63,7 +63,13 @@
             var MessiStrContent = "";
             for (var phraseNum = 1; phraseNum <= rounds; phraseNum++) {
                 var MessiStrPhraseLabel = 'Phrase ' + phraseNum + ': ';
-                var MessiStrPhraseInput = '<input type="text" id="phrase'+phraseNum+'" name="phrase'+phraseNum+'" required data-parsley-length="[1, 50]" pattern="'+PRHASE_REGEX+'">';
+                // the first phrase is required
+                if (phraseNum == 1) {
+                    var required = "required";
+                } else {
+                    var required = "";
+                }
+                var MessiStrPhraseInput = '<input type="text" id="phrase'+phraseNum+'" name="phrase'+phraseNum+'" data-parsley-maxlength="50" pattern="'+PRHASE_REGEX+'" '+required+'>';
                 var space = " ";
                 var MessiStrHintLabel = 'Hint ' + phraseNum + ': ';
                 var MessiStrHintContent = '<input type="text" id="hint'+phraseNum+'" name="hint'+phraseNum+'">';
