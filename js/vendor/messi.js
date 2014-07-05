@@ -134,10 +134,12 @@ Messi.prototype = {
                 // let's store the phrases and their associated hints
                 for (var count = 1; count <= rounds; count++) {
 
-                    // Parsley check 
-                    if ($('#phrase'+count).parsley().isValid() == false) {
-                        
-                        // do nothing
+                    // Parsley check
+                    var parsleyValidateResult = $('#phrase'+count).parsley().isValid();
+                    if ((typeof parsleyValidateResult == "boolean" 
+                            && parsleyValidateResult == false) || 
+                        (typeof parsleyValidateResult == "object"
+                            && parsleyValidateResult.length != 0)) {
                         return;
                     }
 
