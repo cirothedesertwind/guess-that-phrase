@@ -33,28 +33,28 @@
         var noMoreConsonantsAlertDisplayed = false;
 
         var currency = '$';
-       
+
         var game = $(".game");
         var board;
         var scorebd = new $.SCOREBOARD(game, players, currency);
         var currentSliceValue = -1;
-        
+
         console.log(scorebd);
-        
+
         var setSliceValueOnWheel = function(context) {
             currentSliceValue = wheel.getValue();
         };
-        
+
         var bankruptifyOnWheel = function(context) {
             scorebd.setScore(currentPlayer, 0);
             gsm.loseTurn();
         };
-        
+
         var looseTurnOnWheel = function(context) {
             gsm.loseTurn();
         };
-        
-        
+
+
         phraseFormPopup = function() {
 
             // The Messi message needs to be broken down for maintainability
@@ -63,12 +63,12 @@
             var MessiStrContent = "";
             for (var phraseNum = 1; phraseNum <= rounds; phraseNum++) {
                 var MessiStrPhraseLabel = 'Phrase ' + phraseNum + ': ';
-                var MessiStrPhraseInput = '<input type="text" id="phrase'+phraseNum+'" name="phrase'+phraseNum+'" required data-parsley-length="[1, 50]" pattern="'+PRHASE_REGEX+'">';
+                var MessiStrPhraseInput = '<input type="text" id="phrase' + phraseNum + '" name="phrase' + phraseNum + '" required data-parsley-length="[1, 50]" pattern="' + PRHASE_REGEX + '">';
                 var space = " ";
                 var MessiStrHintLabel = 'Hint ' + phraseNum + ': ';
-                var MessiStrHintContent = '<input type="text" id="hint'+phraseNum+'" name="hint'+phraseNum+'">';
+                var MessiStrHintContent = '<input type="text" id="hint' + phraseNum + '" name="hint' + phraseNum + '">';
                 MessiStrContent += MessiStrPhraseLabel + MessiStrPhraseInput + space + MessiStrHintLabel + MessiStrHintContent;
-                
+
                 // add a new line after every hint entry box
                 if (phraseNum != rounds) {
                     MessiStrContent += '<br>';
@@ -136,7 +136,7 @@
         }
 
 
-            /*end board setup*/
+        /*end board setup*/
 
         populateBoard = function() {
             //Phrase setup----------------------------------------------
@@ -495,53 +495,8 @@
             /////////////////// END PHRASE SETUP //////////////////////
             ///////////////////////////////////////////////////////////
 
-            //Add clickable letters
-
-
-            l = ich.alphabet_template();
-            for (var e = 0; e < ALPHABET.length; e++) {
-                l.append(ich.letter_template({"letter": ALPHABET.charAt(e)}).click({"letter": ALPHABET.charAt(e), "words": words, "wordIndex": wordIndex}, onLetterClick));
-            }
-
-
-
-            game.append(l);
-
-            //Add options
-            game.append(ich.options_template());
-
-            ///////////////////////////////////////////////////////////
-            ////////////////// BEGIN WHEEL SETUP //////////////////////
-            ///////////////////////////////////////////////////////////
-
-            wheelContainer = ich.wheel_container_template();
-            wheelCanvas = ich.wheel_canvas_template({size: 600});
-
-            wheelContainer.append(wheelCanvas);
-            game.append(wheelContainer);
-
-            canvas = wheelCanvas.get(0);
-            canvasCtx = canvas.getContext("2d");
-
-            wheel = new $.WHEEL(canvasCtx, 0);
-
-            //canvas.addEventListener("click", alert("I've been clicked!"));
-            // get the value of a public property
-            console.log(wheel.settings.REFRESH_RATE);
-            
-            //TODO: make this part of init in wheel
-            wheel.setAllCallbacks(setSliceValueOnWheel);
-            wheel.setCallback(10,bankruptifyOnWheel);
-            wheel.setCallback(19,bankruptifyOnWheel);
-            wheel.setCallback(27,looseTurnOnWheel);
-            
-            //TODO: Set bankrupt callbacks
-
-            ///////////////////////////////////////////////////////////
-            /////////////////// END WHEEL SETUP ///////////////////////
-            ///////////////////////////////////////////////////////////
         };
-        
+
         depopulateBoard = function() {
             //Flip all tiles back to blank the board
             $(".contains_letter").removeClass("flip");
@@ -594,21 +549,67 @@
             callbacks: {
                 onenterstate: function(event, from, to) {
                     scorebd.updateScore();
-                    console.log("|event:"+event+"|from:"+from+"|to:"+to+"|");
+                    console.log("|event:" + event + "|from:" + from + "|to:" + to + "|");
                 },
                 onenterinitPhrases: function(event, from, to) {
                     phraseFormPopup();
                 },
                 onenterinitGame: function(event, from, to) {
                     buildBoard();
+
+                    //Add clickable letters
+
+
+                    l = ich.alphabet_template();
+                    for (var e = 0; e < ALPHABET.length; e++) {
+                        l.append(ich.letter_template({"letter": ALPHABET.charAt(e)}).click({"letter": ALPHABET.charAt(e)}, onLetterClick));
+                    }
+
+
+
+                    game.append(l);
+
+                    //Add options
+                    game.append(ich.options_template());
+
+                    ///////////////////////////////////////////////////////////
+                    ////////////////// BEGIN WHEEL SETUP //////////////////////
+                    ///////////////////////////////////////////////////////////
+
+                    wheelContainer = ich.wheel_container_template();
+                    wheelCanvas = ich.wheel_canvas_template({size: 600});
+
+                    wheelContainer.append(wheelCanvas);
+                    game.append(wheelContainer);
+
+                    canvas = wheelCanvas.get(0);
+                    canvasCtx = canvas.getContext("2d");
+
+                    wheel = new $.WHEEL(canvasCtx, 0);
+
+                    //canvas.addEventListener("click", alert("I've been clicked!"));
+                    // get the value of a public property
+                    console.log(wheel.settings.REFRESH_RATE);
+
+                    //TODO: make this part of init in wheel
+                    wheel.setAllCallbacks(setSliceValueOnWheel);
+                    wheel.setCallback(10, bankruptifyOnWheel);
+                    wheel.setCallback(19, bankruptifyOnWheel);
+                    wheel.setCallback(27, looseTurnOnWheel);
+
+                    //TODO: Set bankrupt callbacks
+
+                    ///////////////////////////////////////////////////////////
+                    /////////////////// END WHEEL SETUP ///////////////////////
+                    ///////////////////////////////////////////////////////////
                 },
                 onenterinitRound: function(event, from, to) {
                     currentRound = currentRound + 1;
-                    
+
                     populateBoard();
 
                     /*If there are more rounds to play, start by randomizing the
-                onenterstate: function(event, from, to start player and start the player's turn. */
+                     onenterstate: function(event, from, to start player and start the player's turn. */
                     if (currentRound < rounds) {
 
                         scorebd.newRound();
@@ -643,7 +644,7 @@
                 },
                 onenterconsonant: function(event, from, to) {
                     wheel.spin();
-                    
+
                 },
                 onentersuccess: function(event, from, to) {
 
@@ -683,7 +684,7 @@
                         } else {
                             solveDialog();
                         }
-                    //otherwise, the user has finished the puzzle
+                        //otherwise, the user has finished the puzzle
                     } else {
                         alert("Please read out the completed phrase");
                         gsm.filledPuzzle();
@@ -707,15 +708,15 @@
 
                     //Add point totals of winning player to total score
                     scorebd.pushToTotalScore(currentPlayer);
-                    
-                    
+
+
                     var timer = $.timer(function() {
                         depopulateBoard(); //Clear the board
                         resetAlphabet(); // reset the alphabet
                         gsm.initRound();  //Init next round
                     });
                     timer.once(5000);
-                    
+
                 },
                 onenterguess: function(event, from, to) {
                     console.log("Got Here");
@@ -764,7 +765,8 @@
                                 gsm.cancelGuess();
                             }
                             else {
-                                alert("How did you get here?"); console.log("How did you get here?");
+                                alert("How did you get here?");
+                                console.log("How did you get here?");
                             }
                         }
                     });
@@ -788,7 +790,8 @@
                                 gsm.solvePuzzle();
                             }
                             else {
-                                alert("How did you get here?"); console.log("How did you get here?");
+                                alert("How did you get here?");
+                                console.log("How did you get here?");
                             }
                         }
                     });
@@ -809,7 +812,8 @@
                                 gsm.solvePuzzle();
                             }
                             else {
-                                alert("How did you get here?"); console.log("How did you get here?");
+                                alert("How did you get here?");
+                                console.log("How did you get here?");
                             }
                         }
                     });
@@ -829,7 +833,8 @@
                                 gsm.solvePuzzle();
                             }
                             else {
-                                alert("How did you get here?"); console.log("How did you get here?");
+                                alert("How did you get here?");
+                                console.log("How did you get here?");
                             }
                         }
                     });
@@ -845,7 +850,8 @@
                                 gsm.solvePuzzle();
                             }
                             else {
-                                alert("How did you get here?"); console.log("How did you get here?");
+                                alert("How did you get here?");
+                                console.log("How did you get here?");
                             }
                         }
                     });
@@ -875,16 +881,16 @@
 
         var setRemainingConsonantsToRed = function() {
             for (var i = 0; i != CONSONANTS.length; i++) {
-                if (!$(".letter_"+CONSONANTS[i]).hasClass("letter_called") && !$(".letter_"+CONSONANTS[i]).hasClass("letter_called_none")) {
-                    $(".letter_"+CONSONANTS[i]).addClass("letter_called_none");
+                if (!$(".letter_" + CONSONANTS[i]).hasClass("letter_called") && !$(".letter_" + CONSONANTS[i]).hasClass("letter_called_none")) {
+                    $(".letter_" + CONSONANTS[i]).addClass("letter_called_none");
                 }
             }
         };
 
         var setRemainingVowelsToRed = function() {
             for (var i = 0; i != VOWELS.length; i++) {
-                if (!$(".letter_"+VOWELS[i]).hasClass("letter_called") && !$(".letter_"+VOWELS[i]).hasClass("letter_called_none")) {
-                    $(".letter_"+VOWELS[i]).addClass("letter_called_none");
+                if (!$(".letter_" + VOWELS[i]).hasClass("letter_called") && !$(".letter_" + VOWELS[i]).hasClass("letter_called_none")) {
+                    $(".letter_" + VOWELS[i]).addClass("letter_called_none");
                 }
             }
         };
@@ -952,18 +958,9 @@
 
             if (((vowelState && vowelChosen) || (consonantState && consonantChosen)) && isWhite) {
 
-                var words = event.data.words;
-                var wordIndex = event.data.wordIndex;
-                var count = 0;
-
-                for (var word = 0; word < words.length; word++) {
-                    for (var c = 0; c < words[word].length; c++) {
-                        if (words[word].charAt(c) == letter) {
-                            $('div.cell_' + (wordIndex[word] + c)).addClass("flip");
-                            count++;
-                        }
-                    }
-                }
+                letterSet = $("p.letter:contains('" + letter + "')").parents(".cell");
+                count = letterSet.length;
+                letterSet.addClass("flip");
 
                 // regardless if there are or aren't any selected vowels in 
                 // the phrase, we must deduct $250 from the current player's 
@@ -979,7 +976,7 @@
                     if (vowelChosen) {
                         numberOfVowelsRemaining -= 1;
 
-                    // handle choosing an unselected consonant
+                        // handle choosing an unselected consonant
                     } else {
                         numberOfConsonantsRemaining -= 1;
                         scorebd.earnConsonant(currentPlayer, count * currentSliceValue);
@@ -997,18 +994,18 @@
 
             }
         };
-        
-        guessCorrectlyHTML = function(){
+
+        guessCorrectlyHTML = function() {
             gsm.guessCorrectly();
         };
-        
-        guessIncorrectlyHTML = function(){
+
+        guessIncorrectlyHTML = function() {
             gsm.guessIncorrectly();
         };
 
         //GAME INIT
         gsm.initPhrases();
-        
+
 
     });
 })(jQuery);
