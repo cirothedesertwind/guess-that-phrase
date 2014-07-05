@@ -70,7 +70,7 @@
                 } else {
                     var required = "";
                 }
-                var MessiStrPhraseInput = '<input type="text" id="phrase'+phraseNum+'" name="phrase'+phraseNum+'" data-parsley-maxlength="50" pattern="'+PRHASE_REGEX+'" '+required+'>';
+                var MessiStrPhraseInput = '<input type="text" id="phrase'+phraseNum+'" name="phrase'+phraseNum+'" data-parsley-maxlength="50" data-parsley-fits pattern="'+PRHASE_REGEX+'" '+required+'>';
 
                 var space = " ";
                 var MessiStrHintLabel = 'Hint ' + phraseNum + ': ';
