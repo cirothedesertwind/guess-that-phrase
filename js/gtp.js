@@ -630,7 +630,6 @@
                         countVowels(phrase);
 
                         currentPlayer = Math.floor((Math.random() * players));
-                        showStartingPlayer();
                         gsm.initTurn();
                     } else {
                         gsm.stop();
@@ -638,15 +637,6 @@
 
                 },
                 onenterinitTurn: function(event, from, to) {
-
-                    //TODO: Lock out letters and buy a vowel button
-
-                    // if (!isPuzzleSolved) {
-                    //     spinSolveDialog();
-                    // } else {
-                    //     console.log("Error: Puzzle cannot be solved at the beginning of a turn because it is the previous player's win");
-                    // }
-
                     gsm.success();
 
                 },
@@ -679,18 +669,23 @@
                     }
                     isPuzzleSolved = allVowelsFound && allConsonantsFound;
 
+                    if (from === "initTurn") {
+                        var message = "Player " + (currentPlayer + 1) + ", it is your turn. ";
+                    } else {
+                        var message = "Player " + (currentPlayer + 1) + ", it is still your turn. ";
+                    }
                     /*If puzzle is unsolved, prompt (iff vowels available & player has > $250, incude vowel option) */
                     if (!isPuzzleSolved) {
                         if (!allVowelsFound && !allConsonantsFound && scorebd.score(currentPlayer) > 250) {
-                            vowelSpinSolveDialog();
+                            vowelSpinSolveDialog(message);
                         }
                         else if (!allVowelsFound && scorebd.score(currentPlayer) > 250) {
-                            vowelSolveDialog();
+                            vowelSolveDialog(message);
                         }
                         else if (!allConsonantsFound) {
-                            spinSolveDialog();
+                            spinSolveDialog(message);
                         } else {
-                            solveDialog();
+                            solveDialog(message);
                         }
                         //otherwise, the user has finished the puzzle
                     } else {
@@ -743,13 +738,6 @@
 
         });
 
-
-
-
-        var showStartingPlayer = function() {
-            alert("Player " + (currentPlayer + 1) + " will start this round.");  /* Uses 1->n rather than 0->(n-1)*/
-        };
-
         ///////////////////////////////////////////////////////////
         ////////////// DIALOG START ///////////////////////////////
         ///////////////////////////////////////////////////////////
@@ -757,112 +745,116 @@
         // we display this dialog when the user chooses to solve the puzzle
         var solveLockInDialog = function() {
             new Messi('Did Player ' + (currentPlayer + 1) + ' guess the puzzle correctly?',
-                    {title: 'Buttons',
-                        buttons: [
-                            {id: 0, label: 'Correct', val: 'correct', class: 'btn-success'},
-                            {id: 1, label: 'Incorrect', val: 'incorrect', class: 'btn-danger'},
-                            {id: 2, label: 'Cancel', val: 'cancel'}],
-                        callback: function(val) {
-                            if (val === 'correct') {
-                                gsm.guessCorrectly();
-                            }
-                            else if (val === 'incorrect') {
-                                gsm.guessIncorrectly();
-                            }
-                            else if (val === 'cancel') {
-                                gsm.cancelGuess();
-                            }
-                            else {
-                                alert("How did you get here?");
-                                console.log("How did you get here?");
-                            }
+                {title: 'Buttons',
+                    buttons: [
+                        {id: 0, label: 'Correct', val: 'correct', class: 'btn-success'},
+                        {id: 1, label: 'Incorrect', val: 'incorrect', class: 'btn-danger'},
+                        {id: 2, label: 'Cancel', val: 'cancel'}],
+                    callback: function(val) {
+                        if (val === 'correct') {
+                            gsm.guessCorrectly();
                         }
-                    });
+                        else if (val === 'incorrect') {
+                            gsm.guessIncorrectly();
+                        }
+                        else if (val === 'cancel') {
+                            gsm.cancelGuess();
+                        }
+                        else {
+                            alert("How did you get here?");
+                            console.log("How did you get here?");
+                        }
+                    }
+                });
         };
 
-        var vowelSpinSolveDialog = function() {
-            new Messi('Player ' + (currentPlayer + 1) + ', would you like to buy a vowel, spin the wheel, or solve the puzzle?',
-                    {title: 'Buttons',
-                        buttons: [
-                            {id: 0, label: 'Buy Vowel', val: 'buyVowel', class: 'btn-success'},
-                            {id: 1, label: 'Spin Again', val: 'spin', class: 'btn-danger'},
-                            {id: 2, label: 'Solve', val: 'solvePuzzle'}],
-                        callback: function(val) {
-                            if (val === 'buyVowel') {
-                                gsm.buyVowel();
-                            }
-                            else if (val === 'spin') {
-                                gsm.spin();
-                            }
-                            else if (val === 'solvePuzzle') {
-                                gsm.solvePuzzle();
-                            }
-                            else {
-                                alert("How did you get here?");
-                                console.log("How did you get here?");
-                            }
+        var vowelSpinSolveDialog = function(message) {
+            message += 'Would you like to buy a vowel, spin the wheel, or solve the puzzle?';
+            new Messi(message,
+                {title: 'Buttons',
+                    buttons: [
+                        {id: 0, label: 'Buy Vowel', val: 'buyVowel', class: 'btn-success'},
+                        {id: 1, label: 'Spin Again', val: 'spin', class: 'btn-danger'},
+                        {id: 2, label: 'Solve', val: 'solvePuzzle'}],
+                    callback: function(val) {
+                        if (val === 'buyVowel') {
+                            gsm.buyVowel();
                         }
-                    });
+                        else if (val === 'spin') {
+                            gsm.spin();
+                        }
+                        else if (val === 'solvePuzzle') {
+                            gsm.solvePuzzle();
+                        }
+                        else {
+                            alert("How did you get here?");
+                            console.log("How did you get here?");
+                        }
+                    }
+                });
         };
 
-        var spinSolveDialog = function() {
-            new Messi('Player ' + (currentPlayer + 1) + ', would you like to spin the wheel or solve the puzzle?',
-                    {title: 'Buttons',
-                        buttons: [
-                            {id: 0, label: 'Spin', val: 'spin', class: 'btn-danger'},
-                            {id: 1, label: 'Solve', val: 'solvePuzzle'}],
-                        callback: function(val) {
-                            console.log(val);
-                            if (val === 'spin') {
-                                gsm.spin();
-                            }
-                            else if (val === 'solvePuzzle') {
-                                gsm.solvePuzzle();
-                            }
-                            else {
-                                alert("How did you get here?");
-                                console.log("How did you get here?");
-                            }
+        var spinSolveDialog = function(message) {
+            message += 'Would you like to spin the wheel or solve the puzzle?';
+            new Messi(message,
+                {title: 'Buttons',
+                    buttons: [
+                        {id: 0, label: 'Spin', val: 'spin', class: 'btn-danger'},
+                        {id: 1, label: 'Solve', val: 'solvePuzzle'}],
+                    callback: function(val) {
+                        console.log(val);
+                        if (val === 'spin') {
+                            gsm.spin();
                         }
-                    });
+                        else if (val === 'solvePuzzle') {
+                            gsm.solvePuzzle();
+                        }
+                        else {
+                            alert("How did you get here?");
+                            console.log("How did you get here?");
+                        }
+                    }
+                });
         };
 
-        var vowelSolveDialog = function() {
-            new Messi('Player ' + (currentPlayer + 1) + ', would you like to buy a vowel or solve the puzzle?',
-                    {title: 'Buttons',
-                        buttons: [
-                            {id: 0, label: 'Buy Vowel', val: 'buyVowel', class: 'btn-success'},
-                            {id: 1, label: 'Solve', val: 'solvePuzzle'}],
-                        callback: function(val) {
-                            if (val === 'buyVowel') {
-                                gsm.buyVowel();
-                            }
-                            else if (val === 'solvePuzzle') {
-                                gsm.solvePuzzle();
-                            }
-                            else {
-                                alert("How did you get here?");
-                                console.log("How did you get here?");
-                            }
+        var vowelSolveDialog = function(message) {
+            message += 'Would you like to buy a vowel or solve the puzzle?';
+            new Messi(message,
+                {title: 'Buttons',
+                    buttons: [
+                        {id: 0, label: 'Buy Vowel', val: 'buyVowel', class: 'btn-success'},
+                        {id: 1, label: 'Solve', val: 'solvePuzzle'}],
+                    callback: function(val) {
+                        if (val === 'buyVowel') {
+                            gsm.buyVowel();
                         }
-                    });
+                        else if (val === 'solvePuzzle') {
+                            gsm.solvePuzzle();
+                        }
+                        else {
+                            alert("How did you get here?");
+                            console.log("How did you get here?");
+                        }
+                    }
+                });
         };
 
-        var solveDialog = function() {
-            new Messi('Player ' + (currentPlayer + 1) + ', you must solve the puzzle. What is your guess?',
-                    {title: 'Buttons',
-                        buttons: [
-                            {id: 0, label: 'My final answer', val: 'solvePuzzle'}],
-                        callback: function(val) {
-                            if (val === 'solvePuzzle') {
-                                gsm.solvePuzzle();
-                            }
-                            else {
-                                alert("How did you get here?");
-                                console.log("How did you get here?");
-                            }
+        var solveDialog = function(message) {
+            message += 'You must solve the puzzle. What is your guess?';
+            new Messi(message,
+                {title: 'Buttons',
+                    buttons: [
+                        {id: 0, label: 'My final answer', val: 'solvePuzzle'}],
+                    callback: function(val) {
+                        if (val === 'solvePuzzle') {
+                            gsm.solvePuzzle();
                         }
-                    });
+                        else {
+                            alert("How did you get here?");
+                            console.log("How did you get here?");
+                        }
+                    }
+                });
         };
 
         ///////////////////////////////////////////////////////////
