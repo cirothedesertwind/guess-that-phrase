@@ -99,6 +99,18 @@
             });
         };
 
+        plugin.getWinners = function() {
+            var arrayOfWinners = new Array();
+            var maxScore = Math.max.apply(Math, playerTotalScore);
+            for (var i = 0; i!=playerTotalScore.length;i++) {
+                if (playerTotalScore[i] == maxScore) {
+                    arrayOfWinners.push(i);
+                }
+            }
+
+            return arrayOfWinners;
+        };
+
         init();
 
     };

@@ -552,7 +552,7 @@
                 //Allow the user to cancel their guess attempt. 
                 {name: 'cancelGuess', from: 'guess', to: 'success'},
                 //End game when all rounds end
-                {name: 'stop', from: 'termRound', to: 'term'}
+                {name: 'stop', from: 'initRound', to: 'term'}
             ],
             callbacks: {
                 onenterstate: function(event, from, to) {
@@ -614,12 +614,11 @@
                 onenterinitRound: function(event, from, to) {
                     currentRound = currentRound + 1;
 
-                    populateBoard();
-
                     /*If there are more rounds to play, start by randomizing the
                      onenterstate: function(event, from, to start player and start the player's turn. */
+                    
                     if (currentRound < rounds) {
-
+                        populateBoard();
                         scorebd.newRound();
 
                         scorebd.updateScore();
@@ -722,7 +721,6 @@
 
                 },
                 onenterguess: function(event, from, to) {
-                    console.log("Got Here");
                     solveLockInDialog();
                 },
                 onenterguessCorrectly: function(event, from, to) {
@@ -732,7 +730,7 @@
                     gsm.loseTurn();
                 },
                 onenterterm: function(event, from, to) {
-                    alert("The game has ended.");
+                    gameFinishDialog();
                 }
             }
 
@@ -741,6 +739,35 @@
         ///////////////////////////////////////////////////////////
         ////////////// DIALOG START ///////////////////////////////
         ///////////////////////////////////////////////////////////
+
+        // we display this message when we finish the game 
+        var gameFinishDialog = function() {
+            var winners = scorebd.getWinners();
+            if (winners.length == 1) {
+                var winner = winners[0]+1;
+                var message = 'The game has ended. Player ' + winner + ' is the winner!';
+            } else if (winners.length == 2) {
+                var winner1 = winners[0]+1;
+                var winner2 = winners[1]+1;
+                var message = 'The game has ended. It seems there is a tie. Players ' + winner1 + ' and ' + winner2 + ' are both winners!';
+            } else {
+                var message = 'The game has ended. You\'re all winners!';
+            }
+            new Messi(message,
+                {title: 'Buttons',
+                    buttons: [
+                        {id: 0, label: 'OK', val: 'ok', class: 'btn-success'}],
+                    callback: function(val) {
+                        if (val === 'ok') {
+                            // finish game
+                            return;
+                        } else {
+                            alert("How did you get here?");
+                            console.log("How did you get here?");
+                        }
+                    }
+                });
+        };
 
         // we display this dialog when the user chooses to solve the puzzle
         var solveLockInDialog = function() {
