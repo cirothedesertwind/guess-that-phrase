@@ -669,9 +669,9 @@
                     isPuzzleSolved = allVowelsFound && allConsonantsFound;
 
                     if (from === "initTurn") {
-                        var message = "Player " + (currentPlayer + 1) + ", it is your turn. ";
+                        var message = scorebd.getPlayerName(currentPlayer + 1) + ", it is your turn. ";
                     } else {
-                        var message = "Player " + (currentPlayer + 1) + ", it is still your turn. ";
+                        var message = scorebd.getPlayerName(currentPlayer + 1) + ", it is still your turn. ";
                     }
                     /*If puzzle is unsolved, prompt (iff vowels available & player has > $250, incude vowel option) */
                     if (!isPuzzleSolved) {
@@ -744,12 +744,12 @@
         var gameFinishDialog = function() {
             var winners = scorebd.getWinners();
             if (winners.length == 1) {
-                var winner = winners[0]+1;
-                var message = 'The game has ended. Player ' + winner + ' is the winner!';
+                var winner = scorebd.getPlayerName(winners[0]+1);
+                var message = 'The game has ended. ' + winner + ' is the winner!';
             } else if (winners.length == 2) {
-                var winner1 = winners[0]+1;
-                var winner2 = winners[1]+1;
-                var message = 'The game has ended. It seems there is a tie. Players ' + winner1 + ' and ' + winner2 + ' are both winners!';
+                var winner1 = scorebd.getPlayerName(winners[0]+1);
+                var winner2 = scorebd.getPlayerName(winners[1]+1);
+                var message = 'The game has ended. It seems there is a tie. ' + winner1 + ' and ' + winner2 + ' are both winners!';
             } else {
                 var message = 'The game has ended. You\'re all winners!';
             }
@@ -771,7 +771,7 @@
 
         // we display this dialog when the user chooses to solve the puzzle
         var solveLockInDialog = function() {
-            new Messi('Did Player ' + (currentPlayer + 1) + ' guess the puzzle correctly?',
+            new Messi('Did ' + scorebd.getPlayerName(currentPlayer + 1) + ' guess the puzzle correctly?',
                 {title: 'Buttons',
                     buttons: [
                         {id: 0, label: 'Correct', val: 'correct', class: 'btn-success'},

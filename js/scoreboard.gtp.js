@@ -111,6 +111,10 @@
             return arrayOfWinners;
         };
 
+        plugin.getPlayerName = function(player) {
+            return "<b>Player " + player + "</b>";
+        }
+
         init();
 
     };
