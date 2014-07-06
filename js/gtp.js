@@ -184,11 +184,6 @@
             // here, we'll set the new phrase at the beginning of each round
             phrase = phrases[currentRound];
 
-            //Checks phrase for length
-            if (phrase.length > TOTAL_TILES) {
-                window.alert("Phrase is too long for the board.");
-            }
-
             // These indices point to the locations on the board below.
             //  X-----------  //
             // -X------------ //
@@ -224,9 +219,20 @@
             var num_lines_occupied;
             var max_line_len;
 
+            //Checks phrase for length
+            if (phrase.length > TOTAL_TILES) {
+                window.alert("Phrase is too long for the board.");
+            }
+            //checks words for length
+            for (var i = 0; i != words.length; i++) {
+                if (words[i].length >= 14) {
+                    alert("You can't have words that are 14 characters or longer.")
+                }
+            }
+
             // if the phrase length can fit in one line, then we'll do that...
             // otherwise, we need an algorithm to decide how to best fit it on the board
-            if (phrase.length > 10) {
+            if ((phrase.length > 10)&&(words.length > 1)) {
 
                 // the algorithm is simple -- try every possibility, and choose the best one that fits on the board
                 // the best one minimizes the differences between the lengths of the lines, so
@@ -675,9 +681,9 @@
                     } else {
                         var message = scorebd.getPlayerName(currentPlayer + 1) + ", it is still your turn. ";
                     }
-                    /*If puzzle is unsolved, prompt (iff vowels available & player has > $250, incude vowel option) */
+                    /*If puzzle is unsolved, prompt (iff vowels available & player has >= $250, incude vowel option) */
                     if (!isPuzzleSolved) {
-                        if (!allVowelsFound && !allConsonantsFound && scorebd.score(currentPlayer) > 250) {
+                        if (!allVowelsFound && !allConsonantsFound && scorebd.score(currentPlayer) >= 250) {
                             vowelSpinSolveDialog(message);
                         }
                         else if (!allVowelsFound && scorebd.score(currentPlayer) > 250) {

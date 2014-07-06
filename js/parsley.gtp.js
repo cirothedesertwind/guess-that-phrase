@@ -42,11 +42,6 @@ canFitOnBoard = function(phrase) {
     ///////////////////////////////////////////////////////////
     ///////////////// BEGIN PHRASE SETUP //////////////////////
     ///////////////////////////////////////////////////////////
-    //Checks phrase for length
-    if (phrase.length > TOTAL_TILES) {
-        // window.alert("Phrase is too long for the board.");
-        return false;
-    }
 
     // These indices point to the locations on the board below.
     //  X-----------  //
@@ -83,9 +78,20 @@ canFitOnBoard = function(phrase) {
     var num_lines_occupied;
     var max_line_len;
 
+    //Checks phrase for length
+    if (phrase.length > TOTAL_TILES) {
+        return false;
+    }
+    //checks words for length
+    for (var i = 0; i != words.length; i++) {
+        if (words[i].length >= 14) {
+            return false;
+        }
+    }
+
     // if the phrase length can fit in one line, then we'll do that...
     // otherwise, we need an algorithm to decide how to best fit it on the board
-    if (phrase.length > 10) {
+    if ((phrase.length > 10) && (words.length > 1)) {
 
         // the algorithm is simple -- try every possibility, and choose the best one that fits on the board
         // the best one minimizes the differences between the lengths of the lines, so
