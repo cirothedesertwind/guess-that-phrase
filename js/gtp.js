@@ -86,7 +86,7 @@
             var MessiStr = MessiStrExplanation + MessiStrFormOpening + MessiStrContent + MessiStrFormClosing;
 
             new Messi(MessiStr,
-                    {title: 'Buttons',
+                    {title: 'Set your phrases', titleClass: 'info',
                         buttons: [{id: 0, label: 'Ok', val: 'Ok', class: 'btn-success'}],
                         callback: function(val) {
                             gsm.initGame();
@@ -754,7 +754,7 @@
                 var message = 'The game has ended. You\'re all winners!';
             }
             new Messi(message,
-                {title: 'Buttons',
+                {title: 'Congratulations', titleClass: 'success',
                     buttons: [
                         {id: 0, label: 'OK', val: 'ok', class: 'btn-success'}],
                     callback: function(val) {
@@ -772,7 +772,7 @@
         // we display this dialog when the user chooses to solve the puzzle
         var solveLockInDialog = function() {
             new Messi('Did ' + scorebd.getPlayerName(currentPlayer + 1) + ' guess the puzzle correctly?',
-                {title: 'Buttons',
+                {title: 'Your Answer', titleClass: 'info',
                     buttons: [
                         {id: 0, label: 'Correct', val: 'correct', class: 'btn-success'},
                         {id: 1, label: 'Incorrect', val: 'incorrect', class: 'btn-danger'},
@@ -798,7 +798,7 @@
         var vowelSpinSolveDialog = function(message) {
             message += 'Would you like to buy a vowel, spin the wheel, or solve the puzzle?';
             new Messi(message,
-                {title: 'Buttons',
+                {title: 'Choice Stage',
                     buttons: [
                         {id: 0, label: 'Buy Vowel', val: 'buyVowel', class: 'btn-success'},
                         {id: 1, label: 'Spin Again', val: 'spin', class: 'btn-danger'},
@@ -824,7 +824,7 @@
         var spinSolveDialog = function(message) {
             message += 'Would you like to spin the wheel or solve the puzzle?';
             new Messi(message,
-                {title: 'Buttons',
+                {title: 'Choice Stage',
                     buttons: [
                         {id: 0, label: 'Spin', val: 'spin', class: 'btn-danger'},
                         {id: 1, label: 'Solve', val: 'solvePuzzle'}],
@@ -847,7 +847,7 @@
         var vowelSolveDialog = function(message) {
             message += 'Would you like to buy a vowel or solve the puzzle?';
             new Messi(message,
-                {title: 'Buttons',
+                {title: 'Choice Stage', 
                     buttons: [
                         {id: 0, label: 'Buy Vowel', val: 'buyVowel', class: 'btn-success'},
                         {id: 1, label: 'Solve', val: 'solvePuzzle'}],
@@ -869,7 +869,7 @@
         var solveDialog = function(message) {
             message += 'You must solve the puzzle. What is your guess?';
             new Messi(message,
-                {title: 'Buttons',
+                {title: 'Choice Stage',
                     buttons: [
                         {id: 0, label: 'My final answer', val: 'solvePuzzle'}],
                     callback: function(val) {
