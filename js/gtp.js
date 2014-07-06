@@ -536,11 +536,15 @@
                 //Buy a vowel only after spinning the wheel and calling a consonant or buying another vowel previously
                 {name: 'buyVowel', from: 'success', to: 'vowel'},
                 //On a sucessful selection, prompt for next action
-                {name: 'success', from: ['consonant', 'vowel', 'initTurn'], to: 'success'},
+                {name: 'success', from: ['consonant', 'vowel', 'initTurn', 'noMoreVowels', 'noMoreConsonants'], to: 'success'},
                 //Lose your turn by incorrectly calling a letter or vowel,
                 //landing on bankrupt or loose your trn, or incorrectly
                 //solving the puzzle (triggered by facilitator clicking button)
                 {name: 'loseTurn', from: ['consonant', 'vowel', 'spin'], to: 'termTurn'},
+                // We would like a state to declare when there are no vowels
+                {name: 'declareNoMoreVowels', from: 'success', to: 'noMoreVowels'},
+                // We would like a state to declare when there are no vowels
+                {name: 'declareNoMoreConsonants', from: 'success', to: 'noMoreConsonants'},
                 //The user guessed the last letter correctly
                 {name: 'filledPuzzle', from: 'success', to: 'termRound'},
                 //The user has asked to solve the puzzle
@@ -649,9 +653,8 @@
                     if (numberOfVowelsRemaining == 0) {
                         allVowelsFound = true;
                         if (!noMoreVowelsAlertDisplayed) {
-                            noMoreVowelsAlertDisplayed = true;
-                            noMoreVowelsAlert();
-                            setRemainingVowelsToRed();
+                            gsm.declareNoMoreVowels();
+                            return; // we need to return to indicate we want to leave this state
                         }
                     } else {
                         allVowelsFound = false;
@@ -659,9 +662,8 @@
                     if (numberOfConsonantsRemaining == 0) {
                         allConsonantsFound = true;
                         if (!noMoreConsonantsAlertDisplayed) {
-                            noMoreConsonantsAlertDisplayed = true;
-                            noMoreConsonantsAlert();
-                            setRemainingConsonantsToRed();
+                            gsm.declareNoMoreConsonants();
+                            return; // we need to return to indicate we want to leave this state
                         }
                     } else {
                         allConsonantsFound = false;
@@ -688,8 +690,7 @@
                         }
                         //otherwise, the user has finished the puzzle
                     } else {
-                        alert("Please read out the completed phrase");
-                        gsm.filledPuzzle();
+                        readPhraseDialog();
                     }
 
                 },
@@ -719,6 +720,27 @@
                     });
                     timer.once(5000);
 
+                },
+                onenternoMoreVowels: function(event, from, to) {
+                    noMoreVowelsAlertDisplayed = true;
+                    setRemainingVowelsToRed();
+                    new Messi('All the vowels in the phrase have been called out.', 
+                        {title: 'No more vowels!', 
+                         titleClass: 'anim warning', 
+                         buttons: [{id: 0, label: 'Close', val: 'X'}],
+                         modal: true,
+                         callback: function(val) { gsm.success(); }
+                    });
+                },
+                onenternoMoreConsonants: function(event, from, to) {
+                    noMoreConsonantsAlertDisplayed = true;
+                    setRemainingConsonantsToRed();
+                    new Messi('All the consonants in the phrase have been called out.', 
+                        {title: 'No more consonants!', 
+                         titleClass: 'anim warning', 
+                         buttons: [{id: 0, label: 'Close', val: 'X'}],
+                         callback: function(val) { gsm.success(); }
+                    });
                 },
                 onenterguess: function(event, from, to) {
                     solveLockInDialog();
@@ -769,6 +791,19 @@
                 });
         };
 
+        // we display this dialog when the round finishes
+        var readPhraseDialog = function() {
+            new Messi("Please read out the completed phrase.",
+                {title: 'Round Finish', titleClass: 'info',
+                    buttons: [
+                        {id: 0, label: 'OK', val: 'ok', class: 'btn-success'}],
+                    callback: function(val) {
+                        gsm.filledPuzzle();
+                    }
+                }
+            );
+        };
+
         // we display this dialog when the user chooses to solve the puzzle
         var solveLockInDialog = function() {
             new Messi('Did ' + scorebd.getPlayerName(currentPlayer + 1) + ' guess the puzzle correctly?',
@@ -792,7 +827,8 @@
                             console.log("How did you get here?");
                         }
                     }
-                });
+                }
+            );
         };
 
         var vowelSpinSolveDialog = function(message) {
@@ -818,7 +854,8 @@
                             console.log("How did you get here?");
                         }
                     }
-                });
+                }
+            );
         };
 
         var spinSolveDialog = function(message) {
@@ -841,7 +878,8 @@
                             console.log("How did you get here?");
                         }
                     }
-                });
+                }
+            );
         };
 
         var vowelSolveDialog = function(message) {
@@ -863,7 +901,8 @@
                             console.log("How did you get here?");
                         }
                     }
-                });
+                }
+            );
         };
 
         var solveDialog = function(message) {
@@ -881,7 +920,8 @@
                             console.log("How did you get here?");
                         }
                     }
-                });
+                }
+            );
         };
 
         ///////////////////////////////////////////////////////////
@@ -920,24 +960,6 @@
                     $(".letter_" + VOWELS[i]).addClass("letter_called_none");
                 }
             }
-        };
-
-        var noMoreVowelsAlert = function() {
-            alert('All the vowels in the phrase have been called out.');
-            // new Messi('All the vowels in the phrase have been called out.', 
-            //          {title: 'No more vowels!', 
-            //           titleClass: 'anim warning', 
-            //           buttons: [{id: 0, label: 'Close', val: 'X'}],
-            //           modal: true});
-        };
-
-        var noMoreConsonantsAlert = function() {
-            alert('All the consonants in the phrase have been called out.');
-            // new Messi('All the consonants in the phrase have been called out.', 
-            //          {title: 'No more consonants!', 
-            //           titleClass: 'anim warning', 
-            //           buttons: [{id: 0, label: 'Close', val: 'X'}],
-            //           modal: true});
         };
 
         var countVowels = function(phrase) {
