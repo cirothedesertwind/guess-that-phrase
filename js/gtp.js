@@ -576,19 +576,12 @@
                     buildBoard();
 
                     //Add clickable letters
-
-
                     l = ich.alphabet_template();
                     for (var e = 0; e < ALPHABET.length; e++) {
                         l.append(ich.letter_template({"letter": ALPHABET.charAt(e)}).click({"letter": ALPHABET.charAt(e)}, onLetterClick));
                     }
-
-
-
+                    
                     game.append(l);
-
-                    //Add options
-                    game.append(ich.options_template());
 
                     ///////////////////////////////////////////////////////////
                     ////////////////// BEGIN WHEEL SETUP //////////////////////
@@ -1048,14 +1041,6 @@
                 }
 
             }
-        };
-
-        guessCorrectlyHTML = function() {
-            gsm.guessCorrectly();
-        };
-
-        guessIncorrectlyHTML = function() {
-            gsm.guessIncorrectly();
         };
 
         //GAME INIT
