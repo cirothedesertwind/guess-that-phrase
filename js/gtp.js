@@ -747,12 +747,6 @@
                 onenterguess: function(event, from, to) {
                     solveLockInDialog();
                 },
-                onenterguessCorrectly: function(event, from, to) {
-                    gsm.termround();
-                },
-                onenterguessIncorrectly: function(event, from, to) {
-                    gsm.loseTurn();
-                },
                 onenterterm: function(event, from, to) {
                     gameFinishDialog();
                 }
