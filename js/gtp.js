@@ -708,6 +708,9 @@
                     numberOfConsonantsRemaining = 0;
                     noMoreConsonantsAlertDisplayed = false;
 
+                    //winning player minimum wins 1000.
+                    scorebd.setScore(currentPlayer,Math.max(1000, scorebd.score(currentPlayer)));
+                    
                     //Add point totals of winning player to total score
                     scorebd.pushToTotalScore(currentPlayer);
 
