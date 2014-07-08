@@ -598,10 +598,6 @@
 
                     wheel = new $.WHEEL(canvasCtx, 0);
 
-                    //canvas.addEventListener("click", alert("I've been clicked!"));
-                    // get the value of a public property
-                    console.log(wheel.settings.REFRESH_RATE);
-
                     //TODO: make this part of init in wheel
                     wheel.setAllCallbacks(setSliceValueOnWheel);
                     wheel.setCallback(10, bankruptifyOnWheel);
