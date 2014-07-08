@@ -1,0 +1,10 @@
+> Prompt to say choose  a consonant
+> prompt for vowel
+> solving puzzle thingy
+> wheel has ugly and I don't like scorlling to it
+>> Make it a popup
+> Messages for bad phrase inputs
+> Indicate that starters are random
+> want to make my own name
+
+"..." Breaks the game
