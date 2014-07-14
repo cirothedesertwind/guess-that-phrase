@@ -34,8 +34,8 @@
         // plugin's default options
         // this is private property and is accessible only from inside the plugin
         var defaults = {
-            size: 600,
-            radius: 290,
+            size: 1200,
+            radius: 580,
             slices: [
                 {value: 250, alt: "", color: '#2E8B57', formatting: null, callback: null},//00
                 {value: 300, alt: "", color: '#FF8C00', formatting: null, callback: null},//01
@@ -67,10 +67,10 @@
                 {value: -1, alt: "L TURN", color: '#FFFFFF', formatting: looseTurnFormat, callback: null}//27
             ],
             lineHeight: 22,
-            innerLineWidth: 1,
+            innerLineWidth: 2,
             innerCircleFill: '#ffffff',
             innerCircleStroke: '#000000',
-            outerLineWidth: 4,
+            outerLineWidth: 8,
             outerCircleStroke: '#000000',
             rotations: 18.8495559215, //Math.PI * 6
             spinDuration: 800,

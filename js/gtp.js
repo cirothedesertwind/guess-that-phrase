@@ -591,7 +591,7 @@
                     ///////////////////////////////////////////////////////////
 
                     wheelContainer = ich.wheel_container_template();
-                    wheelCanvas = ich.wheel_canvas_template({size: 600});
+                    wheelCanvas = ich.wheel_canvas_template({size: 1200}); //TODO: Duplicated defns.
 
                     wheelContainer.append(wheelCanvas);
                     game.append(wheelContainer);
