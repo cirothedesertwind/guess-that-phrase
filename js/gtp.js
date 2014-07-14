@@ -696,6 +696,7 @@
 
                 },
                 onentertermTurn: function(event, from, to) { /*Go to next player and start turn. */
+                    incorrectConsonantOrVowelSound(); // Play the "incorrectGuess sound"
                     currentPlayer = currentPlayer + 1;
                     currentPlayer = currentPlayer % players;
                     gsm.initTurn(); //Init next turn.
@@ -1021,6 +1022,9 @@
                 }
 
                 if (count > 0) {
+                    
+                    correctConsonantOrVowelSound(); // play the "correctGuess" sound
+                    
                     $(".letter_" + letter).addClass("letter_called");
 
                     // handle choosing an unselected vowel 
@@ -1051,6 +1055,25 @@
             var sound = new Howl({
                 urls: ['sound/new_puzzle.ogg']
             }).play();
+        }
+
+        incorrectConsonantOrVowelSound = function() {
+            var sound = new Howl(
+                {
+                    urls: ['sound/incorrectConsonantOrVowelSound.mp3'],
+                    sprite: { portion : [0,400] }
+                }
+            );
+            sound.play("portion");
+        }
+
+        correctConsonantOrVowelSound = function() {
+            var sound = new Howl(
+                {
+                    urls: ['sound/correctConsonantOrVowelSound.mp3']
+                }
+            );
+            sound.play();
         }
 
         //GAME INIT
