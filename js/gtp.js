@@ -40,6 +40,13 @@
         var currentSliceValue = -1;
 
         console.log(scorebd);
+        
+        var vowelOrConsonant = function(letter){
+            if (['A', 'E', 'I', 'O', 'U'].indexOf(letter) !== -1)
+                return "vowel";
+            else
+                return "consonant";
+        };
 
         var setSliceValueOnWheel = function(context) {
             currentSliceValue = wheel.getValue();
@@ -583,7 +590,7 @@
                     //Add clickable letters
                     l = ich.alphabet_template();
                     for (var e = 0; e < ALPHABET.length; e++) {
-                        l.append(ich.letter_template({"letter": ALPHABET.charAt(e)}).click({"letter": ALPHABET.charAt(e)}, onLetterClick));
+                        l.append(ich.letter_template({"letter": ALPHABET.charAt(e), "vowelOrConsonant" : vowelOrConsonant(ALPHABET.charAt(e))}).click({"letter": ALPHABET.charAt(e)}, onLetterClick));
                     }
 
                     game.append(l);
@@ -953,19 +960,11 @@
         //---------------------------------------------------------------------
 
         var setRemainingConsonantsToRed = function() {
-            for (var i = 0; i != CONSONANTS.length; i++) {
-                if (!$(".letter_" + CONSONANTS[i]).hasClass("letter_called") && !$(".letter_" + CONSONANTS[i]).hasClass("letter_called_none")) {
-                    $(".letter_" + CONSONANTS[i]).addClass("letter_called_none");
-                }
-            }
+            $(".consonant:not(.letter_called)").addClass("letter_called_none");
         };
 
         var setRemainingVowelsToRed = function() {
-            for (var i = 0; i != VOWELS.length; i++) {
-                if (!$(".letter_" + VOWELS[i]).hasClass("letter_called") && !$(".letter_" + VOWELS[i]).hasClass("letter_called_none")) {
-                    $(".letter_" + VOWELS[i]).addClass("letter_called_none");
-                }
-            }
+            $(".vowel:not(.letter_called)").addClass("letter_called_none");
         };
 
         var countVowels = function(phrase) {
