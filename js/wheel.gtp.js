@@ -20,7 +20,7 @@
             context.fillStyle = '#FFFFFF';
             context.textBaseline = "middle";
             context.textAlign = "center";
-            context.font = "1em Arial";
+            context.font = "3em Raleway";
         };
         
         var looseTurnFormat = function(context) {
@@ -28,7 +28,7 @@
             context.fillStyle = '#000000';
             context.textBaseline = "middle";
             context.textAlign = "center";
-            context.font = "1em Arial";
+            context.font = "3em Raleway";
         };
 
         // plugin's default options
@@ -66,7 +66,7 @@
                 {value: 400, alt: "", color: '#9400D3', formatting: null, callback: null},//26
                 {value: -1, alt: "L TURN", color: '#FFFFFF', formatting: looseTurnFormat, callback: null}//27
             ],
-            lineHeight: 22,
+            lineHeight: 44,
             innerLineWidth: 2,
             innerCircleFill: '#ffffff',
             innerCircleStroke: '#000000',
@@ -222,7 +222,7 @@
             context.strokeStyle = '#000000';
             context.textBaseline = "middle";
             context.textAlign = "center";
-            context.font = "1.4em Arial";
+            context.font = "3em Raleway";
 
             sliceAngle = (2 * Math.PI) / plugin.settings.slices.length;
 
@@ -258,11 +258,8 @@
                 str = plugin.settings.slices[index].alt;
             }
 
-            if (plugin.settings.slices[index].formatting != null){
-                
+            if (plugin.settings.slices[index].formatting != null){   
                 plugin.settings.slices[index].formatting(context);
-            }else{
-                console.log("not bankrupt flag");
             }
 
             for (var i = 0; i < str.length; i++) {
@@ -321,5 +318,5 @@
         init();
 
     };
-
+            
 })(jQuery);
