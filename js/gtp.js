@@ -47,10 +47,12 @@
 
         var bankruptifyOnWheel = function(context) {
             scorebd.setScore(currentPlayer, 0);
+            bankruptOrLooseTurnSound();
             gsm.loseTurn();
         };
 
         var looseTurnOnWheel = function(context) {
+            bankruptOrLooseTurnSound();
             gsm.loseTurn();
         };
 
@@ -696,12 +698,13 @@
 
                 },
                 onentertermTurn: function(event, from, to) { /*Go to next player and start turn. */
-                    incorrectConsonantOrVowelSound(); // Play the "incorrectGuess sound"
                     currentPlayer = currentPlayer + 1;
                     currentPlayer = currentPlayer % players;
                     gsm.initTurn(); //Init next turn.
                 },
                 onentertermRound: function(event, from, to) { /*Go to next round and start. */
+                    endRoundSuccessSound();
+            
                     //Flip all tiles
                     $(".contains_letter").addClass("flip");
 
@@ -1041,6 +1044,8 @@
                     gsm.success();
 
                 } else { /*Count == 0 */
+                    incorrectConsonantOrVowelSound(); // Play the "incorrectGuess sound"
+                    
                     $(".letter_" + letter).addClass("letter_called_none");
 
                     //There were no instances of that letter therefore player looses turn
@@ -1055,7 +1060,7 @@
             var sound = new Howl({
                 urls: ['sound/new_puzzle.ogg']
             }).play();
-        }
+        };
 
         incorrectConsonantOrVowelSound = function() {
             var sound = new Howl(
@@ -1065,7 +1070,7 @@
                 }
             );
             sound.play("portion");
-        }
+        };
 
         correctConsonantOrVowelSound = function() {
             var sound = new Howl(
@@ -1074,7 +1079,25 @@
                 }
             );
             sound.play();
-        }
+        };
+        
+        endRoundSuccessSound = function() {
+            var sound = new Howl(
+                {
+                    urls: ['sound/endRoundSuccess.ogg']
+                }
+            );
+            sound.play();
+        };
+        
+        bankruptOrLooseTurnSound = function() {
+            var sound = new Howl(
+                {
+                    urls: ['sound/bankruptOrLooseTurn.ogg']
+                }
+            );
+            sound.play();
+        };
 
         //GAME INIT
         gsm.initPhrases();

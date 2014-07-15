@@ -1,0 +1,27 @@
+## Incorrect Guess
+
+incorrectConsonantOrVowelSound.mp3
+Originally http://www.soundjay.com/misc/fail-buzzer-04.mp3
+Found at http://www.soundjay.com/failure-sound-effect.html
+http://www.soundjay.com/tos.html
+
+http://www.findsounds.com/ISAPI/search.dll
+
+## New Puzzle
+
+new_puzzle.ogg, by David McKee
+http://opengameart.org/content/ui-accept-or-forward
+CC-BY 3.0
+
+## Bankrupt / Loose Turn
+
+Modified using sliding pitch on Audacity.
+endRoundSuccess.ogg, by grunz
+http://www.freesound.org/people/grunz/sounds/109662/
+CC-BY 3.0
+
+## End Round Success
+
+endRoundSuccess.ogg, by grunz
+http://www.freesound.org/people/grunz/sounds/109662/
+CC-BY 3.0
