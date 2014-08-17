@@ -541,26 +541,28 @@
         ///////////////////////////////////////////////////////////
 
         buildPanel = function() {
-            buildClickableLetters();
-            buildWheel();
-        }
+            panel = ich.panel_template();
+            game.append(panel);
+            buildClickableLetters(panel);
+            buildWheel(panel);
+        };
         
-        buildClickableLetters = function(){
+        buildClickableLetters = function(element){
             //Add clickable letters
             l = ich.alphabet_template();
             for (var e = 0; e < ALPHABET.length; e++) {
                 l.append(ich.letter_template({"letter": ALPHABET.charAt(e), "vowelOrConsonant": vowelOrConsonant(ALPHABET.charAt(e))}).click({"letter": ALPHABET.charAt(e)}, onLetterClick));
             }
 
-            game.append(l);
-        }
+            element.append(l);
+        };
         
-        buildWheel = function(){
+        buildWheel = function(element){
             wheelContainer = ich.wheel_container_template();
             wheelCanvas = ich.wheel_canvas_template({size: 1200}); //TODO: Duplicated defns.
 
             wheelContainer.append(wheelCanvas);
-            game.append(wheelContainer);
+            element.append(wheelContainer);
 
             canvas = wheelCanvas.get(0);
             canvasCtx = canvas.getContext("2d");
@@ -574,7 +576,7 @@
             wheel.setCallback(27, looseTurnOnWheel);
 
             //TODO: Ideally, set bankrupt callbacks here
-        }
+        };
 
         ///////////////////////////////////////////////////////////
         ////////////// GAME STATE MACHINE /////////////////////////
