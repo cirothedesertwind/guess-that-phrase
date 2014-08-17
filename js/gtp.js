@@ -37,9 +37,19 @@
         var game = $(".game");
         var board;
         var scorebd = new $.SCOREBOARD(game, players, currency);
+        
+        var alphabetElement;
+        var wheelContainerElement;
+       
         var currentSliceValue = -1;
 
         console.log(scorebd);
+        
+        var spinFinishedCallback = function(){
+            //TODO: unlock letters here
+            wheelContainerElement.fadeOut();
+            alphabetElement.fadeIn();
+        };
 
         var vowelOrConsonant = function(letter) {
             if (['A', 'E', 'I', 'O', 'U'].indexOf(letter) !== -1)
@@ -555,6 +565,7 @@
             }
 
             element.append(l);
+            alphabetElement = l;
         };
         
         buildWheel = function(element){
@@ -567,7 +578,7 @@
             canvas = wheelCanvas.get(0);
             canvasCtx = canvas.getContext("2d");
 
-            wheel = new $.WHEEL(canvasCtx, 0);
+            wheel = new $.WHEEL(canvasCtx, 0, spinFinishedCallback);
 
             //TODO: make this part of init in wheel
             wheel.setAllCallbacks(setSliceValueOnWheel);
@@ -576,6 +587,8 @@
             wheel.setCallback(27, looseTurnOnWheel);
 
             //TODO: Ideally, set bankrupt callbacks here
+            
+            wheelContainerElement = wheelContainer;
         };
 
         ///////////////////////////////////////////////////////////
@@ -631,6 +644,9 @@
                 onenterinitGame: function(event, from, to) {
                     buildBoard();
                     buildPanel();
+                    
+                    $(".letter.vowel").hide();
+                    alphabetElement.hide();
                 },
                 onenterinitRound: function(event, from, to) {
                     currentRound = currentRound + 1;
@@ -864,9 +880,14 @@
                             {id: 2, label: 'Solve', val: 'solvePuzzle'}],
                         callback: function(val) {
                             if (val === 'buyVowel') {
+                                wheelContainerElement.fadeOut();
+                                alphabetElement.fadeIn();
+                                $(".letter.consonant").hide();
                                 gsm.buyVowel();
                             }
                             else if (val === 'spin') {
+                                $(".letter.vowel").hide();
+                                wheelContainerElement.show();
                                 gsm.spin();
                             }
                             else if (val === 'solvePuzzle') {
@@ -891,6 +912,8 @@
                         callback: function(val) {
                             console.log(val);
                             if (val === 'spin') {
+                                wheelContainerElement.show();
+                                $(".letter.vowel").hide();
                                 gsm.spin();
                             }
                             else if (val === 'solvePuzzle') {
@@ -1006,7 +1029,10 @@
         };
 
         onLetterClick = function(event) {
-
+            
+            $(".letter").show(); //show all letters b/c only shows consonant or vowels
+            alphabetElement.fadeOut();
+            
             // we clicked a letter
             // we need to see if we were allowed to click that letter
 

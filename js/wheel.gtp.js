@@ -13,7 +13,7 @@
     // available outside this function's scope
     // "el" should be a jQuery object or a collection of jQuery objects as returned by
     // jQuery's selector engine
-    $.WHEEL = function(canvasCtx, wheelAng, options) {
+    $.WHEEL = function(canvasCtx, wheelAng, finishCallback, options) {
 
          var bankruptFormat = function(context) {
             context.lineWidth = 1;
@@ -103,6 +103,8 @@
         var wheelAngle = 0;
         var spinRandomFactor = 0;
         var currentSlice = -1;
+       
+        var spinFinishedCallback;
 
         // to avoid confusions, use "plugin" to reference the
         // current instance of the  object
@@ -127,6 +129,7 @@
 
             canvasContext = canvasCtx;
             wheelAngle = wheelAng;
+            spinFinishedCallback = finishCallback;
 
             draw(canvasContext, wheelAngle);
 
@@ -166,6 +169,7 @@
                 currentSlice = slice;
                 
                 plugin.settings.slices[slice].callback();
+                spinFinishedCallback();
             }
             else {
                 wheelAngle = easeOutCubic(countTime, 0, 1, spinDuration) *
