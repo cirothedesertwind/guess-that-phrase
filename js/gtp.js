@@ -40,8 +40,8 @@
         var currentSliceValue = -1;
 
         console.log(scorebd);
-        
-        var vowelOrConsonant = function(letter){
+
+        var vowelOrConsonant = function(letter) {
             if (['A', 'E', 'I', 'O', 'U'].indexOf(letter) !== -1)
                 return "vowel";
             else
@@ -104,8 +104,9 @@
                     });
         };
 
-        //Append scoreboard
-        //put scoreboard here
+        ///////////////////////////////////////////////////////////
+        ////////////// BOARD //////////// /////////////////////////
+        ///////////////////////////////////////////////////////////
 
         //build a board
         buildBoard = function() {
@@ -152,9 +153,7 @@
             board.append(ich.puzzle_hint_template({hint: ""}));
         }
 
-
         /*end board setup*/
-
         populateBoard = function() {
             //Phrase setup----------------------------------------------
             //This is alpha quality
@@ -495,10 +494,12 @@
             }
 
             //place letters in respective tiles, tile by tile using a schedule
-            delay = 0; 
+            delay = 0;
             for (var word = 0; word < words.length; word++) {
                 for (var c = 0; c < words[word].length; c++) {
-                    $('div.cell_' + (wordIndex[word] + c)).schedule(delay, function(){$(this).addClass("contains_letter");});
+                    $('div.cell_' + (wordIndex[word] + c)).schedule(delay, function() {
+                        $(this).addClass("contains_letter");
+                    });
                     $('div.cell_' + (wordIndex[word] + c) + ' div.flipper div.back p.letter').text(words[word].charAt(c));
                     delay += 75; //add 250ms per letter
 
@@ -507,8 +508,8 @@
                         $('div.cell_' + (wordIndex[word] + c)).addClass("flip");
                     }
                 }
-                
-                
+
+
             }
 
             //reveal punctuation marks (apostrophes,hyphens, question marks and exclamation marks)
@@ -523,6 +524,7 @@
 
         };
 
+        /*change the board */
         depopulateBoard = function() {
             //Flip all tiles back to blank the board
             $(".contains_letter").removeClass("flip");
@@ -532,6 +534,46 @@
         resetAlphabet = function() {
             //Set all the letters so they are uncalled
             $(".letter").removeClass("letter_called letter_called_none");
+        }
+
+        ///////////////////////////////////////////////////////////
+        ////////////// PANEL //////////// /////////////////////////
+        ///////////////////////////////////////////////////////////
+
+        buildPanel = function() {
+            buildClickableLetters();
+            buildWheel();
+        }
+        
+        buildClickableLetters = function(){
+            //Add clickable letters
+            l = ich.alphabet_template();
+            for (var e = 0; e < ALPHABET.length; e++) {
+                l.append(ich.letter_template({"letter": ALPHABET.charAt(e), "vowelOrConsonant": vowelOrConsonant(ALPHABET.charAt(e))}).click({"letter": ALPHABET.charAt(e)}, onLetterClick));
+            }
+
+            game.append(l);
+        }
+        
+        buildWheel = function(){
+            wheelContainer = ich.wheel_container_template();
+            wheelCanvas = ich.wheel_canvas_template({size: 1200}); //TODO: Duplicated defns.
+
+            wheelContainer.append(wheelCanvas);
+            game.append(wheelContainer);
+
+            canvas = wheelCanvas.get(0);
+            canvasCtx = canvas.getContext("2d");
+
+            wheel = new $.WHEEL(canvasCtx, 0);
+
+            //TODO: make this part of init in wheel
+            wheel.setAllCallbacks(setSliceValueOnWheel);
+            wheel.setCallback(10, bankruptifyOnWheel);
+            wheel.setCallback(19, bankruptifyOnWheel);
+            wheel.setCallback(27, looseTurnOnWheel);
+
+            //TODO: Ideally, set bankrupt callbacks here
         }
 
         ///////////////////////////////////////////////////////////
@@ -586,41 +628,7 @@
                 },
                 onenterinitGame: function(event, from, to) {
                     buildBoard();
-
-                    //Add clickable letters
-                    l = ich.alphabet_template();
-                    for (var e = 0; e < ALPHABET.length; e++) {
-                        l.append(ich.letter_template({"letter": ALPHABET.charAt(e), "vowelOrConsonant" : vowelOrConsonant(ALPHABET.charAt(e))}).click({"letter": ALPHABET.charAt(e)}, onLetterClick));
-                    }
-
-                    game.append(l);
-
-                    ///////////////////////////////////////////////////////////
-                    ////////////////// BEGIN WHEEL SETUP //////////////////////
-                    ///////////////////////////////////////////////////////////
-
-                    wheelContainer = ich.wheel_container_template();
-                    wheelCanvas = ich.wheel_canvas_template({size: 1200}); //TODO: Duplicated defns.
-
-                    wheelContainer.append(wheelCanvas);
-                    game.append(wheelContainer);
-
-                    canvas = wheelCanvas.get(0);
-                    canvasCtx = canvas.getContext("2d");
-
-                    wheel = new $.WHEEL(canvasCtx, 0);
-
-                    //TODO: make this part of init in wheel
-                    wheel.setAllCallbacks(setSliceValueOnWheel);
-                    wheel.setCallback(10, bankruptifyOnWheel);
-                    wheel.setCallback(19, bankruptifyOnWheel);
-                    wheel.setCallback(27, looseTurnOnWheel);
-
-                    //TODO: Set bankrupt callbacks
-
-                    ///////////////////////////////////////////////////////////
-                    /////////////////// END WHEEL SETUP ///////////////////////
-                    ///////////////////////////////////////////////////////////
+                    buildPanel();
                 },
                 onenterinitRound: function(event, from, to) {
                     currentRound = currentRound + 1;
@@ -711,7 +719,7 @@
                 },
                 onentertermRound: function(event, from, to) { /*Go to next round and start. */
                     endRoundSuccessSound();
-            
+
                     //Flip all tiles
                     $(".contains_letter").addClass("flip");
 
@@ -1024,9 +1032,9 @@
                 }
 
                 if (count > 0) {
-                    
+
                     correctConsonantOrVowelSound(); // play the "correctGuess" sound
-                    
+
                     $(".letter_" + letter).addClass("letter_called");
 
                     // handle choosing an unselected vowel 
@@ -1044,7 +1052,7 @@
 
                 } else { /*Count == 0 */
                     incorrectConsonantOrVowelSound(); // Play the "incorrectGuess sound"
-                    
+
                     $(".letter_" + letter).addClass("letter_called_none");
 
                     //There were no instances of that letter therefore player looses turn
@@ -1063,37 +1071,37 @@
 
         incorrectConsonantOrVowelSound = function() {
             var sound = new Howl(
-                {
-                    urls: ['sound/incorrectConsonantOrVowelSound.mp3'],
-                    sprite: { portion : [0,400] }
-                }
+                    {
+                        urls: ['sound/incorrectConsonantOrVowelSound.mp3'],
+                        sprite: {portion: [0, 400]}
+                    }
             );
             sound.play("portion");
         };
 
         correctConsonantOrVowelSound = function() {
             var sound = new Howl(
-                {
-                    urls: ['sound/correctConsonantOrVowelSound.mp3']
-                }
+                    {
+                        urls: ['sound/correctConsonantOrVowelSound.mp3']
+                    }
             );
             sound.play();
         };
-        
+
         endRoundSuccessSound = function() {
             var sound = new Howl(
-                {
-                    urls: ['sound/endRoundSuccess.ogg']
-                }
+                    {
+                        urls: ['sound/endRoundSuccess.ogg']
+                    }
             );
             sound.play();
         };
-        
+
         bankruptOrLooseTurnSound = function() {
             var sound = new Howl(
-                {
-                    urls: ['sound/bankruptOrLooseTurn.ogg']
-                }
+                    {
+                        urls: ['sound/bankruptOrLooseTurn.ogg']
+                    }
             );
             sound.play();
         };
