@@ -537,6 +537,7 @@
         /*change the board */
         depopulateBoard = function() {
             //Flip all tiles back to blank the board
+            $("p.letter").empty(); // this is needed to clear all the letters on the board so they don't reappear in the next round
             $(".contains_letter").removeClass("flip");
             $(".cell").removeClass("contains_letter");
         };
