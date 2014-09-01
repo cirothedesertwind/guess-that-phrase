@@ -7,18 +7,6 @@ body {
 	visibility: hidden;
 }
 
-.board {
-  padding-top: 10px;
-}
-
-.cell {
-  margin-bottom: 4px;
-}
-
-.cell .back {
- background-color: white;
-}
-
 .alphabet {
     text-align: center;
 }
@@ -27,51 +15,6 @@ span.letter {
     font-weight: bold;
     font-size: 3em;
     color: white;
-}
-
-/*Cell flip animation ----------------------------- */
-/*Based on tutorial by David Walsh */
-
-.flip-container {
-  -webkit-perspective: 1000;
-  -moz-perspective: 1000;
-  -o-perspective: 1000;
-  perspective: 1000;
-}
-
-.flip-container {
-	width: 60px;
-	height: 75px;
-}
-
-.flipper {
-	position: relative;
-}
-
-.front, .back {
-	-webkit-backface-visibility: hidden;
-	-moz-backface-visibility: hidden;
-  -o-backface-visibility: hidden;
-	backface-visibility: hidden;
-
-	position: absolute;
-	top: 0;
-	left: 0;
-}
-
-.front {
-	z-index: 2;
-}
-
-.back {
-	-webkit-transform: rotateY(180deg);
-	-moz-transform: rotateY(180deg);
-  -o-transform: rotateY(180deg);
-	transform: rotateY(180deg);
-}
-
-.flip-container.flip .flipper {
-	transform: rotateY(180deg);
 }
 
 span.letter {
@@ -85,5 +28,3 @@ span.letter.letter_called {
 span.letter.letter_called_none {
 	color: red;
 }
-
-/*Cell flip animation ----------------------------- */
