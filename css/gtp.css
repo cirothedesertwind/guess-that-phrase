@@ -28,3 +28,33 @@ span.letter.letter_called {
 span.letter.letter_called_none {
 	color: red;
 }
+
+/* End Message Panel*/ 
+.message-box {
+	padding-left: 10%; 
+	padding-right: 10%; 
+	padding-top: 10px;
+}
+
+#message-label {
+	font-size: 1.5em; 
+	color: white;
+}
+
+#button-list {
+	padding-top: 10px;
+}
+
+.button-green {
+    background: rgb(28, 184, 65); /* this is a green */
+}
+
+.button-red {
+    background: rgb(202, 60, 60); /* this is a maroon */
+}
+
+.button-yellow {
+    background: rgb(255, 255, 0); /* this is an yellow */
+}
+
+/* Start Message Panel*/

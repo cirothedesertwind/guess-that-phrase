@@ -603,7 +603,7 @@
                 {
                     "id": "spin",
                     "name": "spin",
-                    "color": "success",
+                    "color": "red",
                     "label": "Spin the Wheel"
                 }
             ).click({}, function() {gsm.spin();});
@@ -611,7 +611,7 @@
                 {
                     "id": "guess",
                     "name": "guess",
-                    "color": "danger",
+                    "color": "green",
                     "label": "Guess a Vowel"
                 }
             ).click({}, function() {gsm.buyVowel();});
@@ -619,7 +619,7 @@
                 {
                     "id": "solve",
                     "name": "solve",
-                    "color": "primary",
+                    "color": "yellow",
                     "label": "Solve the Puzzle"
                 }
             ).click({}, function() {gsm.solvePuzzle();});
