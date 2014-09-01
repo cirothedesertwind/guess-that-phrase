@@ -29,13 +29,25 @@ div.board div.row {
     margin-top: @row-margin;
 }
 
-.cell .front, .cell .back {
-        //TODO: Understand how this actually works because it doesn't make
+
+//TODO: Understand how this actually works because it doesn't make
         //sense mathematically.
+        // It may be because of the 3D transform.
+.cell .front, .cell .back {
+        
 	height: @cell-height - @cell-border * 2; /*Top and bottom*/ 
 	width: @cell-width - @cell-border * 2; /*Right and left*/
         top: @cell-border/2;
         left: @cell-border/2;
+	position: absolute;
+}
+
+.cell .back {
+     
+	height: @cell-height - @cell-border * 2; /*Top and bottom*/ 
+	width: @cell-width - @cell-border * 2; /*Right and left*/
+        top: @cell-border;
+        left: @cell-border;
 	position: absolute;
 }
 
