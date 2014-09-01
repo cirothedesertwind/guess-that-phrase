@@ -48,6 +48,7 @@
         console.log(scorebd);
         
         var spinFinishedCallback = function(){
+            currentSliceValue = wheel.getValue();
             //TODO: unlock letters here
             wheelContainerElement.fadeOut();
             alphabetElement.fadeIn();
@@ -58,10 +59,6 @@
                 return "vowel";
             else
                 return "consonant";
-        };
-
-        var setSliceValueOnWheel = function(context) {
-            currentSliceValue = wheel.getValue();
         };
 
         var bankruptifyOnWheel = function(context) {
@@ -587,10 +584,10 @@
             canvas = wheelCanvas.get(0);
             canvasCtx = canvas.getContext("2d");
 
-            wheel = new $.WHEEL(canvasCtx, 0, spinFinishedCallback);
+            wheel = new $.WHEEL(canvasCtx, 0, spinFinishedCallback,null);
 
             //TODO: make this part of init in wheel
-            wheel.setAllCallbacks(setSliceValueOnWheel);
+            wheel.setAllCallbacks(spinFinishedCallback);
             wheel.setCallback(10, bankruptifyOnWheel);
             wheel.setCallback(19, bankruptifyOnWheel);
             wheel.setCallback(27, looseTurnOnWheel);
