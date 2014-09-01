@@ -804,7 +804,7 @@
                 onentertermTurn: function(event, from, to) { /*Go to next player and start turn. */
                     currentPlayer = currentPlayer + 1;
                     currentPlayer = currentPlayer % players;
-                    $(".letter").hide(); // hide the letters after the round has been terminated
+                    alphabetElement.hide(); // hide the letters after the round has been terminated
                     gsm.initTurn(); //Init next turn.
                 },
                 onentertermRound: function(event, from, to) { /*Go to next round and start. */
