@@ -169,7 +169,6 @@
                 currentSlice = slice;
                 
                 plugin.settings.slices[slice].callback();
-                spinFinishedCallback();
             }
             else {
                 wheelAngle = easeOutCubic(countTime, 0, 1, spinDuration) *
