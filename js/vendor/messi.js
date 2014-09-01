@@ -126,37 +126,33 @@ Messi.prototype = {
         /////////////////////////////////////////////////////////////////////////////////////
         
         // if there is a form inside the Messi message, we should process it
-        if ($("form").length == 1) {
+        if (($("form").length == 1) && ($("form").attr("id") == "phrase_input")){
 
-            // if we're looking at the phrase_input form specifically... 
-            if ($("#phrase_input").length = 1) {
-                
-                // let's store the phrases and their associated hints
-                for (var count = 1; count <= rounds; count++) {
+            // let's store the phrases and their associated hints
+            for (var count = 1; count <= rounds; count++) {
 
-                    // Parsley check
-                    var parsleyValidateResult = $('#phrase'+count).parsley().isValid();
-                    if ((typeof parsleyValidateResult == "boolean" 
-                            && parsleyValidateResult == false) || 
-                        (typeof parsleyValidateResult == "object"
-                            && parsleyValidateResult.length != 0)) {
-                        return;
-                    }
-
-                    // it looks like our phrase passes the Parsley validation 
-                    // let's sanitize the phrases and hints...
-                    var phrase = document.forms["phrase_input"]["phrase"+count].value;
-                    phrase = phrase.toUpperCase();
-                    phrase = phrase.trim();
-
-                    var hint = document.forms["phrase_input"]["hint"+count].value;
-                    hint = hint.toUpperCase();
-                    hint = hint.trim();
-
-                    // ... and add them to our arrays
-                    phrases.push(phrase);
-                    hints.push(hint);
+                // Parsley check
+                var parsleyValidateResult = $('#phrase'+count).parsley().isValid();
+                if ((typeof parsleyValidateResult == "boolean" 
+                        && parsleyValidateResult == false) || 
+                    (typeof parsleyValidateResult == "object"
+                        && parsleyValidateResult.length != 0)) {
+                    return;
                 }
+
+                // it looks like our phrase passes the Parsley validation 
+                // let's sanitize the phrases and hints...
+                var phrase = document.forms["phrase_input"]["phrase"+count].value;
+                phrase = phrase.toUpperCase();
+                phrase = phrase.trim();
+
+                var hint = document.forms["phrase_input"]["hint"+count].value;
+                hint = hint.toUpperCase();
+                hint = hint.trim();
+
+                // ... and add them to our arrays
+                phrases.push(phrase);
+                hints.push(hint);
             }
         }
 

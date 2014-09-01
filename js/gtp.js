@@ -38,6 +38,8 @@
         var board;
         var scorebd = new $.SCOREBOARD(game, players, currency);
         
+        // these are global pointers to elements we want to hide or show within our panel 
+        var messageContainerElement;        
         var alphabetElement;
         var wheelContainerElement;
        
@@ -556,13 +558,19 @@
             game.append(panel);
             buildClickableLetters(panel);
             buildWheel(panel);
+            buildMessage(panel);
         };
         
         buildClickableLetters = function(element){
             //Add clickable letters
             l = ich.alphabet_template();
             for (var e = 0; e < ALPHABET.length; e++) {
-                l.append(ich.letter_template({"letter": ALPHABET.charAt(e), "vowelOrConsonant": vowelOrConsonant(ALPHABET.charAt(e))}).click({"letter": ALPHABET.charAt(e)}, onLetterClick));
+                l.append(ich.letter_template(
+                    {
+                        "letter": ALPHABET.charAt(e), 
+                        "vowelOrConsonant": vowelOrConsonant(ALPHABET.charAt(e))
+                    }
+                ).click({"letter": ALPHABET.charAt(e)}, onLetterClick));
             }
 
             element.append(l);
@@ -591,6 +599,55 @@
             
             wheelContainerElement = wheelContainer;
         };
+
+        buildMessage = function(element) {
+
+            button_spin = ich.button_template(
+                {
+                    "id": "spin",
+                    "name": "spin",
+                    "color": "success",
+                    "label": "Spin the Wheel"
+                }
+            ).click({}, function() {gsm.spin();});
+            button_guess = ich.button_template(
+                {
+                    "id": "guess",
+                    "name": "guess",
+                    "color": "danger",
+                    "label": "Guess a Vowel"
+                }
+            ).click({}, function() {gsm.buyVowel();});
+            button_solve = ich.button_template(
+                {
+                    "id": "solve",
+                    "name": "solve",
+                    "color": "primary",
+                    "label": "Solve the Puzzle"
+                }
+            ).click({}, function() {gsm.solvePuzzle();});
+
+            // retrieve the message box container
+            messageContainerElement = ich.message_form_template();
+            messageFieldSetElement = ich.message_fieldset_template();
+            messageControlGroupElement = ich.message_control_group_template();
+            messageButtonListElement = ich.message_button_list_template();
+            messageLabelElement = ich.message_label_template();
+
+            messageButtonListElement.append(button_spin);
+            messageButtonListElement.append(button_guess);
+            messageButtonListElement.append(button_solve);
+            
+            messageControlGroupElement.append(messageLabelElement);
+            messageControlGroupElement.append(messageButtonListElement);
+
+            messageFieldSetElement.append(messageControlGroupElement);
+
+            messageContainerElement.append(messageFieldSetElement);
+
+            // append to panel
+            element.append(messageContainerElement);
+        }
 
         ///////////////////////////////////////////////////////////
         ////////////// GAME STATE MACHINE /////////////////////////
@@ -646,8 +703,12 @@
                     buildBoard();
                     buildPanel();
                     
+                    wheelContainerElement.hide();
                     $(".letter.vowel").hide();
                     alphabetElement.hide();
+                    messageContainerElement.hide();
+                    $("button#spin").hide();$("button#guess").hide();$("button#solve").hide();
+
                 },
                 onenterinitRound: function(event, from, to) {
                     currentRound = currentRound + 1;
@@ -681,8 +742,17 @@
 
                 },
                 onenterconsonant: function(event, from, to) {
+                    closeMessage();
+                    $(".letter.vowel").hide();
+                    wheelContainerElement.show();
                     wheel.spin();
 
+                },
+                onentervowel: function(event, from, to) {
+                    closeMessage();
+                    wheelContainerElement.fadeOut();
+                    alphabetElement.fadeIn();
+                    $(".letter.consonant").hide();
                 },
                 onentersuccess: function(event, from, to) {
 
@@ -734,6 +804,7 @@
                 onentertermTurn: function(event, from, to) { /*Go to next player and start turn. */
                     currentPlayer = currentPlayer + 1;
                     currentPlayer = currentPlayer % players;
+                    $(".letter").hide(); // hide the letters after the round has been terminated
                     gsm.initTurn(); //Init next turn.
                 },
                 onentertermRound: function(event, from, to) { /*Go to next round and start. */
@@ -873,103 +944,41 @@
 
         var vowelSpinSolveDialog = function(message) {
             message += 'Would you like to buy a vowel, spin the wheel, or solve the puzzle?';
-            new Messi(message,
-                    {title: 'Choice Stage',
-                        buttons: [
-                            {id: 0, label: 'Buy Vowel', val: 'buyVowel', class: 'btn-success'},
-                            {id: 1, label: 'Spin Again', val: 'spin', class: 'btn-danger'},
-                            {id: 2, label: 'Solve', val: 'solvePuzzle'}],
-                        callback: function(val) {
-                            if (val === 'buyVowel') {
-                                wheelContainerElement.fadeOut();
-                                alphabetElement.fadeIn();
-                                $(".letter.consonant").hide();
-                                gsm.buyVowel();
-                            }
-                            else if (val === 'spin') {
-                                $(".letter.vowel").hide();
-                                wheelContainerElement.show();
-                                gsm.spin();
-                            }
-                            else if (val === 'solvePuzzle') {
-                                gsm.solvePuzzle();
-                            }
-                            else {
-                                alert("How did you get here?");
-                                console.log("How did you get here?");
-                            }
-                        }
-                    }
-            );
+
+            $("#message-label").append(message);
+            $("button#spin").show();$("button#guess").show();$("button#solve").show();
+            messageContainerElement.show();
         };
 
         var spinSolveDialog = function(message) {
             message += 'Would you like to spin the wheel or solve the puzzle?';
-            new Messi(message,
-                    {title: 'Choice Stage',
-                        buttons: [
-                            {id: 0, label: 'Spin', val: 'spin', class: 'btn-danger'},
-                            {id: 1, label: 'Solve', val: 'solvePuzzle'}],
-                        callback: function(val) {
-                            console.log(val);
-                            if (val === 'spin') {
-                                wheelContainerElement.show();
-                                $(".letter.vowel").hide();
-                                gsm.spin();
-                            }
-                            else if (val === 'solvePuzzle') {
-                                gsm.solvePuzzle();
-                            }
-                            else {
-                                alert("How did you get here?");
-                                console.log("How did you get here?");
-                            }
-                        }
-                    }
-            );
+
+            $("#message-label").append(message);
+            $("button#spin").show();$("button#solve").show();
+            messageContainerElement.show();
         };
 
         var vowelSolveDialog = function(message) {
             message += 'Would you like to buy a vowel or solve the puzzle?';
-            new Messi(message,
-                    {title: 'Choice Stage',
-                        buttons: [
-                            {id: 0, label: 'Buy Vowel', val: 'buyVowel', class: 'btn-success'},
-                            {id: 1, label: 'Solve', val: 'solvePuzzle'}],
-                        callback: function(val) {
-                            if (val === 'buyVowel') {
-                                gsm.buyVowel();
-                            }
-                            else if (val === 'solvePuzzle') {
-                                gsm.solvePuzzle();
-                            }
-                            else {
-                                alert("How did you get here?");
-                                console.log("How did you get here?");
-                            }
-                        }
-                    }
-            );
+
+            $("#message-label").append(message);
+            $("button#guess").show();$("button#solve").show();
+            messageContainerElement.show();
         };
 
         var solveDialog = function(message) {
             message += 'You must solve the puzzle. What is your guess?';
-            new Messi(message,
-                    {title: 'Choice Stage',
-                        buttons: [
-                            {id: 0, label: 'My final answer', val: 'solvePuzzle'}],
-                        callback: function(val) {
-                            if (val === 'solvePuzzle') {
-                                gsm.solvePuzzle();
-                            }
-                            else {
-                                alert("How did you get here?");
-                                console.log("How did you get here?");
-                            }
-                        }
-                    }
-            );
+
+            $("#message-label").append(message);
+            $("button#solve").show();
+            messageContainerElement.show();
         };
+
+        var closeMessage = function() {
+            $("#message-label").empty();
+            $("button#spin").hide();$("button#guess").hide();$("button#solve").hide();
+            messageContainerElement.hide();
+        }
 
         ///////////////////////////////////////////////////////////
         ////////////// DIALOG FINISH //////////////////////////////
@@ -1031,8 +1040,8 @@
 
         onLetterClick = function(event) {
             
-            $(".letter").show(); //show all letters b/c only shows consonant or vowels
             alphabetElement.fadeOut();
+            $(".letter").show(); //show all letters b/c only shows consonant or vowels
             
             // we clicked a letter
             // we need to see if we were allowed to click that letter

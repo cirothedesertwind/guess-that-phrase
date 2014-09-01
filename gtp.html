@@ -89,6 +89,34 @@
             <div class="score grid_6"><span>-1</span></br><span class="total">-1</span></div>
         </script>
 
+        <!-- START MESSAGE --><!-- START MESSAGE --><!-- START MESSAGE -->
+
+        <script id="message_form_template" type="text/html">
+            <form class="form-horizontal"></form>
+        </script>
+
+        <script id="message_fieldset_template" type="text/html">
+            <fieldset></fieldset>
+        </script>
+
+        <script id="message_control_group_template" type="text/html">
+            <div class="control-group"></div>
+        </script>
+
+        <script id="message_button_list_template" type="text/html">
+            <div id="button-list" class="controls"></div>
+        </script>
+
+        <script id="message_label_template" type="text/html">
+            <label id="message-label" class="control-label" for="buttons"></label>
+        </script>
+
+        <script id="button_template" type="text/html">
+            <button id="{{ id }}" type="button" name="{{ name }}" class="btn btn-{{ color }}">{{ label }}</button>
+        </script>
+
+         <!-- END MESSAGE -->  <!-- END MESSAGE -->  <!-- END MESSAGE -->
+
         <script src="js/vendor/jquery-2.1.0.min.js"></script>
         <script src="js/vendor/parsley.min.js"></script>
         <script src="js/vendor/jquery.schedule.js"></script>
@@ -97,6 +125,7 @@
         <script src="js/vendor/icanhaz.min.js"></script>
         <script src="js/vendor/howler.min.js"></script>
         <script src="js/vendor/messi.js"></script>
+        <script src="js/vendor/mustache.js"></script>
         <script src="js/parsley.gtp.js"></script>
         <script src="js/wheel.gtp.js"></script>
         <script src="js/scoreboard.gtp.js"></script>
