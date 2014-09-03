@@ -729,9 +729,11 @@
                 {name: 'stop', from: 'initRound', to: 'term'}
             ],
             callbacks: {
+                onleavestate: function(event, from, to) {
+                    console.log("on leave |event:" + event + "|from:" + from + "|to:" + to + "|");
+                },
                 onenterstate: function(event, from, to) {
                     scorebd.updateScore();
-                    console.log("|event:" + event + "|from:" + from + "|to:" + to + "|");
                 },
                 onenterinitPhrases: function(event, from, to) {
                     phraseFormPopup();
@@ -791,7 +793,6 @@
                     $(".letter.consonant").hide();
                 },
                 onentersuccess: function(event, from, to) {
-
                     hideMessage();
 
                     // Check the status of the puzzle
@@ -870,7 +871,6 @@
                         depopulateBoard(); //Clear the board
                         resetAlphabet(); // reset the alphabet
                         gsm.initRound();  //Init next round
-                        hideMessage();
                     });
                     timer.once(5000);
 
@@ -930,8 +930,8 @@
                 var message = 'The game has ended. You\'re all winners!';
             }
 
-            // $("button#okay").unbind("click");
-            // $("button#okay").click({}, function() {return;});
+            $("button#okay").unbind("click");
+            $("button#okay").click({}, function() {return;});
             showMessage(message,["okay"]);
         };
 
@@ -993,7 +993,6 @@
         //---------------------------------------------------------------------
 
         var showMessage = function(message, buttons) {
-
             $("#message-label").append(message);
 
             for (var i = 0; i != buttons.length; i++) {
@@ -1005,7 +1004,6 @@
         }
 
         var hideMessage = function() {
-
             $("#message-label").empty();
 
             buttons = ["spin", "guess", "solve", "yes", "no", "cancel", "okay"];
