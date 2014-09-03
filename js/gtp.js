@@ -624,6 +624,42 @@
                 }
             ).click({}, function() {gsm.solvePuzzle();});
 
+            button_yes = ich.button_template(
+                {
+                    "id": "yes",
+                    "name": "yes",
+                    "color": "green",
+                    "label": "Yes"
+                }
+            ).click({}, function() {gsm.guessCorrectly();});
+
+            button_no = ich.button_template(
+                {
+                    "id": "no",
+                    "name": "no",
+                    "color": "red",
+                    "label": "No"
+                }
+            ).click({}, function() {gsm.guessIncorrectly();});
+
+            button_cancel = ich.button_template(
+                {
+                    "id": "cancel",
+                    "name": "cancel",
+                    "color": "yellow",
+                    "label": "Cancel"
+                }
+            ).click({}, function() {gsm.cancelGuess();});
+
+            button_okay = ich.button_template(
+                {
+                    "id": "okay",
+                    "name": "okay",
+                    "color": "green",
+                    "label": "Okay"
+                }
+            ).click({}, function() {gsm.filledPuzzle();});
+
             // retrieve the message box container
             messageContainerElement = ich.message_form_template();
             messageFieldSetElement = ich.message_fieldset_template();
@@ -634,7 +670,11 @@
             messageButtonListElement.append(button_spin);
             messageButtonListElement.append(button_guess);
             messageButtonListElement.append(button_solve);
-            
+            messageButtonListElement.append(button_yes);
+            messageButtonListElement.append(button_no);
+            messageButtonListElement.append(button_cancel);
+            messageButtonListElement.append(button_okay);
+
             messageControlGroupElement.append(messageLabelElement);
             messageControlGroupElement.append(messageButtonListElement);
 
@@ -676,7 +716,7 @@
                 // We would like a state to declare when there are no vowels
                 {name: 'declareNoMoreConsonants', from: 'success', to: 'noMoreConsonants'},
                 //The user guessed the last letter correctly
-                {name: 'filledPuzzle', from: 'success', to: 'termRound'},
+                {name: 'filledPuzzle', from: ['success','guess'], to: 'termRound'},
                 //The user has asked to solve the puzzle
                 {name: 'solvePuzzle', from: ['initTurn', 'success'], to: 'guess'},
                 //when correctly guessed, terminate round
@@ -703,8 +743,7 @@
                     wheelContainerElement.hide();
                     $(".letter.vowel").hide();
                     alphabetElement.hide();
-                    messageContainerElement.hide();
-                    $("button#spin").hide();$("button#guess").hide();$("button#solve").hide();
+                    hideMessage();
 
                 },
                 onenterinitRound: function(event, from, to) {
@@ -739,19 +778,21 @@
 
                 },
                 onenterconsonant: function(event, from, to) {
-                    closeMessage();
+                    hideMessage();
                     $(".letter.vowel").hide();
                     wheelContainerElement.show();
                     wheel.spin();
 
                 },
                 onentervowel: function(event, from, to) {
-                    closeMessage();
+                    hideMessage();
                     wheelContainerElement.fadeOut();
                     alphabetElement.fadeIn();
                     $(".letter.consonant").hide();
                 },
                 onentersuccess: function(event, from, to) {
+
+                    hideMessage();
 
                     // Check the status of the puzzle
                     if (numberOfVowelsRemaining == 0) {
@@ -794,7 +835,7 @@
                         }
                         //otherwise, the user has finished the puzzle
                     } else {
-                        readPhraseDialog();
+                        gsm.filledPuzzle();
                     }
 
                 },
@@ -806,6 +847,9 @@
                 },
                 onentertermRound: function(event, from, to) { /*Go to next round and start. */
                     endRoundSuccessSound();
+
+                    hideMessage();
+                    termRoundDialog();
 
                     //Flip all tiles
                     $(".contains_letter").addClass("flip");
@@ -822,11 +866,11 @@
                     //Add point totals of winning player to total score
                     scorebd.pushToTotalScore(currentPlayer);
 
-
                     var timer = $.timer(function() {
                         depopulateBoard(); //Clear the board
                         resetAlphabet(); // reset the alphabet
                         gsm.initRound();  //Init next round
+                        hideMessage();
                     });
                     timer.once(5000);
 
@@ -857,9 +901,11 @@
                             });
                 },
                 onenterguess: function(event, from, to) {
+                    hideMessage();
                     solveLockInDialog();
                 },
                 onenterterm: function(event, from, to) {
+                    hideMessage();
                     gameFinishDialog();
                 }
             }
@@ -883,99 +929,46 @@
             } else {
                 var message = 'The game has ended. You\'re all winners!';
             }
-            new Messi(message,
-                    {title: 'Congratulations', titleClass: 'success',
-                        buttons: [
-                            {id: 0, label: 'OK', val: 'ok', class: 'btn-success'}],
-                        callback: function(val) {
-                            if (val === 'ok') {
-                                // finish game
-                                return;
-                            } else {
-                                alert("How did you get here?");
-                                console.log("How did you get here?");
-                            }
-                        }
-                    });
+
+            // $("button#okay").unbind("click");
+            // $("button#okay").click({}, function() {return;});
+            showMessage(message,["okay"]);
         };
 
         // we display this dialog when the round finishes
-        var readPhraseDialog = function() {
-            new Messi("Please read out the completed phrase.",
-                    {title: 'Round Finish', titleClass: 'info',
-                        buttons: [
-                            {id: 0, label: 'OK', val: 'ok', class: 'btn-success'}],
-                        callback: function(val) {
-                            gsm.filledPuzzle();
-                        }
-                    }
-            );
+        var termRoundDialog = function() {
+            message = "Congratulations " + scorebd.getPlayerName(currentPlayer + 1) + "! ";
+            if ((currentRound + 1 < rounds)) {
+                message += "The next round will begin shortly!"
+            }
+            showMessage(message,[]);
         };
 
         // we display this dialog when the user chooses to solve the puzzle
         var solveLockInDialog = function() {
-            new Messi('Did ' + scorebd.getPlayerName(currentPlayer + 1) + ' guess the puzzle correctly?',
-                    {title: 'Your Answer', titleClass: 'info',
-                        buttons: [
-                            {id: 0, label: 'Correct', val: 'correct', class: 'btn-success'},
-                            {id: 1, label: 'Incorrect', val: 'incorrect', class: 'btn-danger'},
-                            {id: 2, label: 'Cancel', val: 'cancel'}],
-                        callback: function(val) {
-                            if (val === 'correct') {
-                                gsm.guessCorrectly();
-                            }
-                            else if (val === 'incorrect') {
-                                gsm.guessIncorrectly();
-                            }
-                            else if (val === 'cancel') {
-                                gsm.cancelGuess();
-                            }
-                            else {
-                                alert("How did you get here?");
-                                console.log("How did you get here?");
-                            }
-                        }
-                    }
-            );
+            message = 'Did ' + scorebd.getPlayerName(currentPlayer + 1) + ' guess the puzzle correctly?';
+            showMessage(message,["yes", "no", "cancel"]);
         };
 
         var vowelSpinSolveDialog = function(message) {
             message += 'Would you like to buy a vowel, spin the wheel, or solve the puzzle?';
-
-            $("#message-label").append(message);
-            $("button#spin").show();$("button#guess").show();$("button#solve").show();
-            messageContainerElement.show();
+            showMessage(message,["spin", "guess", "solve"]);
         };
 
         var spinSolveDialog = function(message) {
             message += 'Would you like to spin the wheel or solve the puzzle?';
-
-            $("#message-label").append(message);
-            $("button#spin").show();$("button#solve").show();
-            messageContainerElement.show();
+            showMessage(message,["spin", "solve"]);
         };
 
         var vowelSolveDialog = function(message) {
             message += 'Would you like to buy a vowel or solve the puzzle?';
-
-            $("#message-label").append(message);
-            $("button#guess").show();$("button#solve").show();
-            messageContainerElement.show();
+            showMessage(message,["guess", "solve"]);
         };
 
         var solveDialog = function(message) {
             message += 'You must solve the puzzle. What is your guess?';
-
-            $("#message-label").append(message);
-            $("button#solve").show();
-            messageContainerElement.show();
+            showMessage(message,["solve"]);
         };
-
-        var closeMessage = function() {
-            $("#message-label").empty();
-            $("button#spin").hide();$("button#guess").hide();$("button#solve").hide();
-            messageContainerElement.hide();
-        }
 
         ///////////////////////////////////////////////////////////
         ////////////// DIALOG FINISH //////////////////////////////
@@ -998,6 +991,31 @@
 
 
         //---------------------------------------------------------------------
+
+        var showMessage = function(message, buttons) {
+
+            $("#message-label").append(message);
+
+            for (var i = 0; i != buttons.length; i++) {
+                $("button#"+buttons[i]).show();
+            }
+
+            messageContainerElement.show();
+
+        }
+
+        var hideMessage = function() {
+
+            $("#message-label").empty();
+
+            buttons = ["spin", "guess", "solve", "yes", "no", "cancel", "okay"];
+
+            for (var i = 0; i != buttons.length; i++) {
+                $("button#"+buttons[i]).hide();
+            }
+
+            messageContainerElement.hide();
+        }
 
         var setRemainingConsonantsToRed = function() {
             $(".consonant:not(.letter_called)").addClass("letter_called_none");
