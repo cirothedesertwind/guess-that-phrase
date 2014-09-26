@@ -42,6 +42,7 @@
         var messageContainerElement;        
         var alphabetElement;
         var wheelContainerElement;
+        var sliceContainerElement;
        
         var currentSliceValue = -1;
 
@@ -49,9 +50,11 @@
         
         var spinFinishedCallback = function(){
             currentSliceValue = wheel.getValue();
+            currentSliceColor = wheel.getColor();
             //TODO: unlock letters here
             wheelContainerElement.fadeOut();
-            alphabetElement.fadeIn();
+            // enter the "consonant" state, where we choose consonants
+            gsm.chooseConsonant();
         };
 
         var vowelOrConsonant = function(letter) {
@@ -553,12 +556,13 @@
         buildPanel = function() {
             panel = ich.panel_template();
             game.append(panel);
-            buildClickableLetters(panel);
             buildWheel(panel);
+            buildClickableLetters();
+            buildSlice(panel);
             buildMessage(panel);
         };
         
-        buildClickableLetters = function(element){
+        buildClickableLetters = function(){
             //Add clickable letters
             l = ich.alphabet_template();
             for (var e = 0; e < ALPHABET.length; e++) {
@@ -570,8 +574,11 @@
                 ).click({"letter": ALPHABET.charAt(e)}, onLetterClick));
             }
 
-            element.append(l);
             alphabetElement = l;
+
+            // hide the alphabet
+            $(".vowel, .consonant").hide();
+            alphabetElement.hide();
         };
         
         buildWheel = function(element){
@@ -593,8 +600,22 @@
             wheel.setCallback(27, looseTurnOnWheel);
 
             //TODO: Ideally, set bankrupt callbacks here
-            
             wheelContainerElement = wheelContainer;
+            
+        };
+
+        buildSlice = function(element){
+            sliceContainer = ich.slice_container_template();
+            sliceCanvas = ich.slice_canvas_template({width: 248, height: 128});
+
+            sliceContainer.append(sliceCanvas);
+            element.append(sliceContainer);
+
+            slice_canvas = sliceCanvas.get(0);
+            slice_canvasCtx = slice_canvas.getContext("2d");
+
+            sliceContainerElement = sliceContainer;
+            
         };
 
         buildMessage = function(element) {
@@ -679,6 +700,8 @@
             messageControlGroupElement.append(messageButtonListElement);
 
             messageFieldSetElement.append(messageControlGroupElement);
+            messageFieldSetElement.append(alphabetElement);
+            messageFieldSetElement.append(sliceContainerElement);
 
             messageContainerElement.append(messageFieldSetElement);
 
@@ -702,7 +725,9 @@
                 //Start the game with the randomized starting player
                 {name: 'initTurn', from: ['initRound', 'termTurn'], to: 'initTurn'},
                 //Spin a wheel at the start of the turn, or after sucessfully calling a consonant or buying a vowel.
-                {name: 'spin', from: ['initTurn', 'success'], to: 'consonant'},
+                {name: 'spin', from: ['initTurn', 'success'], to: 'wheelspin'},
+                //Choose a consonant from the alphabet
+                {name: 'chooseConsonant', from: 'wheelspin', to: 'consonant'},
                 //Buy a vowel only after spinning the wheel and calling a consonant or buying another vowel previously
                 {name: 'buyVowel', from: 'success', to: 'vowel'},
                 //On a sucessful selection, prompt for next action
@@ -743,8 +768,6 @@
                     buildPanel();
                     
                     wheelContainerElement.hide();
-                    $(".letter.vowel").hide();
-                    alphabetElement.hide();
                     hideMessage();
 
                 },
@@ -779,18 +802,18 @@
                     gsm.success();
 
                 },
-                onenterconsonant: function(event, from, to) {
+                onenterwheelspin: function(event, from, to) {
                     hideMessage();
-                    $(".letter.vowel").hide();
                     wheelContainerElement.show();
                     wheel.spin();
 
                 },
+                onenterconsonant: function(event, from, to) {
+                    chooseConsonantDialog();
+                },
                 onentervowel: function(event, from, to) {
                     hideMessage();
-                    wheelContainerElement.fadeOut();
-                    alphabetElement.fadeIn();
-                    $(".letter.consonant").hide();
+                    chooseVowelDialog();
                 },
                 onentersuccess: function(event, from, to) {
                     hideMessage();
@@ -970,6 +993,20 @@
             showMessage(message,["solve"]);
         };
 
+        var chooseConsonantDialog = function() {
+            message = 'Please choose a consonant. The <font color="red">red</font> consonants have been selected already.';
+            $(".consonant").show();             // show consonants
+            drawSlice();                        // draw slice spin
+            sliceContainerElement.show();       // show slice spun
+            showMessage(message, []);           // show message
+        };
+
+        var chooseVowelDialog = function() {
+            message = 'Please choose a vowel. The <font color="red">red</font> vowels have been selected already.';
+            $(".vowel").show();                 // show vowels
+            showMessage(message, []);           // show message
+        };
+
         ///////////////////////////////////////////////////////////
         ////////////// DIALOG FINISH //////////////////////////////
         ///////////////////////////////////////////////////////////
@@ -999,6 +1036,8 @@
                 $("button#"+buttons[i]).show();
             }
 
+            alphabetElement.show();
+
             messageContainerElement.show();
 
         }
@@ -1012,7 +1051,39 @@
                 $("button#"+buttons[i]).hide();
             }
 
+            $(".vowel, .consonant").hide();
+            alphabetElement.hide();
+
+            clearSlice();
+            sliceContainerElement.hide();
+
             messageContainerElement.hide();
+        }
+
+        var drawSlice = function() {
+            var ctx = $("#slice_canvas").get(0).getContext("2d");
+
+            ctx.beginPath();
+            ctx.arc(100,100,50,(5/4)*Math.PI,(7/4)*Math.PI);
+            ctx.lineTo(125,125);
+            ctx.lineTo(75,125);
+            ctx.closePath();
+            ctx.fillStyle = currentSliceColor;
+            ctx.fill();
+            ctx.fillStyle = "#000000";
+            ctx.font = "10px Raleway";
+
+            str = currency + currentSliceValue.toString();
+            for (var i = 0; i < str.length; i++) {
+                ctx.fillText(str.charAt(i), 95, 90 + 10*i);
+            }
+
+            ctx.stroke();
+        }
+
+        var clearSlice = function(){
+            var ctx = $("#slice_canvas").get(0).getContext("2d");
+            ctx.clearRect(0,0,248,128);
         }
 
         var setRemainingConsonantsToRed = function() {
@@ -1053,7 +1124,7 @@
 
         onLetterClick = function(event) {
             
-            alphabetElement.fadeOut();
+            alphabetElement.hide();
             $(".letter").show(); //show all letters b/c only shows consonant or vowels
             
             // we clicked a letter

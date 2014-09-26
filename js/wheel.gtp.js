@@ -202,6 +202,10 @@
             return plugin.settings.slices[currentSlice].value;
         };
         
+        plugin.getColor = function() {
+            return plugin.settings.slices[currentSlice].color;
+        };
+
         plugin.setAllCallbacks = function(callback){
             for (var i = 0; i < plugin.settings.slices.length; i++)
                 plugin.settings.slices[i].callback = callback;
