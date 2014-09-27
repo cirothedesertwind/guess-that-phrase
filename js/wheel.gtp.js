@@ -47,7 +47,7 @@
                 {value: 250, alt: "", color: '#2E8B57', formatting: null, callback: null},//07
                 {value: 350, alt: "", color: '#FFA500', formatting: null, callback: null},//08
                 {value: 500, alt: "", color: '#00BFFF', formatting: null, callback: null},//09
-                {value: -1, alt: "BANKRUPT", color: '#0A0A0A', formatting: bankruptFormat, callback: null},//10
+                {value: 0xFFFFBA, alt: "BANKRUPT", color: '#0A0A0A', formatting: bankruptFormat, callback: null},//10
                 {value: 1000, alt: "", color: '#DAA520', formatting: null, callback: null},//11
                 {value: 800, alt: "", color: '#CC0000', formatting: null, callback: null},//12
                 {value: 400, alt: "", color: '#9400D3', formatting: null, callback: null},//13
@@ -56,7 +56,7 @@
                 {value: 500, alt: "", color: '#00BFFF', formatting: null, callback: null},//16
                 {value: 750, alt: "", color: '#808000', formatting: null, callback: null},//17
                 {value: 2500, alt: "", color: '#C0C0C0', formatting: null, callback: null},//18
-                {value: -1, alt: "BANKRUPT", color: '#0A0A0A', formatting: bankruptFormat, callback: null},//19
+                {value: 0xFFFFBA, alt: "BANKRUPT", color: '#0A0A0A', formatting: bankruptFormat, callback: null},//19
                 {value: 400, alt: "", color: '#9400D3', formatting: null, callback: null},//20
                 {value: 250, alt: "", color: '#2E8B57', formatting: null, callback: null},//21
                 {value: 300, alt: "", color: '#FF8C00', formatting: null, callback: null},//22
@@ -64,7 +64,7 @@
                 {value: 650, alt: "", color: '#FA8072', formatting: null, callback: null},//24
                 {value: 750, alt: "", color: '#808000', formatting: null, callback: null},//25
                 {value: 400, alt: "", color: '#9400D3', formatting: null, callback: null},//26
-                {value: -1, alt: "L TURN", color: '#FFFFFF', formatting: looseTurnFormat, callback: null}//27
+                {value: 0xFFFF10, alt: "L TURN", color: '#FFFFFF', formatting: looseTurnFormat, callback: null}//27
             ],
             lineHeight: 44,
             innerLineWidth: 2,

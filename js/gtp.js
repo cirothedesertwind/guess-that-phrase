@@ -53,8 +53,18 @@
             currentSliceColor = wheel.getColor();
             //TODO: unlock letters here
             wheelContainerElement.fadeOut();
-            // enter the "consonant" state, where we choose consonants
-            gsm.chooseConsonant();
+            
+            //Enter the appropriate wheel state:
+            if (currentSliceValue === 0xFFFFBA){ //bankrupt
+                gsm.bankrupt();
+            }
+            else if (currentSliceValue === 0xFFFF10){ //loose turn
+                gsm.loseTurn();
+            }
+            else{
+                //only choose consonants after a wheel spin
+                gsm.chooseConsonant();
+            }
         };
 
         var vowelOrConsonant = function(letter) {
@@ -728,14 +738,16 @@
                 {name: 'spin', from: ['initTurn', 'success'], to: 'wheelspin'},
                 //Choose a consonant from the alphabet
                 {name: 'chooseConsonant', from: 'wheelspin', to: 'consonant'},
+                //Go bankrupt
+                {name: 'bankrupt', from: 'wheelspin', to: 'bankruptState'},
                 //Buy a vowel only after spinning the wheel and calling a consonant or buying another vowel previously
                 {name: 'buyVowel', from: 'success', to: 'vowel'},
                 //On a sucessful selection, prompt for next action
-                {name: 'success', from: ['consonant', 'vowel', 'initTurn', 'noMoreVowels', 'noMoreConsonants'], to: 'success'},
+                {name: 'success', from: ['consonant', 'vowel', 'wheelspin', 'noMoreVowels', 'noMoreConsonants'], to: 'success'},
                 //Lose your turn by incorrectly calling a letter or vowel,
                 //landing on bankrupt or loose your trn, or incorrectly
                 //solving the puzzle (triggered by facilitator clicking button)
-                {name: 'loseTurn', from: ['consonant', 'vowel', 'spin'], to: 'termTurn'},
+                {name: 'loseTurn', from: ['consonant', 'vowel', 'wheelspin'], to: 'termTurn'},
                 // We would like a state to declare when there are no vowels
                 {name: 'declareNoMoreVowels', from: 'success', to: 'noMoreVowels'},
                 // We would like a state to declare when there are no vowels
@@ -799,14 +811,22 @@
 
                 },
                 onenterinitTurn: function(event, from, to) {
-                    gsm.success();
-
+                    hideMessage();
+                    wheelContainerElement.hide();
+                    
+                    var message = scorebd.getPlayerName(currentPlayer + 1) + ", it is your turn. ";
+                    spinSolveDialog(message);
                 },
                 onenterwheelspin: function(event, from, to) {
                     hideMessage();
                     wheelContainerElement.show();
                     wheel.spin();
 
+                },
+                onenterbankruptState: function(event, from, to){
+                   //loose current winnings
+                   scoreboard.setScore(currentPlayer, 0);
+                   gsm.termTurn();
                 },
                 onenterconsonant: function(event, from, to) {
                     chooseConsonantDialog();
@@ -816,6 +836,8 @@
                     chooseVowelDialog();
                 },
                 onentersuccess: function(event, from, to) {
+                     //success only occurs after a correct guess and no
+                     //bankrupt or loose turn
                     hideMessage();
 
                     // Check the status of the puzzle
@@ -839,11 +861,8 @@
                     }
                     isPuzzleSolved = allVowelsFound && allConsonantsFound;
 
-                    if (from === "initTurn") {
-                        var message = scorebd.getPlayerName(currentPlayer + 1) + ", it is your turn. ";
-                    } else {
-                        var message = scorebd.getPlayerName(currentPlayer + 1) + ", it is still your turn. ";
-                    }
+                    var message = scorebd.getPlayerName(currentPlayer + 1) + ", it is still your turn. ";
+                    
                     /*If puzzle is unsolved, prompt (iff vowels available & player has >= $250, incude vowel option) */
                     if (!isPuzzleSolved) {
                         if (!allVowelsFound && !allConsonantsFound && scorebd.score(currentPlayer) >= 250) {
