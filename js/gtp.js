@@ -98,7 +98,7 @@
                 var MessiStrPhraseLabel = 'Phrase ' + phraseNum + ': ';
 
                 // the first phrase is required
-                if (phraseNum == 1) {
+                if (phraseNum === 1) {
                     var required = "required";
                 } else {
                     var required = "";
@@ -111,7 +111,7 @@
                 MessiStrContent += MessiStrPhraseLabel + MessiStrPhraseInput + space + MessiStrHintLabel + MessiStrHintContent;
 
                 // add a new line after every hint entry box
-                if (phraseNum != rounds) {
+                if (phraseNum !== rounds) {
                     MessiStrContent += '<br>';
                 }
             }
@@ -150,13 +150,13 @@
                 row = ich.board_row_template();
 
                 //Specialize the row
-                if (r == 0 || r == 3) {
+                if (r === 0 || r === 3) {
                     columns = ROW12_TILES;
-                    row.addClass("grid_12 prefix_3")
+                    row.addClass("grid_12 prefix_3");
                 }
                 else { //r == 1 || r == 2
                     columns = ROW14_TILES;
-                    row.addClass("grid_14 prefix_2")
+                    row.addClass("grid_14 prefix_2");
                 }
 
                 board.append(row);
@@ -175,7 +175,7 @@
 
             // finally, we create the hint template
             board.append(ich.puzzle_hint_template({hint: ""}));
-        }
+        };
 
         /*end board setup*/
         populateBoard = function() {
@@ -256,9 +256,9 @@
                 window.alert("Phrase is too long for the board.");
             }
             //checks words for length
-            for (var i = 0; i != words.length; i++) {
+            for (var i = 0; i !== words.length; i++) {
                 if (words[i].length >= 14) {
-                    alert("You can't have words that are 14 characters or longer.")
+                    alert("You can't have words that are 14 characters or longer.");
                 }
             }
 
@@ -297,7 +297,7 @@
                                 word = words[i];
                                 len += word.length;
                             }
-                            if (len != 0) {
+                            if (len !== 0) {
                                 len += choose[0] - 1;
                             }
                             len_per_line[0] = len;
@@ -307,7 +307,7 @@
                                 word = words[i + choose[0]];
                                 len += word.length;
                             }
-                            if (len != 0) {
+                            if (len !== 0) {
                                 len += choose[1] - 1;
                             }
                             len_per_line[1] = len;
@@ -317,7 +317,7 @@
                                 word = words[i + choose[0] + choose[1]];
                                 len += word.length;
                             }
-                            if (len != 0) {
+                            if (len !== 0) {
                                 len += choose[2] - 1;
                             }
                             len_per_line[2] = len;
@@ -327,7 +327,7 @@
                                 word = words[i + choose[0] + choose[1] + choose[2]];
                                 len += word.length;
                             }
-                            if (len != 0) {
+                            if (len !== 0) {
                                 len += choose[3] - 1;
                             }
                             len_per_line[3] = len;
@@ -360,7 +360,7 @@
                                 }
                             }
 
-                            if (num_lines_occupied == 2) {
+                            if (num_lines_occupied === 2) {
                                 var count = 0;
                                 var temp_len_per_line = new Array(4);
                                 temp_len_per_line[0] = 0;
@@ -369,13 +369,13 @@
                                 tmp_choose[3] = 0;
                                 for (var i = 0; i < len_per_line.length; i++) {
                                     if (len_per_line[i] > 0) {
-                                        if (count == 1) {
+                                        if (count === 1) {
                                             temp_len_per_line[2] = len_per_line[i];
                                             tmp_choose[2] = choose[i];
                                             len_per_line = temp_len_per_line;
                                             break;
                                         }
-                                        else if (count == 0) {
+                                        else if (count === 0) {
                                             temp_len_per_line[1] = len_per_line[i];
                                             tmp_choose[1] = choose[i];
                                             count++;
@@ -383,24 +383,24 @@
                                     }
                                 }
 
-                            } else if (num_lines_occupied == 3) {
+                            } else if (num_lines_occupied === 3) {
                                 var count = 0;
                                 var temp_len_per_line = new Array(4);
                                 temp_len_per_line[3] = 0;
                                 tmp_choose[3] = 0;
                                 for (var i = 0; i < len_per_line.length; i++) {
                                     if (len_per_line[i] > 0) {
-                                        if (count == 2) {
+                                        if (count === 2) {
                                             temp_len_per_line[2] = len_per_line[i];
                                             tmp_choose[2] = choose[i];
                                             len_per_line = temp_len_per_line;
                                             break;
-                                        } else if (count == 1) {
+                                        } else if (count === 1) {
                                             temp_len_per_line[1] = len_per_line[i];
                                             tmp_choose[1] = choose[i];
                                             count++;
                                         }
-                                        else if (count == 0) {
+                                        else if (count === 0) {
                                             temp_len_per_line[0] = len_per_line[i];
                                             tmp_choose[0] = choose[i];
                                             count++;
@@ -423,7 +423,7 @@
 
                             for (var i = 0; i < 4; i++) {
                                 for (var j = i + 1; j < 4; j++) {
-                                    if ((len_per_line[i] != 0) && (len_per_line[j] != 0)) {
+                                    if ((len_per_line[i] !== 0) && (len_per_line[j] !== 0)) {
                                         tmp_diff = Math.abs(len_per_line[i] - len_per_line[j]);
                                         if (tmp_diff > cur_max_diff) {
                                             cur_max_diff = tmp_diff;
@@ -433,7 +433,7 @@
                             }
 
                             // if we enter here, it means we found a new best option!
-                            if ((cur_max_diff < min_max_diff) && (cur_max_diff != -1)) {
+                            if ((cur_max_diff < min_max_diff) && (cur_max_diff !== -1)) {
                                 min_max_diff = cur_max_diff;
 
                                 // we need to set the indent variable to center the text
@@ -491,7 +491,7 @@
             }
 
             // we need to alert the user if they gave a phrase that could not fit on the board
-            if (successful_find == false) {
+            if (successful_find === false) {
                 alert("could not fit the phrase on the board");
             }
 
@@ -511,7 +511,7 @@
                     wordIndex[count] = index;
                     count++;
                     index += words_per_line[i][j].length;
-                    if (j != words_per_line[i].length - 1) {
+                    if (j !== words_per_line[i].length - 1) {
                         index += 1;
                     }
                 }
@@ -559,7 +559,7 @@
         resetAlphabet = function() {
             //Set all the letters so they are uncalled
             $(".letter").removeClass("letter_called letter_called_none");
-        }
+        };
         
         ///////////////////////////////////////////////////////////
         ////////////// CHARACTER //////// /////////////////////////
@@ -746,7 +746,7 @@
 
             // append to panel
             element.append(messageContainerElement);
-        }
+        };
 
         ///////////////////////////////////////////////////////////
         ////////////// GAME STATE MACHINE /////////////////////////
@@ -871,7 +871,7 @@
                     hideMessage();
 
                     // Check the status of the puzzle
-                    if (numberOfVowelsRemaining == 0) {
+                    if (numberOfVowelsRemaining === 0) {
                         allVowelsFound = true;
                         if (!noMoreVowelsAlertDisplayed) {
                             gsm.declareNoMoreVowels();
@@ -880,7 +880,7 @@
                     } else {
                         allVowelsFound = false;
                     }
-                    if (numberOfConsonantsRemaining == 0) {
+                    if (numberOfConsonantsRemaining === 0) {
                         allConsonantsFound = true;
                         if (!noMoreConsonantsAlertDisplayed) {
                             gsm.declareNoMoreConsonants();
@@ -991,10 +991,10 @@
         // we display this message when we finish the game 
         var gameFinishDialog = function() {
             var winners = scorebd.getWinners();
-            if (winners.length == 1) {
+            if (winners.length === 1) {
                 var winner = scorebd.getPlayerName(winners[0] + 1);
                 var message = 'The game has ended. ' + winner + ' is the winner!';
-            } else if (winners.length == 2) {
+            } else if (winners.length === 2) {
                 var winner1 = scorebd.getPlayerName(winners[0] + 1);
                 var winner2 = scorebd.getPlayerName(winners[1] + 1);
                 var message = 'The game has ended. It seems there is a tie. ' + winner1 + ' and ' + winner2 + ' are both winners!';
@@ -1011,7 +1011,7 @@
         var termRoundDialog = function() {
             message = "Congratulations " + scorebd.getPlayerName(currentPlayer + 1) + "! ";
             if ((currentRound + 1 < rounds)) {
-                message += "The next round will begin shortly!"
+                message += "The next round will begin shortly!";
             }
             showMessage(message,[]);
         };
@@ -1081,7 +1081,7 @@
         var showMessage = function(message, buttons) {
             $("#message-label").append(message);
 
-            for (var i = 0; i != buttons.length; i++) {
+            for (var i = 0; i !== buttons.length; i++) {
                 $("button#"+buttons[i]).show();
             }
 
@@ -1089,14 +1089,14 @@
 
             messageContainerElement.show();
 
-        }
+        };
 
         var hideMessage = function() {
             $("#message-label").empty();
 
             buttons = ["spin", "guess", "solve", "yes", "no", "cancel", "okay"];
 
-            for (var i = 0; i != buttons.length; i++) {
+            for (var i = 0; i !== buttons.length; i++) {
                 $("button#"+buttons[i]).hide();
             }
 
@@ -1107,7 +1107,7 @@
             sliceContainerElement.hide();
 
             messageContainerElement.hide();
-        }
+        };
 
         var drawSlice = function() {
             var ctx = $("#slice_canvas").get(0).getContext("2d");
@@ -1128,12 +1128,12 @@
             }
 
             ctx.stroke();
-        }
+        };
 
         var clearSlice = function(){
             var ctx = $("#slice_canvas").get(0).getContext("2d");
             ctx.clearRect(0,0,248,128);
-        }
+        };
 
         var setRemainingConsonantsToRed = function() {
             $(".consonant:not(.letter_called)").addClass("letter_called_none");
@@ -1146,7 +1146,7 @@
         var countVowels = function(phrase) {
 
             // for every vowel...
-            for (var i = 0; i != VOWELS.length; i++) {
+            for (var i = 0; i !== VOWELS.length; i++) {
 
                 // if the vowel is in our phrase...
                 if (phrase.indexOf(VOWELS[i]) !== -1) {
@@ -1160,7 +1160,7 @@
         var countConsonants = function(phrase) {
 
             // for every consonant...
-            for (var i = 0; i != CONSONANTS.length; i++) {
+            for (var i = 0; i !== CONSONANTS.length; i++) {
 
                 // if the consonant is in our phrase...
                 if (phrase.indexOf(CONSONANTS[i]) !== -1) {
