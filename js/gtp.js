@@ -844,7 +844,9 @@
                     }
 
                 },
-                onenterinitTurn: function(event, from, to) {
+                onenterinitTurn: function(event, from, to) {                  
+                    $(".scoreboad").children().eq(currentPlayer).addClass("active");
+                    
                     hideMessage();
                     wheelContainerElement.hide();
                     
@@ -917,6 +919,8 @@
 
                 },
                 onentertermTurn: function(event, from, to) { /*Go to next player and start turn. */
+                   //remove highlight from all three scores
+                    $(".score").removeClass("active");
                     currentPlayer = currentPlayer + 1;
                     currentPlayer = currentPlayer % players;
                     alphabetElement.hide(); // hide the letters after the round has been terminated

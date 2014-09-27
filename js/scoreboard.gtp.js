@@ -30,7 +30,7 @@
             plugin.el = el;
             plugin.currency = currency;
             // code goes here
-
+            
             playerTotalScore = new Array(players);
             playerTotalScore[0] = 0;
             playerTotalScore[1] = 0;
@@ -94,7 +94,8 @@
 
         plugin.updateScore = function() {
             scoreboard.children().each(function(i) {
-                $(this).children().first().text(plugin.currency + playerScore[i]);
+                $(this).children().first().text("Player " + (i+1));
+                $(this).children().eq(2).text(plugin.currency + playerScore[i]);
                 $(this).children().last().text(plugin.currency + playerTotalScore[i]);
             });
         };
