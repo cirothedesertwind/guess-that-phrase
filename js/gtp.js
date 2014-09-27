@@ -36,6 +36,8 @@
 
         var game = $(".game");
         var board;
+        var character;
+        var isCharacterOnLeft = true;
         var scorebd = new $.SCOREBOARD(game, players, currency);
         
         // these are global pointers to elements we want to hide or show within our panel 
@@ -558,6 +560,33 @@
             //Set all the letters so they are uncalled
             $(".letter").removeClass("letter_called letter_called_none");
         }
+        
+        ///////////////////////////////////////////////////////////
+        ////////////// CHARACTER //////// /////////////////////////
+        ///////////////////////////////////////////////////////////
+
+        buildCharacter = function() {
+            character = ich.character_template();
+            $("body").append(character);
+            character.css("top", 90);
+            character.css("left", 150);
+        };
+
+        flipTiles = function (letter) {
+            letterSet = $("p.letter:contains('" + letter + "')").parents(".cell");
+            letterSet.addClass("flip");
+
+            //only move if there are characters to be flipped
+            if (letterSet.length > 0) {
+                if (isCharacterOnLeft) {
+                    character.velocity({translateX: "1100px"});
+                    isCharacterOnLeft = false;
+                } else {
+                    character.velocity({translateX: "0px"});
+                    isCharacterOnLeft = true;
+                }
+            }
+        };
 
         ///////////////////////////////////////////////////////////
         ////////////// PANEL //////////// /////////////////////////
@@ -778,6 +807,7 @@
                 onenterinitGame: function(event, from, to) {
                     buildBoard();
                     buildPanel();
+                    buildCharacter();
                     
                     wheelContainerElement.hide();
                     hideMessage();
@@ -1161,9 +1191,8 @@
 
             if (((vowelState && vowelChosen) || (consonantState && consonantChosen)) && isWhite) {
 
-                letterSet = $("p.letter:contains('" + letter + "')").parents(".cell");
-                count = letterSet.length;
-                letterSet.addClass("flip");
+                count = $("p.letter:contains('" + letter + "')").parents(".cell").length;
+                flipTiles(letter);
 
                 // regardless if there are or aren't any selected vowels in 
                 // the phrase, we must deduct $250 from the current player's 
