@@ -1193,6 +1193,9 @@
 
                 count = $("p.letter:contains('" + letter + "')").parents(".cell").length;
                 flipTiles(letter);
+                
+                //unbind selected letter.
+                $(".letter_" + letter).unbind();
 
                 // regardless if there are or aren't any selected vowels in 
                 // the phrase, we must deduct $250 from the current player's 
