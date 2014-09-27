@@ -605,6 +605,11 @@
             //Add clickable letters
             l = ich.alphabet_template();
             for (var e = 0; e < ALPHABET.length; e++) {
+                //add special break for two lines of letters
+                if (e === 15){ //Magic number
+                    l.append("</br>");
+                }
+                
                 l.append(ich.letter_template(
                     {
                         "letter": ALPHABET.charAt(e), 
