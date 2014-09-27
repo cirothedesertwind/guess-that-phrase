@@ -827,6 +827,10 @@
                         scorebd.newRound();
 
                         scorebd.updateScore();
+                        
+                        //enable all letters per round after being disabled
+                        //by the previous round
+                        $(".alphabet span.letter").prop("disabled", false);
 
                         // we should check if phrases with no consonants or no
                         // vowels are introduced to the game
@@ -1194,9 +1198,8 @@
                 count = $("p.letter:contains('" + letter + "')").parents(".cell").length;
                 flipTiles(letter);
                 
-                //unbind selected letter.
-                $(".letter_" + letter).unbind();
-
+                //disable selected letter.
+                $(".letter_" + letter).prop("disabled", true);
                 // regardless if there are or aren't any selected vowels in 
                 // the phrase, we must deduct $250 from the current player's 
                 // score
