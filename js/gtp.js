@@ -932,6 +932,8 @@
                     gsm.initTurn(); //Init next turn.
                 },
                 onentertermRound: function(event, from, to) { /*Go to next round and start. */
+                    //remove highlight from all three scores
+                    $(".score").removeClass("active");
                     endRoundSuccessSound();
 
                     hideMessage();
