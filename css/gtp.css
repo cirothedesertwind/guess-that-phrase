@@ -55,12 +55,15 @@ span.letter.letter_called_none {
     background: rgb(255, 255, 0); /* this is an yellow */
 }
 
-.score {
-    border-top: 25px solid #b3b3b3; 
-}
 
-.score.active {
-    border-top: 25px solid yellow;
+.score:not(.active) {
+    opacity: .4;
 }
 
 /* Start Message Panel*/
+
+fieldset {
+    padding: 0;
+    padding-top: 0.25em;
+    margin: 0;
+}
