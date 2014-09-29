@@ -1199,58 +1199,47 @@
                 
                 // we clicked a letter
                 // we need to see if we were allowed to click that letter
-                var letter = event.data.letter;
-                var vowelChosen = ['A', 'E', 'I', 'O', 'U'].indexOf(letter) !== -1;
+                letter = event.data.letter;
+                vowelChosen = ['A', 'E', 'I', 'O', 'U'].indexOf(letter) !== -1;
                 //var vowelChosen = VOWELS_REGEX.test(letter);
-                var consonantChosen = !vowelChosen;
-                var vowelState = gsm.is("vowel");
-                var consonantState = gsm.is("consonant");
-                var isGray = $(".letter_" + letter).hasClass("letter_called");
-                var isRed = $(".letter_" + letter).hasClass("letter_called_none");
-                var isWhite = !(isGray || isRed);
+                consonantChosen = !vowelChosen;
 
-                if (((vowelState && vowelChosen) || (consonantState && consonantChosen)) && isWhite) {
+                count = $("p.letter:contains('" + letter + "')").parents(".cell").length;
+                flipTiles(letter);
+                
+                // regardless if there are or aren't any selected vowels in 
+                // the phrase, we must deduct $250 from the current player's 
+                // score
+                if (vowelChosen) {
+                    scorebd.buyVowel(currentPlayer);
+                }
 
-                    count = $("p.letter:contains('" + letter + "')").parents(".cell").length;
-                    flipTiles(letter);
-                    
-                    //disable selected letter.
-                    $(".letter_" + letter).prop("disabled", true);
-                    // regardless if there are or aren't any selected vowels in 
-                    // the phrase, we must deduct $250 from the current player's 
-                    // score
+                if (count > 0) {
+
+                    correctConsonantOrVowelSound(); // play the "correctGuess" sound
+
+                    $(".letter_" + letter).addClass("letter_called");
+
+                    // handle choosing an unselected vowel 
                     if (vowelChosen) {
-                        scorebd.buyVowel(currentPlayer);
+                        numberOfVowelsRemaining -= 1;
+
+                        // handle choosing an unselected consonant
+                    } else {
+                        numberOfConsonantsRemaining -= 1;
+                        scorebd.earnConsonant(currentPlayer, count * currentSliceValue);
                     }
 
-                    if (count > 0) {
+                    //Successful selection
+                    gsm.success();
 
-                        correctConsonantOrVowelSound(); // play the "correctGuess" sound
+                } else { /*Count == 0 */
+                    incorrectConsonantOrVowelSound(); // Play the "incorrectGuess sound"
 
-                        $(".letter_" + letter).addClass("letter_called");
+                    $(".letter_" + letter).addClass("letter_called_none");
 
-                        // handle choosing an unselected vowel 
-                        if (vowelChosen) {
-                            numberOfVowelsRemaining -= 1;
-
-                            // handle choosing an unselected consonant
-                        } else {
-                            numberOfConsonantsRemaining -= 1;
-                            scorebd.earnConsonant(currentPlayer, count * currentSliceValue);
-                        }
-
-                        //Successful selection
-                        gsm.success();
-
-                    } else { /*Count == 0 */
-                        incorrectConsonantOrVowelSound(); // Play the "incorrectGuess sound"
-
-                        $(".letter_" + letter).addClass("letter_called_none");
-
-                        //There were no instances of that letter therefore player looses turn
-                        gsm.loseTurn();
-                    }
-
+                    //There were no instances of that letter therefore player looses turn
+                    gsm.loseTurn();
                 }
             }
         };
