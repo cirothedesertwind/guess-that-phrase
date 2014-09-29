@@ -34,6 +34,7 @@ span.letter.letter_called_none {
 	padding-left: 10%; 
 	padding-right: 10%; 
 	padding-top: 10px;
+	text-align: center;
 }
 
 #message-label {

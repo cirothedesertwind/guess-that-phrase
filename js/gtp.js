@@ -1058,7 +1058,7 @@
         };
 
         var chooseConsonantDialog = function() {
-            message = 'Please choose a consonant. The <font color="red">red</font> consonants have been selected already.';
+            message = 'Please choose a consonant.';
             $(".consonant").show();             // show consonants
             drawSlice();                        // draw slice spin
             sliceContainerElement.show();       // show slice spun
@@ -1066,7 +1066,7 @@
         };
 
         var chooseVowelDialog = function() {
-            message = 'Please choose a vowel. The <font color="red">red</font> vowels have been selected already.';
+            message = 'Please choose a vowel.';
             $(".vowel").show();                 // show vowels
             showMessage(message, []);           // show message
         };
