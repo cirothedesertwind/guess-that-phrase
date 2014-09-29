@@ -48,6 +48,11 @@
        
         var currentSliceValue = -1;
 
+        // shift due to border thickness of slice
+        var shift               = 5;                
+        var slice_canvas_width  = 200 + shift;
+        var slice_canvas_height = 200 + shift;
+
         console.log(scorebd);
         
         var spinFinishedCallback = function(){
@@ -650,7 +655,9 @@
 
         buildSlice = function(element){
             sliceContainer = ich.slice_container_template();
-            sliceCanvas = ich.slice_canvas_template({width: 248, height: 128});
+            sliceCanvas = ich.slice_canvas_template(
+                {width: slice_canvas_width, 
+                 height: slice_canvas_height});
 
             sliceContainer.append(sliceCanvas);
             element.append(sliceContainer);
@@ -1126,19 +1133,27 @@
         var drawSlice = function() {
             var ctx = $("#slice_canvas").get(0).getContext("2d");
 
+            circle_origin_x = 70+shift;
+            circle_origin_y = 100+shift;
+            circle_radius   = 100;
+            start_angle     = Math.PI*(5/4);
+            end_angle       = Math.PI*(7/4);   
+
             ctx.beginPath();
-            ctx.arc(100,100,50,(5/4)*Math.PI,(7/4)*Math.PI);
-            ctx.lineTo(125,125);
-            ctx.lineTo(75,125);
+            ctx.lineWidth = 3;
+            ctx.fillStyle = "#000000";
+            ctx.arc(circle_origin_x,circle_origin_y,circle_radius,start_angle,end_angle);
+            ctx.lineTo(90+shift,200+shift);
+            ctx.lineTo(50+shift,200+shift);
             ctx.closePath();
             ctx.fillStyle = currentSliceColor;
             ctx.fill();
             ctx.fillStyle = "#000000";
-            ctx.font = "10px Raleway";
+            ctx.font = "2em Raleway";
 
             str = currency + currentSliceValue.toString();
             for (var i = 0; i < str.length; i++) {
-                ctx.fillText(str.charAt(i), 95, 90 + 10*i);
+                ctx.fillText(str.charAt(i), 60+shift, 60 + 30*i + shift);
             }
 
             ctx.stroke();
@@ -1146,7 +1161,7 @@
 
         var clearSlice = function(){
             var ctx = $("#slice_canvas").get(0).getContext("2d");
-            ctx.clearRect(0,0,248,128);
+            ctx.clearRect(0,0,slice_canvas_width,slice_canvas_height);
         };
 
         var setRemainingConsonantsToRed = function() {
