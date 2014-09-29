@@ -31,6 +31,7 @@ span.letter.letter_called_none {
 
 /* End Message Panel*/ 
 .message-box {
+	text-align: center;
 }
 
 #message-label {
