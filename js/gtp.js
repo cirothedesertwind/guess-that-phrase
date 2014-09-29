@@ -833,9 +833,8 @@
 
                         scorebd.updateScore();
                         
-                        //enable all letters per round after being disabled
-                        //by the previous round
-                        $(".alphabet span.letter").prop("disabled", false);
+                        //re-enable all letters by re-setting the attributes to yes
+                        $("span.letter").attr("data-clickable", "yes");
 
                         // we should check if phrases with no consonants or no
                         // vowels are introduced to the game
@@ -1188,29 +1187,26 @@
 
         onLetterClick = function(event) {
             
-            alphabetElement.hide();
-            $(".letter").show(); //show all letters b/c only shows consonant or vowels
-            
-            // we clicked a letter
-            // we need to see if we were allowed to click that letter
+            if ($(event.target).attr("data-clickable")==="yes") {
 
-            var letter = event.data.letter;
-            var vowelChosen = ['A', 'E', 'I', 'O', 'U'].indexOf(letter) !== -1;
-            //var vowelChosen = VOWELS_REGEX.test(letter);
-            var consonantChosen = !vowelChosen;
-            var vowelState = gsm.is("vowel");
-            var consonantState = gsm.is("consonant");
-            var isGray = $(".letter_" + letter).hasClass("letter_called");
-            var isRed = $(".letter_" + letter).hasClass("letter_called_none");
-            var isWhite = !(isGray || isRed);
+                // we shouldn't be able to click the letter again this round
+                // so we set the attribute to no 
+                $(event.target).attr("data-clickable", "no"); 
 
-            if (((vowelState && vowelChosen) || (consonantState && consonantChosen)) && isWhite) {
+                // hide the alphabet
+                alphabetElement.hide();
+                $(".letter").show(); //show all letters b/c only shows consonant or vowels
+                
+                // we clicked a letter
+                // we need to see if we were allowed to click that letter
+                letter = event.data.letter;
+                vowelChosen = ['A', 'E', 'I', 'O', 'U'].indexOf(letter) !== -1;
+                //var vowelChosen = VOWELS_REGEX.test(letter);
+                consonantChosen = !vowelChosen;
 
                 count = $("p.letter:contains('" + letter + "')").parents(".cell").length;
                 flipTiles(letter);
                 
-                //disable selected letter.
-                $(".letter_" + letter).prop("disabled", true);
                 // regardless if there are or aren't any selected vowels in 
                 // the phrase, we must deduct $250 from the current player's 
                 // score
@@ -1245,7 +1241,6 @@
                     //There were no instances of that letter therefore player looses turn
                     gsm.loseTurn();
                 }
-
             }
         };
 
