@@ -31,6 +31,7 @@ span.letter.letter_called_none {
 
 /* End Message Panel*/ 
 .message-box {
+    text-align: center;
 }
 
 #message-label {
@@ -59,5 +60,10 @@ span.letter.letter_called_none {
     opacity: .4;
 }
 
-
 /* Start Message Panel*/
+
+fieldset {
+    padding: 0;
+    padding-top: 0.25em;
+    margin: 0;
+}
