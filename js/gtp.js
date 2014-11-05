@@ -65,7 +65,7 @@
             if (currentSliceValue === 0xFFFFBA){ //bankrupt
                 gsm.bankrupt();
             }
-            else if (currentSliceValue === 0xFFFF10){ //loose turn
+            else if (currentSliceValue === 0xFFFF10){ //lose turn
                 gsm.loseTurn();
             }
             else{
@@ -784,7 +784,7 @@
                 //Buy a vowel only after spinning the wheel and calling a consonant or buying another vowel previously
                 {name: 'buyVowel', from: 'success', to: 'vowel'},
                 //On a sucessful selection, prompt for next action
-                {name: 'success', from: ['consonant', 'vowel', 'wheelspin', 'noMoreVowels', 'noMoreConsonants'], to: 'success'},
+                {name: 'success', from: ['initTurn', 'consonant', 'vowel', 'wheelspin', 'noMoreVowels', 'noMoreConsonants'], to: 'success'},
                 //Lose your turn by incorrectly calling a letter or vowel,
                 //landing on bankrupt or loose your trn, or incorrectly
                 //solving the puzzle (triggered by facilitator clicking button)
@@ -821,6 +821,7 @@
                     buildPanel();
                     buildCharacter();
                     
+                    // initialiy make these items hidden for now
                     wheelContainerElement.hide();
                     hideMessage();
 
@@ -855,23 +856,18 @@
                     }
 
                 },
-                onenterinitTurn: function(event, from, to) {                  
+                onenterinitTurn: function(event, from, to) {        
+                    // set the correct players stuff to be highlighted          
                     $(".scoreboad").children().eq(currentPlayer).addClass("active");
-                    
-                    hideMessage();
-                    wheelContainerElement.hide();
-                    
-                    var message = scorebd.getPlayerName(currentPlayer + 1) + ", it is your turn. ";
-                    spinSolveDialog(message);
+                    gsm.success();
                 },
                 onenterwheelspin: function(event, from, to) {
                     hideMessage();
-                    wheelContainerElement.show();
+                    wheelContainerElement.fadeIn();
                     wheel.spin();
-
                 },
                 onenterbankruptState: function(event, from, to){
-                   //loose current winnings
+                   //lose current winnings
                    scoreboard.setScore(currentPlayer, 0);
                    gsm.termTurn();
                 },
@@ -884,7 +880,7 @@
                 },
                 onentersuccess: function(event, from, to) {
                      //success only occurs after a correct guess and no
-                     //bankrupt or loose turn
+                     //bankrupt or lose turn
                     hideMessage();
 
                     // Check the status of the puzzle
@@ -908,7 +904,12 @@
                     }
                     isPuzzleSolved = allVowelsFound && allConsonantsFound;
 
-                    var message = scorebd.getPlayerName(currentPlayer + 1) + ", it is still your turn. ";
+                    // What should the message to the user be
+                    if (from === "initTurn") {
+                        var message = scorebd.getPlayerName(currentPlayer + 1) + ", it is your turn. ";
+                    } else {
+                        var message = scorebd.getPlayerName(currentPlayer + 1) + ", it is still your turn. ";
+                    }
                     
                     /*If puzzle is unsolved, prompt (iff vowels available & player has >= $250, incude vowel option) */
                     if (!isPuzzleSolved) {
@@ -1253,7 +1254,7 @@
 
                     $(".letter_" + letter).addClass("letter_called_none");
 
-                    //There were no instances of that letter therefore player looses turn
+                    //There were no instances of that letter therefore player loses turn
                     gsm.loseTurn();
                 }
             }
