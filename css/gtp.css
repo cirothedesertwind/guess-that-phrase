@@ -67,3 +67,9 @@ fieldset {
     padding-top: 0.25em;
     margin: 0;
 }
+
+#canvas {
+    transform: rotateX(60deg);
+    position: absolute;
+    top: -300px;
+}
