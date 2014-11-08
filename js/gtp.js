@@ -573,8 +573,9 @@
         buildCharacter = function() {
             character = ich.character_template();
             $("body").append(character);
-            character.css("top", 90);
-            character.css("left", 150);
+            character.css("top", 200);
+            character.css("left", 200);
+            character.sprite({fps: 6, no_of_frames: 3}).active();
         };
 
         flipTiles = function (letter) {
