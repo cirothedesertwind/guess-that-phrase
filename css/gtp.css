@@ -73,3 +73,13 @@ fieldset {
     position: absolute;
     top: -300px;
 }
+
+#player_name_input_form {
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+}
+
+.player_name_input {
+    width: 200px;
+}

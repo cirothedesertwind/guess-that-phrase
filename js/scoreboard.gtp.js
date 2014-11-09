@@ -9,6 +9,7 @@
     $.SCOREBOARD = function(el, players, currency, options) {
 
         var scoreboard;
+        var playerName;
         var playerTotalScore;
         var playerScore;
         var currency;
@@ -30,6 +31,11 @@
             plugin.el = el;
             plugin.currency = currency;
             // code goes here
+
+            playerName = new Array(players);
+            playerName[0] = "Player 1";
+            playerName[1] = "Player 2";
+            playerName[2] = "Player 3";
             
             playerTotalScore = new Array(players);
             playerTotalScore[0] = 0;
@@ -94,7 +100,7 @@
 
         plugin.updateScore = function() {
             scoreboard.children().each(function(i) {
-                $(this).children().first().text("Player " + (i+1));
+                $(this).children().first().text(playerName[i]);
                 $(this).children().eq(2).text(plugin.currency + playerScore[i]);
                 $(this).children().last().text(plugin.currency + playerTotalScore[i]);
             });
@@ -111,6 +117,10 @@
 
             return arrayOfWinners;
         };
+
+        plugin.setPlayerName = function(player, name) {
+            playerName[player] = name;
+        }
 
         plugin.getPlayerName = function(player) {
             return "<b>Player " + player + "</b>";

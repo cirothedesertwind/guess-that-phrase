@@ -156,6 +156,21 @@ Messi.prototype = {
             }
         }
 
+        // if there is a form inside the Messi message, we should process it
+        if (($("form").length == 1) && ($("form").attr("id") == "player_name_input_form")){
+
+            // let's store the phrases and their associated hints
+            for (var count = 1; count <= players; count++) {
+
+                // let's sanitize the phrases and hints...
+                var player = document.forms["player_name_input_form"]["player"+count].value;
+                player = player.trim();
+
+                // ... and add them to our arrays
+                scorebd.setPlayerName(count-1, player);
+            }
+        }
+
         /////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////// END MODIFIED CODE /////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////////////

@@ -10,6 +10,7 @@
         TOTAL_TILES = ROW12_TILES * 2 + ROW14_TILES * 2;
         PUNCTUATION_REGEX = /[\.\,\?\!\@\#\$\%\^\&\*\(\)\<\>\:\;\']/g;
         PRHASE_REGEX = "^[A-Za-z\\s\\.\\,\\?\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\<\\>\\:\\;\\']+$"; //This is a string to use with parsley.js
+        PLAYER_REGEX = "^[A-Za-z\\s\\.\\,\\?\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\<\\>\\:\\;\\']+$"; //This is a string to use with parsley.js
         ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         VOWELS_REGEX = /[AEIOU]/g;
         VOWELS = "AEIOU";
@@ -20,7 +21,7 @@
         hints = new Array();
         rounds = 5;
 
-        var players = 3;
+        players = 3;
 
         var currentPlayer = 0;
 
@@ -38,7 +39,7 @@
         var board;
         var character;
         var isCharacterOnLeft = true;
-        var scorebd = new $.SCOREBOARD(game, players, currency);
+        scorebd = new $.SCOREBOARD(game, players, currency);
         
         // these are global pointers to elements we want to hide or show within our panel 
         var messageContainerElement;        
@@ -125,6 +126,36 @@
 
             new Messi(MessiStr,
                     {title: 'Set your phrases', titleClass: 'info',
+                        buttons: [{id: 0, label: 'Ok', val: 'Ok', class: 'btn-success'}],
+                        callback: function(val) {
+                            gsm.initPlayerNames();
+                        }
+                    });
+        };
+
+        playerNamesFormPopup = function() {
+
+            // The Messi message needs to be broken down for maintainability
+            var MessiStrExplanation = '<p>Please input each player\'s name in the boxes below. Each name is limited to 12 characters maximum.</p>';
+            var MessiStrFormOpening = '<form id="player_name_input_form" action="" data-parsley-validate>';
+            var MessiStrContent = "";
+            for (var phraseNum = 1; phraseNum <= players; phraseNum++) {
+                var MessiStrPhraseLabel = 'Player ' + phraseNum + ': ';
+
+                var MessiStrPhraseInput = '<input type="text" class="player_name_input" id="player' + phraseNum + '" name="player' + phraseNum + '" data-parsley-maxlength="12" data-parsley-fits pattern="' + PLAYER_REGEX + '" required>';
+
+                MessiStrContent += MessiStrPhraseLabel + MessiStrPhraseInput;
+
+                // add a new line after every hint entry box
+                if (phraseNum !== rounds) {
+                    MessiStrContent += '<br>';
+                }
+            }
+            var MessiStrFormClosing = '</form>';
+            var MessiStr = MessiStrExplanation + MessiStrFormOpening + MessiStrContent + MessiStrFormClosing;
+
+            new Messi(MessiStr,
+                    {title: 'Set Your Player Names', titleClass: 'info',
                         buttons: [{id: 0, label: 'Ok', val: 'Ok', class: 'btn-success'}],
                         callback: function(val) {
                             gsm.initGame();
@@ -770,8 +801,10 @@
             events: [
                 //Create the Phrases
                 {name: 'initPhrases', from: 'init', to: 'initPhrases'},
+                //Set the players' names
+                {name: 'initPlayerNames', from: 'initPhrases', to: 'initPlayerNames'},
                 //Init the game
-                {name: 'initGame', from: 'initPhrases', to: 'initGame'},
+                {name: 'initGame', from: 'initPlayerNames', to: 'initGame'},
                 //Init round when either starting the game or ending the last round
                 {name: 'initRound', from: ['initGame', 'termRound'], to: 'initRound'},
                 //Start the game with the randomized starting player
@@ -816,6 +849,9 @@
                 },
                 onenterinitPhrases: function(event, from, to) {
                     phraseFormPopup();
+                },
+                onenterinitPlayerNames: function(event, from, to) {
+                    playerNamesFormPopup();
                 },
                 onenterinitGame: function(event, from, to) {
                     buildBoard();
