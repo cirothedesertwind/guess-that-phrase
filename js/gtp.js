@@ -118,7 +118,7 @@
             gsm.loseTurn();
         };
 
-        var looseTurnOnWheel = function(context) {
+        var loseTurnOnWheel = function(context) {
             bankruptOrLooseTurnSound();
             gsm.loseTurn();
         };
@@ -708,7 +708,7 @@
             wheel.setAllCallbacks(spinFinishedCallback);
             wheel.setCallback(10, bankruptifyOnWheel);
             wheel.setCallback(19, bankruptifyOnWheel);
-            wheel.setCallback(27, looseTurnOnWheel);
+            wheel.setCallback(27, loseTurnOnWheel);
 
             //TODO: Ideally, set bankrupt callbacks here
             wheelContainerElement = wheelContainer;
@@ -850,7 +850,7 @@
                 //On a sucessful selection, prompt for next action
                 {name: 'success', from: ['initTurn', 'consonant', 'vowel', 'wheelspin', 'noMoreVowels', 'noMoreConsonants'], to: 'success'},
                 //Lose your turn by incorrectly calling a letter or vowel,
-                //landing on bankrupt or loose your trn, or incorrectly
+                //landing on bankrupt or lose your trn, or incorrectly
                 //solving the puzzle (triggered by facilitator clicking button)
                 {name: 'loseTurn', from: ['consonant', 'vowel', 'wheelspin'], to: 'termTurn'},
                 // We would like a state to declare when there are no vowels
