@@ -21,6 +21,137 @@
     GTP.tiles.PRHASE_REGEX = "^[A-Za-z\\s\\.\\,\\?\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\<\\>\\:\\;\\']+$"; //This is a string to use with parsley.js
     GTP.tiles.PLAYER_REGEX = "^[A-Za-z\\s\\.\\,\\?\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\<\\>\\:\\;\\']+$"; //This is a string to use with parsley.js
 
+    GTP.gamestate = {};
+    GTP.gamestate.currentSliceValue = -1;
+    GTP.gamestate.currentPlayer = -1;
+
+    GTP.dialog = {};
+    GTP.dialog.shift = 5;
+    GTP.dialog.drawSlice = function () {
+        var ctx = $("#slice_canvas").get(0).getContext("2d");
+
+        circle_origin_x = 70 + GTP.dialog.shift;
+        circle_origin_y = 100 + GTP.dialog.shift;
+        circle_radius = 100;
+        start_angle = Math.PI * (5 / 4);
+        end_angle = Math.PI * (7 / 4);
+
+        ctx.beginPath();
+        ctx.lineWidth = 3;
+        ctx.fillStyle = "#000000";
+        ctx.arc(circle_origin_x, circle_origin_y, circle_radius, start_angle, end_angle);
+        ctx.lineTo(90 + GTP.dialog.shift, 200 + GTP.dialog.shift);
+        ctx.lineTo(50 + GTP.dialog.shift, 200 + GTP.dialog.shift);
+        ctx.closePath();
+        ctx.fillStyle = currentSliceColor;
+        ctx.fill();
+        ctx.fillStyle = "#000000";
+        ctx.font = "2em Raleway";
+
+        str = GTP.ruleset.CURRENCY + GTP.gamestate.currentSliceValue.toString();
+        for (var i = 0; i < str.length; i++) {
+            ctx.fillText(str.charAt(i), 60 + GTP.dialog.shift, 60 + 30 * i + GTP.dialog.shift);
+        }
+
+        ctx.stroke();
+    };
+    GTP.dialog.clearSlice = function () {
+        var ctx = $("#slice_canvas").get(0).getContext("2d");
+        ctx.clearRect(0, 0, 200 + GTP.dialog.shift, 200 + GTP.dialog.shift);
+    };
+    GTP.dialog.alphabetElement = null;
+    GTP.dialog.messageContainerElement = null;
+    GTP.dialog.sliceContainerElement = null;
+    GTP.dialog.showMessage = function (message, tuple) {
+        $("#message-label").append(message);
+
+        for (var i = 0; i < tuple.length; i++) {
+            $("button#" + tuple[i]).show();
+        }
+
+        GTP.dialog.alphabetElement.show();
+
+        GTP.dialog.messageContainerElement.show();
+    };
+    GTP.dialog.hideMessage = function () {
+        $("#message-label").empty();
+
+        buttons = ["spin", "guess", "solve", "yes", "no", "cancel", "okay"];
+
+        for (var i = 0; i !== buttons.length; i++) {
+            $("button#" + buttons[i]).hide();
+        }
+
+        $(".vowel, .consonant").hide();
+        GTP.dialog.alphabetElement.hide();
+
+        GTP.dialog.clearSlice();
+        GTP.dialog.sliceContainerElement.hide();
+
+        GTP.dialog.messageContainerElement.hide();
+    };
+    // we display this message when we finish the game 
+    GTP.dialog.gameFinishDialog = function () {
+        var winners = scorebd.getWinners();
+        if (winners.length === 1) {
+            var winner = scorebd.getPlayerName(winners[0] + 1);
+            var message = 'The game has ended. ' + winner + ' is the winner!';
+        } else if (winners.length === 2) {
+            var winner1 = scorebd.getPlayerName(winners[0] + 1);
+            var winner2 = scorebd.getPlayerName(winners[1] + 1);
+            var message = 'The game has ended. It seems there is a tie. ' + winner1 + ' and ' + winner2 + ' are both winners!';
+        } else {
+            var message = 'The game has ended. You\'re all winners!';
+        }
+
+        $("button#okay").unbind("click");
+        $("button#okay").click({}, function () {
+            return;
+        });
+        GTP.dialog.showMessage(message, ["okay"]);
+    };
+    // we display this dialog when the round finishes
+    GTP.dialog.termRoundDialog = function () {
+        message = "Congratulations " + scorebd.getPlayerName(+1) + "! ";
+        if ((currentRound + 1 < GTP.ruleset.ROUNDS)) {
+            message += "The next round will begin shortly!";
+        }
+        GTP.dialog.showMessage(message, []);
+    };
+    // we display this dialog when the user chooses to solve the puzzle
+    GTP.dialog.solveLockInDialog = function () {
+        message = 'Did ' + scorebd.getPlayerName(+1) + ' guess the puzzle correctly?';
+        GTP.dialog.showMessage(message, ["yes", "no", "cancel"]);
+    };
+    GTP.dialog.vowelSpinSolveDialog = function (message) {
+        message += 'Would you like to buy a vowel, spin the wheel, or solve the puzzle?';
+        GTP.dialog.showMessage(message, ["spin", "guess", "solve"]);
+    };
+    GTP.dialog.spinSolveDialog = function (message) {
+        message += 'Would you like to spin the wheel or solve the puzzle?';
+        GTP.dialog.showMessage(message, ["spin", "solve"]);
+    };
+    GTP.dialog.vowelSolveDialog = function (message) {
+        message += 'Would you like to buy a vowel or solve the puzzle?';
+        GTP.dialog.showMessage(message, ["guess", "solve"]);
+    };
+    GTP.dialog.solveDialog = function (message) {
+        message += 'You must solve the puzzle. What is your guess?';
+        GTP.dialog.showMessage(message, ["solve"]);
+    };
+    GTP.dialog.chooseConsonantDialog = function () {
+        message = 'Please choose a consonant.';
+        $(".consonant").show();             // show consonants
+        GTP.dialog.drawSlice();                        // draw slice spin
+        GTP.dialog.sliceContainerElement.show();       // show slice spun
+        GTP.dialog.showMessage(message, []);           // show message
+    };
+    GTP.dialog.chooseVowelDialog = function () {
+        message = 'Please choose a vowel.';
+        $(".vowel").show();                 // show vowels
+        GTP.dialog.showMessage(message, []);           // show message
+    };
+
     GTP.sounds = {};
     GTP.sounds.newGameSound = function () {
         //Add sound effect for new puzzle
@@ -96,9 +227,6 @@
         phrases = new Array();
         hints = new Array();
 
-
-        var currentPlayer = 0;
-
         var currentRound = -1;
 
         var isPuzzleSolved = false;
@@ -113,32 +241,22 @@
         var isCharacterOnLeft = true;
         scorebd = new $.SCOREBOARD(game, GTP.ruleset.PLAYERS, GTP.ruleset.CURRENCY);
 
-        // these are global pointers to elements we want to hide or show within our panel 
-        var messageContainerElement;
-        var alphabetElement;
         var wheelContainerElement;
-        var sliceContainerElement;
 
-        var currentSliceValue = -1;
-
-        // shift due to border thickness of slice
-        var shift = 5;
-        var slice_canvas_width = 200 + shift;
-        var slice_canvas_height = 200 + shift;
 
         console.log(scorebd);
 
         var spinFinishedCallback = function () {
-            currentSliceValue = wheel.getValue();
+            GTP.gamestate.currentSliceValue = wheel.getValue();
             currentSliceColor = wheel.getColor();
             //TODO: unlock letters here
             wheelContainerElement.fadeOut();
 
             //Enter the appropriate wheel state:
-            if (currentSliceValue === 0xFFFFBA) { //bankrupt
+            if (GTP.gamestate.currentSliceValue === 0xFFFFBA) { //bankrupt
                 gsm.bankrupt();
             }
-            else if (currentSliceValue === 0xFFFF10) { //lose turn
+            else if (GTP.gamestate.currentSliceValue === 0xFFFF10) { //lose turn
                 gsm.loseTurn();
             }
             else {
@@ -155,7 +273,7 @@
         };
 
         var bankruptifyOnWheel = function (context) {
-            scorebd.setScore(currentPlayer, 0);
+            scorebd.setScore(GTP.gamestate.currentPlayer, 0);
             GTP.sounds.bankruptOrLooseTurnSound();
             gsm.loseTurn();
         };
@@ -727,11 +845,11 @@
                 ).click({"letter": GTP.lang.ALPHABET.charAt(e)}, onLetterClick));
             }
 
-            alphabetElement = l;
+            GTP.dialog.alphabetElement = l;
 
             // hide the alphabet
             $(".vowel, .consonant").hide();
-            alphabetElement.hide();
+            GTP.dialog.alphabetElement.hide();
         };
 
         buildWheel = function (element) {
@@ -760,8 +878,8 @@
         buildSlice = function (element) {
             sliceContainer = ich.slice_container_template();
             sliceCanvas = ich.slice_canvas_template(
-                    {width: slice_canvas_width,
-                        height: slice_canvas_height});
+                    {width: 200 + GTP.dialog.shift,
+                        height: 200 + GTP.dialog.shift});
 
             sliceContainer.append(sliceCanvas);
             element.append(sliceContainer);
@@ -769,7 +887,7 @@
             slice_canvas = sliceCanvas.get(0);
             slice_canvasCtx = slice_canvas.getContext("2d");
 
-            sliceContainerElement = sliceContainer;
+            GTP.dialog.sliceContainerElement = sliceContainer;
 
         };
 
@@ -851,7 +969,7 @@
             });
 
             // retrieve the message box container
-            messageContainerElement = ich.message_form_template();
+            GTP.dialog.messageContainerElement = ich.message_form_template();
             messageFieldSetElement = ich.message_fieldset_template();
             messageControlGroupElement = ich.message_control_group_template();
             messageButtonListElement = ich.message_button_list_template();
@@ -869,13 +987,13 @@
             messageControlGroupElement.append(messageButtonListElement);
 
             messageFieldSetElement.append(messageControlGroupElement);
-            messageFieldSetElement.append(alphabetElement);
-            messageFieldSetElement.append(sliceContainerElement);
+            messageFieldSetElement.append(GTP.dialog.alphabetElement);
+            messageFieldSetElement.append(GTP.dialog.sliceContainerElement);
 
-            messageContainerElement.append(messageFieldSetElement);
+            GTP.dialog.messageContainerElement.append(messageFieldSetElement);
 
             // append to panel
-            element.append(messageContainerElement);
+            element.append(GTP.dialog.messageContainerElement);
         };
 
         ///////////////////////////////////////////////////////////
@@ -946,7 +1064,7 @@
 
                     // initialiy make these items hidden for now
                     wheelContainerElement.hide();
-                    hideMessage();
+                    GTP.dialog.hideMessage();
 
                 },
                 onenterinitRound: function (event, from, to) {
@@ -972,7 +1090,7 @@
                         numberOfConsonantsRemaining = GTP.util.countConsonants(phrase);
                         numberOfVowelsRemaining = GTP.util.countVowels(phrase);
 
-                        currentPlayer = Math.floor((Math.random() * GTP.ruleset.PLAYERS));
+                        GTP.gamestate.currentPlayer = Math.floor((Math.random() * GTP.ruleset.PLAYERS));
                         gsm.initTurn();
                     } else {
                         gsm.stop();
@@ -981,30 +1099,30 @@
                 },
                 onenterinitTurn: function (event, from, to) {
                     // set the correct players stuff to be highlighted          
-                    $(".scoreboad").children().eq(currentPlayer).addClass("active");
+                    $(".scoreboad").children().eq(GTP.gamestate.currentPlayer).addClass("active");
                     gsm.success();
                 },
                 onenterwheelspin: function (event, from, to) {
-                    hideMessage();
+                    GTP.dialog.hideMessage();
                     wheelContainerElement.fadeIn();
                     wheel.spin();
                 },
                 onenterbankruptState: function (event, from, to) {
                     //lose current winnings
-                    scoreboard.setScore(currentPlayer, 0);
+                    scoreboard.setScore(GTP.gamestate.currentPlayer, 0);
                     gsm.termTurn();
                 },
                 onenterconsonant: function (event, from, to) {
-                    chooseConsonantDialog();
+                    GTP.dialog.chooseConsonantDialog();
                 },
                 onentervowel: function (event, from, to) {
-                    hideMessage();
-                    chooseVowelDialog();
+                    GTP.dialog.hideMessage();
+                    GTP.dialog.chooseVowelDialog();
                 },
                 onentersuccess: function (event, from, to) {
                     //success only occurs after a correct guess and no
                     //bankrupt or lose turn
-                    hideMessage();
+                    GTP.dialog.hideMessage();
 
                     // Check the status of the puzzle
                     if (numberOfVowelsRemaining === 0) {
@@ -1029,23 +1147,23 @@
 
                     // What should the message to the user be
                     if (from === "initTurn") {
-                        var message = scorebd.getPlayerName(currentPlayer + 1) + ", it is your turn. ";
+                        var message = scorebd.getPlayerName(GTP.gamestate.currentPlayer + 1) + ", it is your turn. ";
                     } else {
-                        var message = scorebd.getPlayerName(currentPlayer + 1) + ", it is still your turn. ";
+                        var message = scorebd.getPlayerName(GTP.gamestate.currentPlayer + 1) + ", it is still your turn. ";
                     }
 
                     /*If puzzle is unsolved, prompt (iff vowels available & player has >= $250, incude vowel option) */
                     if (!isPuzzleSolved) {
-                        if (!allVowelsFound && !allConsonantsFound && scorebd.score(currentPlayer) >= 250) {
-                            vowelSpinSolveDialog(message);
+                        if (!allVowelsFound && !allConsonantsFound && scorebd.score(GTP.gamestate.currentPlayer) >= 250) {
+                            GTP.dialog.vowelSpinSolveDialog(message);
                         }
-                        else if (!allVowelsFound && scorebd.score(currentPlayer) > 250) {
-                            vowelSolveDialog(message);
+                        else if (!allVowelsFound && scorebd.score(GTP.gamestate.currentPlayer) > 250) {
+                            GTP.dialog.vowelSolveDialog(message);
                         }
                         else if (!allConsonantsFound) {
-                            spinSolveDialog(message);
+                            GTP.dialog.spinSolveDialog(message);
                         } else {
-                            solveDialog(message);
+                            GTP.dialog.solveDialog(message);
                         }
                         //otherwise, the user has finished the puzzle
                     } else {
@@ -1056,18 +1174,18 @@
                 onentertermTurn: function (event, from, to) { /*Go to next player and start turn. */
                     //remove highlight from all three scores
                     $(".score").removeClass("active");
-                    currentPlayer = currentPlayer + 1;
-                    currentPlayer = currentPlayer % GTP.ruleset.PLAYERS;
-                    alphabetElement.hide(); // hide the letters after the round has been terminated
+                    GTP.gamestate.currentPlayer = GTP.gamestate.currentPlayer + 1;
+                    GTP.gamestate.currentPlayer = GTP.gamestate.currentPlayer % GTP.ruleset.PLAYERS;
+                    GTP.dialog.alphabetElement.hide(); // hide the letters after the round has been terminated
                     gsm.initTurn(); //Init next turn.
                 },
                 onentertermRound: function (event, from, to) { /*Go to next round and start. */
                     //remove highlight from all three scores
                     $(".score").removeClass("active");
-                    endRoundSuccessSound();
+                    GTP.sounds.endRoundSuccessSound();
 
-                    hideMessage();
-                    termRoundDialog();
+                    GTP.dialog.hideMessage();
+                    GTP.dialog.termRoundDialog();
 
                     //Flip all tiles
                     $(".contains_letter").addClass("flip");
@@ -1079,10 +1197,10 @@
                     noMoreConsonantsAlertDisplayed = false;
 
                     //winning player minimum wins 1000.
-                    scorebd.setScore(currentPlayer, Math.max(1000, scorebd.score(currentPlayer)));
+                    scorebd.setScore(GTP.gamestate.currentPlayer, Math.max(1000, scorebd.score(GTP.gamestate.currentPlayer)));
 
                     //Add point totals of winning player to total score
-                    scorebd.pushToTotalScore(currentPlayer);
+                    scorebd.pushToTotalScore(GTP.gamestate.currentPlayer);
 
                     var timer = $.timer(function () {
                         depopulateBoard(); //Clear the board
@@ -1118,94 +1236,17 @@
                             });
                 },
                 onenterguess: function (event, from, to) {
-                    hideMessage();
-                    solveLockInDialog();
+                    GTP.dialog.hideMessage();
+                    GTP.dialog.solveLockInDialog();
                 },
                 onenterterm: function (event, from, to) {
-                    hideMessage();
-                    gameFinishDialog();
+                    GTP.dialog.hideMessage();
+                    GTP.dialog.gameFinishDialog();
                 }
             }
 
         });
 
-        ///////////////////////////////////////////////////////////
-        ////////////// DIALOG START ///////////////////////////////
-        ///////////////////////////////////////////////////////////
-
-        // we display this message when we finish the game 
-        var gameFinishDialog = function () {
-            var winners = scorebd.getWinners();
-            if (winners.length === 1) {
-                var winner = scorebd.getPlayerName(winners[0] + 1);
-                var message = 'The game has ended. ' + winner + ' is the winner!';
-            } else if (winners.length === 2) {
-                var winner1 = scorebd.getPlayerName(winners[0] + 1);
-                var winner2 = scorebd.getPlayerName(winners[1] + 1);
-                var message = 'The game has ended. It seems there is a tie. ' + winner1 + ' and ' + winner2 + ' are both winners!';
-            } else {
-                var message = 'The game has ended. You\'re all winners!';
-            }
-
-            $("button#okay").unbind("click");
-            $("button#okay").click({}, function () {
-                return;
-            });
-            showMessage(message, ["okay"]);
-        };
-
-        // we display this dialog when the round finishes
-        var termRoundDialog = function () {
-            message = "Congratulations " + scorebd.getPlayerName(currentPlayer + 1) + "! ";
-            if ((currentRound + 1 < GTP.ruleset.ROUNDS)) {
-                message += "The next round will begin shortly!";
-            }
-            showMessage(message, []);
-        };
-
-        // we display this dialog when the user chooses to solve the puzzle
-        var solveLockInDialog = function () {
-            message = 'Did ' + scorebd.getPlayerName(currentPlayer + 1) + ' guess the puzzle correctly?';
-            showMessage(message, ["yes", "no", "cancel"]);
-        };
-
-        var vowelSpinSolveDialog = function (message) {
-            message += 'Would you like to buy a vowel, spin the wheel, or solve the puzzle?';
-            showMessage(message, ["spin", "guess", "solve"]);
-        };
-
-        var spinSolveDialog = function (message) {
-            message += 'Would you like to spin the wheel or solve the puzzle?';
-            showMessage(message, ["spin", "solve"]);
-        };
-
-        var vowelSolveDialog = function (message) {
-            message += 'Would you like to buy a vowel or solve the puzzle?';
-            showMessage(message, ["guess", "solve"]);
-        };
-
-        var solveDialog = function (message) {
-            message += 'You must solve the puzzle. What is your guess?';
-            showMessage(message, ["solve"]);
-        };
-
-        var chooseConsonantDialog = function () {
-            message = 'Please choose a consonant.';
-            $(".consonant").show();             // show consonants
-            drawSlice();                        // draw slice spin
-            sliceContainerElement.show();       // show slice spun
-            showMessage(message, []);           // show message
-        };
-
-        var chooseVowelDialog = function () {
-            message = 'Please choose a vowel.';
-            $(".vowel").show();                 // show vowels
-            showMessage(message, []);           // show message
-        };
-
-        ///////////////////////////////////////////////////////////
-        ////////////// DIALOG FINISH //////////////////////////////
-        ///////////////////////////////////////////////////////////
 
         ///////////////////////////////////////////////////////////
         //////////////////////  START /////////////////////////////
@@ -1225,70 +1266,7 @@
 
         //---------------------------------------------------------------------
 
-        var showMessage = function (message, buttons) {
-            $("#message-label").append(message);
 
-            for (var i = 0; i !== buttons.length; i++) {
-                $("button#" + buttons[i]).show();
-            }
-
-            alphabetElement.show();
-
-            messageContainerElement.show();
-
-        };
-
-        var hideMessage = function () {
-            $("#message-label").empty();
-
-            buttons = ["spin", "guess", "solve", "yes", "no", "cancel", "okay"];
-
-            for (var i = 0; i !== buttons.length; i++) {
-                $("button#" + buttons[i]).hide();
-            }
-
-            $(".vowel, .consonant").hide();
-            alphabetElement.hide();
-
-            clearSlice();
-            sliceContainerElement.hide();
-
-            messageContainerElement.hide();
-        };
-
-        var drawSlice = function () {
-            var ctx = $("#slice_canvas").get(0).getContext("2d");
-
-            circle_origin_x = 70 + shift;
-            circle_origin_y = 100 + shift;
-            circle_radius = 100;
-            start_angle = Math.PI * (5 / 4);
-            end_angle = Math.PI * (7 / 4);
-
-            ctx.beginPath();
-            ctx.lineWidth = 3;
-            ctx.fillStyle = "#000000";
-            ctx.arc(circle_origin_x, circle_origin_y, circle_radius, start_angle, end_angle);
-            ctx.lineTo(90 + shift, 200 + shift);
-            ctx.lineTo(50 + shift, 200 + shift);
-            ctx.closePath();
-            ctx.fillStyle = currentSliceColor;
-            ctx.fill();
-            ctx.fillStyle = "#000000";
-            ctx.font = "2em Raleway";
-
-            str = GTP.ruleset.CURRENCY + currentSliceValue.toString();
-            for (var i = 0; i < str.length; i++) {
-                ctx.fillText(str.charAt(i), 60 + shift, 60 + 30 * i + shift);
-            }
-
-            ctx.stroke();
-        };
-
-        var clearSlice = function () {
-            var ctx = $("#slice_canvas").get(0).getContext("2d");
-            ctx.clearRect(0, 0, slice_canvas_width, slice_canvas_height);
-        };
 
         var setRemainingConsonantsToRed = function () {
             $(".consonant:not(.letter_called)").addClass("letter_called_none");
@@ -1307,7 +1285,7 @@
                 $(event.target).attr("data-clickable", "no");
 
                 // hide the alphabet
-                alphabetElement.hide();
+                GTP.dialog.alphabetElement.hide();
                 $(".letter").show(); //show all letters b/c only shows consonant or vowels
 
                 // we clicked a letter
@@ -1323,7 +1301,7 @@
                 // the phrase, we must deduct $250 from the current player's 
                 // score
                 if (vowelChosen) {
-                    scorebd.buyVowel(currentPlayer);
+                    scorebd.buyVowel(GTP.gamestate.currentPlayer);
                 }
 
                 if (count > 0) {
@@ -1339,7 +1317,7 @@
                         // handle choosing an unselected consonant
                     } else {
                         numberOfConsonantsRemaining -= 1;
-                        scorebd.earnConsonant(currentPlayer, count * currentSliceValue);
+                        scorebd.earnConsonant(GTP.gamestate.currentPlayer, count * GTP.gamestate.currentSliceValue);
                     }
 
                     //Successful selection
