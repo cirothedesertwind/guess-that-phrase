@@ -9,9 +9,9 @@
     GTP.lang.CONSONANTS = "BCDFGHJKLMNPQRSTVWXYZ";
 
     GTP.ruleset = {};
-    GTP.ruleset.rounds = 5;
-    GTP.ruleset.players = 3;
-    GTP.ruleset.currency = '$';
+    GTP.ruleset.ROUNDS = 5;
+    GTP.ruleset.PLAYERS = 3;
+    GTP.ruleset.CURRENCY = '$';
 
     GTP.tiles = {};
 
@@ -72,7 +72,7 @@
         var board;
         var character;
         var isCharacterOnLeft = true;
-        scorebd = new $.SCOREBOARD(game, GTP.ruleset.players, GTP.ruleset.currency);
+        scorebd = new $.SCOREBOARD(game, GTP.ruleset.PLAYERS, GTP.ruleset.CURRENCY);
 
         // these are global pointers to elements we want to hide or show within our panel 
         var messageContainerElement;
@@ -133,7 +133,7 @@
             var MessiStrExplanation = '<p>Please input the phrases you like to use in this game.</p>';
             var MessiStrFormOpening = '<form id="phrase_input" action="" data-parsley-validate>';
             var MessiStrContent = "";
-            for (var phraseNum = 1; phraseNum <= GTP.ruleset.rounds; phraseNum++) {
+            for (var phraseNum = 1; phraseNum <= GTP.ruleset.ROUNDS; phraseNum++) {
                 var MessiStrPhraseLabel = 'Phrase ' + phraseNum + ': ';
 
                 // the first phrase is required
@@ -150,7 +150,7 @@
                 MessiStrContent += MessiStrPhraseLabel + MessiStrPhraseInput + space + MessiStrHintLabel + MessiStrHintContent;
 
                 // add a new line after every hint entry box
-                if (phraseNum !== GTP.ruleset.rounds) {
+                if (phraseNum !== GTP.ruleset.ROUNDS) {
                     MessiStrContent += '<br>';
                 }
             }
@@ -172,7 +172,7 @@
             var MessiStrExplanation = '<p>Please input each player\'s name in the boxes below. Each name is limited to 12 characters maximum.</p>';
             var MessiStrFormOpening = '<form id="player_name_input_form" action="" data-parsley-validate>';
             var MessiStrContent = "";
-            for (var phraseNum = 1; phraseNum <= GTP.ruleset.players; phraseNum++) {
+            for (var phraseNum = 1; phraseNum <= GTP.ruleset.PLAYERS; phraseNum++) {
                 var MessiStrPhraseLabel = 'Player ' + phraseNum + ': ';
 
                 var MessiStrPhraseInput = '<input type="text" class="player_name_input" id="player' + phraseNum + '" name="player' + phraseNum + '" data-parsley-maxlength="12" data-parsley-fits pattern="' + GTP.tiles.PLAYER_REGEX + '" required>';
@@ -180,7 +180,7 @@
                 MessiStrContent += MessiStrPhraseLabel + MessiStrPhraseInput;
 
                 // add a new line after every hint entry box
-                if (phraseNum !== GTP.ruleset.rounds) {
+                if (phraseNum !== GTP.ruleset.ROUNDS) {
                     MessiStrContent += '<br>';
                 }
             }
@@ -916,7 +916,7 @@
                     /*If there are more rounds to play, start by randomizing the
                      onenterstate: function(event, from, to start player and start the player's turn. */
 
-                    if (currentRound < GTP.ruleset.rounds) {
+                    if (currentRound < GTP.ruleset.ROUNDS) {
 
                         newGameSound();
                         populateBoard();
@@ -933,7 +933,7 @@
                         numberOfConsonantsRemaining = GTP.util.countConsonants(phrase);
                         numberOfVowelsRemaining = GTP.util.countVowels(phrase);
 
-                        currentPlayer = Math.floor((Math.random() * GTP.ruleset.players));
+                        currentPlayer = Math.floor((Math.random() * GTP.ruleset.PLAYERS));
                         gsm.initTurn();
                     } else {
                         gsm.stop();
@@ -1018,7 +1018,7 @@
                     //remove highlight from all three scores
                     $(".score").removeClass("active");
                     currentPlayer = currentPlayer + 1;
-                    currentPlayer = currentPlayer % GTP.ruleset.players;
+                    currentPlayer = currentPlayer % GTP.ruleset.PLAYERS;
                     alphabetElement.hide(); // hide the letters after the round has been terminated
                     gsm.initTurn(); //Init next turn.
                 },
@@ -1118,7 +1118,7 @@
         // we display this dialog when the round finishes
         var termRoundDialog = function () {
             message = "Congratulations " + scorebd.getPlayerName(currentPlayer + 1) + "! ";
-            if ((currentRound + 1 < GTP.ruleset.rounds)) {
+            if ((currentRound + 1 < GTP.ruleset.ROUNDS)) {
                 message += "The next round will begin shortly!";
             }
             showMessage(message, []);
@@ -1238,7 +1238,7 @@
             ctx.fillStyle = "#000000";
             ctx.font = "2em Raleway";
 
-            str = GTP.ruleset.currency + currentSliceValue.toString();
+            str = GTP.ruleset.CURRENCY + currentSliceValue.toString();
             for (var i = 0; i < str.length; i++) {
                 ctx.fillText(str.charAt(i), 60 + shift, 60 + 30 * i + shift);
             }
