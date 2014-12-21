@@ -129,7 +129,7 @@ Messi.prototype = {
         if (($("form").length == 1) && ($("form").attr("id") == "phrase_input")){
 
             // let's store the phrases and their associated hints
-            for (var count = 1; count <= rounds; count++) {
+            for (var count = 1; count <= GTP.ruleset.rounds; count++) {
 
                 // Parsley check
                 var parsleyValidateResult = $('#phrase'+count).parsley().isValid();
@@ -160,7 +160,7 @@ Messi.prototype = {
         if (($("form").length == 1) && ($("form").attr("id") == "player_name_input_form")){
 
             // let's store the phrases and their associated hints
-            for (var count = 1; count <= players; count++) {
+            for (var count = 1; count <= GTP.ruleset.players; count++) {
 
                 // let's sanitize the phrases and hints...
                 var player = document.forms["player_name_input_form"]["player"+count].value;
