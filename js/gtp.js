@@ -1,52 +1,52 @@
-(function($) {
-    
+(function ($) {
+
     GTP = {};
-    
-    GTP.lang = {}
+
+    GTP.lang = {};
     GTP.lang.code = "en";
     GTP.lang.ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     GTP.lang.VOWELS = "AEIOU";
     GTP.lang.CONSONANTS = "BCDFGHJKLMNPQRSTVWXYZ";
-    
+
     GTP.ruleset = {};
     GTP.ruleset.rounds = 5;
     GTP.ruleset.players = 3;
     GTP.ruleset.currency = '$';
-    
+
     GTP.tiles = {};
-    
+
     GTP.tiles.ROW12_TILES = 12;
     GTP.tiles.ROW14_TILES = GTP.tiles.ROW12_TILES + 2;
     GTP.tiles.TOTAL_TILES = GTP.tiles.ROW12_TILES * 2 + GTP.tiles.ROW14_TILES * 2;
     GTP.tiles.RPUNCTUATION_REGEX = /[\.\,\?\!\@\#\$\%\^\&\*\(\)\<\>\:\;\']/g;
     GTP.tiles.PRHASE_REGEX = "^[A-Za-z\\s\\.\\,\\?\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\<\\>\\:\\;\\']+$"; //This is a string to use with parsley.js
     GTP.tiles.PLAYER_REGEX = "^[A-Za-z\\s\\.\\,\\?\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\<\\>\\:\\;\\']+$"; //This is a string to use with parsley.js
-    
+
     GTP.util = {};
-    
+
     GTP.util.countVowels = function (phrase) {
         var acc;
-          // for every vowel...
-            for (var i = 0; i !== GTP.lang.VOWELS.length; i++) {
-                // if the vowel is in our phrase...
-                if (phrase.indexOf(GTP.lang.VOWELS[i]) !== -1) {
-                    acc++;
-                }
+        // for every vowel...
+        for (var i = 0; i !== GTP.lang.VOWELS.length; i++) {
+            // if the vowel is in our phrase...
+            if (phrase.indexOf(GTP.lang.VOWELS[i]) !== -1) {
+                acc++;
             }
+        }
     };
-    
-    GTP.util.countConsonants = function(phrase) {
-         var acc;
-            // for every consonant...
-            for (var i = 0; i !== GTP.lang.CONSONANTS.length; i++) {
-                // if the consonant is in our phrase...
-                if (phrase.indexOf(GTP.lang.CONSONANTS[i]) !== -1) {
-                    acc++;
-                }
+
+    GTP.util.countConsonants = function (phrase) {
+        var acc;
+        // for every consonant...
+        for (var i = 0; i !== GTP.lang.CONSONANTS.length; i++) {
+            // if the consonant is in our phrase...
+            if (phrase.indexOf(GTP.lang.CONSONANTS[i]) !== -1) {
+                acc++;
             }
+        }
     };
-    
-    $(document).ready(function() {
+
+    $(document).ready(function () {
 
         ///////////////////////////////////////////////////////////
         ////////////// GAME VARIABLES /////////////////////////////
@@ -56,7 +56,7 @@
         // Global Variables can't have var in front of them?
         phrases = new Array();
         hints = new Array();
-        
+
 
         var currentPlayer = 0;
 
@@ -73,61 +73,61 @@
         var character;
         var isCharacterOnLeft = true;
         scorebd = new $.SCOREBOARD(game, GTP.ruleset.players, GTP.ruleset.currency);
-        
+
         // these are global pointers to elements we want to hide or show within our panel 
-        var messageContainerElement;        
+        var messageContainerElement;
         var alphabetElement;
         var wheelContainerElement;
         var sliceContainerElement;
-       
+
         var currentSliceValue = -1;
 
         // shift due to border thickness of slice
-        var shift               = 5;                
-        var slice_canvas_width  = 200 + shift;
+        var shift = 5;
+        var slice_canvas_width = 200 + shift;
         var slice_canvas_height = 200 + shift;
 
         console.log(scorebd);
-        
-        var spinFinishedCallback = function(){
+
+        var spinFinishedCallback = function () {
             currentSliceValue = wheel.getValue();
             currentSliceColor = wheel.getColor();
             //TODO: unlock letters here
             wheelContainerElement.fadeOut();
-            
+
             //Enter the appropriate wheel state:
-            if (currentSliceValue === 0xFFFFBA){ //bankrupt
+            if (currentSliceValue === 0xFFFFBA) { //bankrupt
                 gsm.bankrupt();
             }
-            else if (currentSliceValue === 0xFFFF10){ //lose turn
+            else if (currentSliceValue === 0xFFFF10) { //lose turn
                 gsm.loseTurn();
             }
-            else{
+            else {
                 //only choose consonants after a wheel spin
                 gsm.chooseConsonant();
             }
         };
 
-        var vowelOrConsonant = function(letter) {
+        var vowelOrConsonant = function (letter) {
             if (['A', 'E', 'I', 'O', 'U'].indexOf(letter) !== -1)
                 return "vowel";
             else
                 return "consonant";
         };
 
-        var bankruptifyOnWheel = function(context) {
+        var bankruptifyOnWheel = function (context) {
             scorebd.setScore(currentPlayer, 0);
             bankruptOrLooseTurnSound();
             gsm.loseTurn();
         };
 
-        var loseTurnOnWheel = function(context) {
+        var loseTurnOnWheel = function (context) {
             bankruptOrLooseTurnSound();
             gsm.loseTurn();
         };
 
 
-        phraseFormPopup = function() {
+        phraseFormPopup = function () {
 
             // The Messi message needs to be broken down for maintainability
             var MessiStrExplanation = '<p>Please input the phrases you like to use in this game.</p>';
@@ -160,13 +160,13 @@
             new Messi(MessiStr,
                     {title: 'Set your phrases', titleClass: 'info',
                         buttons: [{id: 0, label: 'Ok', val: 'Ok', class: 'btn-success'}],
-                        callback: function(val) {
+                        callback: function (val) {
                             gsm.initPlayerNames();
                         }
                     });
         };
 
-        playerNamesFormPopup = function() {
+        playerNamesFormPopup = function () {
 
             // The Messi message needs to be broken down for maintainability
             var MessiStrExplanation = '<p>Please input each player\'s name in the boxes below. Each name is limited to 12 characters maximum.</p>';
@@ -190,7 +190,7 @@
             new Messi(MessiStr,
                     {title: 'Set Your Player Names', titleClass: 'info',
                         buttons: [{id: 0, label: 'Ok', val: 'Ok', class: 'btn-success'}],
-                        callback: function(val) {
+                        callback: function (val) {
                             gsm.initGame();
                             gsm.initRound();
                         }
@@ -202,7 +202,7 @@
         ///////////////////////////////////////////////////////////
 
         //build a board
-        buildBoard = function() {
+        buildBoard = function () {
             //TODO: Sanitize phrases and set to uppercase
 
             //prepare board
@@ -247,7 +247,7 @@
         };
 
         /*end board setup*/
-        populateBoard = function() {
+        populateBoard = function () {
             //Phrase setup----------------------------------------------
             //This is alpha quality
 
@@ -590,7 +590,7 @@
             delay = 0;
             for (var word = 0; word < words.length; word++) {
                 for (var c = 0; c < words[word].length; c++) {
-                    $('div.cell_' + (wordIndex[word] + c)).schedule(delay, function() {
+                    $('div.cell_' + (wordIndex[word] + c)).schedule(delay, function () {
                         $(this).addClass("contains_letter");
                     });
                     $('div.cell_' + (wordIndex[word] + c) + ' div.flipper div.back p.letter').text(words[word].charAt(c));
@@ -618,23 +618,23 @@
         };
 
         /*change the board */
-        depopulateBoard = function() {
+        depopulateBoard = function () {
             //Flip all tiles back to blank the board
             $("p.letter").empty(); // this is needed to clear all the letters on the board so they don't reappear in the next round
             $(".contains_letter").removeClass("flip");
             $(".cell").removeClass("contains_letter");
         };
 
-        resetAlphabet = function() {
+        resetAlphabet = function () {
             //Set all the letters so they are uncalled
             $(".letter").removeClass("letter_called letter_called_none");
         };
-        
+
         ///////////////////////////////////////////////////////////
         ////////////// CHARACTER //////// /////////////////////////
         ///////////////////////////////////////////////////////////
 
-        buildCharacter = function() {
+        buildCharacter = function () {
             character = ich.character_template();
             $("body").append(character);
             character.css("top", 200);
@@ -662,7 +662,7 @@
         ////////////// PANEL //////////// /////////////////////////
         ///////////////////////////////////////////////////////////
 
-        buildPanel = function() {
+        buildPanel = function () {
             panel = ich.panel_template();
             game.append(panel);
             buildWheel(panel);
@@ -670,21 +670,21 @@
             buildSlice(panel);
             buildMessage(panel);
         };
-        
-        buildClickableLetters = function(){
+
+        buildClickableLetters = function () {
             //Add clickable letters
             l = ich.alphabet_template();
             for (var e = 0; e < GTP.lang.ALPHABET.length; e++) {
                 //add special break for two lines of letters
-                if (e === 15){ //Magic number
+                if (e === 15) { //Magic number
                     l.append("</br>");
                 }
-                
+
                 l.append(ich.letter_template(
-                    {
-                        "letter": GTP.lang.ALPHABET.charAt(e), 
-                        "vowelOrConsonant": vowelOrConsonant(GTP.lang.ALPHABET.charAt(e))
-                    }
+                        {
+                            "letter": GTP.lang.ALPHABET.charAt(e),
+                            "vowelOrConsonant": vowelOrConsonant(GTP.lang.ALPHABET.charAt(e))
+                        }
                 ).click({"letter": GTP.lang.ALPHABET.charAt(e)}, onLetterClick));
             }
 
@@ -694,8 +694,8 @@
             $(".vowel, .consonant").hide();
             alphabetElement.hide();
         };
-        
-        buildWheel = function(element){
+
+        buildWheel = function (element) {
             wheelContainer = ich.wheel_container_template();
             wheelCanvas = ich.wheel_canvas_template({size: 1200}); //TODO: Duplicated defns.
 
@@ -705,7 +705,7 @@
             canvas = wheelCanvas.get(0);
             canvasCtx = canvas.getContext("2d");
 
-            wheel = new $.WHEEL(canvasCtx, 0, spinFinishedCallback,null);
+            wheel = new $.WHEEL(canvasCtx, 0, spinFinishedCallback, null);
 
             //TODO: make this part of init in wheel
             wheel.setAllCallbacks(spinFinishedCallback);
@@ -715,14 +715,14 @@
 
             //TODO: Ideally, set bankrupt callbacks here
             wheelContainerElement = wheelContainer;
-            
+
         };
 
-        buildSlice = function(element){
+        buildSlice = function (element) {
             sliceContainer = ich.slice_container_template();
             sliceCanvas = ich.slice_canvas_template(
-                {width: slice_canvas_width, 
-                 height: slice_canvas_height});
+                    {width: slice_canvas_width,
+                        height: slice_canvas_height});
 
             sliceContainer.append(sliceCanvas);
             element.append(sliceContainer);
@@ -731,71 +731,85 @@
             slice_canvasCtx = slice_canvas.getContext("2d");
 
             sliceContainerElement = sliceContainer;
-            
+
         };
 
-        buildMessage = function(element) {
+        buildMessage = function (element) {
 
             button_spin = ich.button_template(
-                {
-                    "id": "spin",
-                    "name": "spin",
-                    "color": "red",
-                    "label": "Spin the Wheel"
-                }
-            ).click({}, function() {gsm.spin();});
+                    {
+                        "id": "spin",
+                        "name": "spin",
+                        "color": "red",
+                        "label": "Spin the Wheel"
+                    }
+            ).click({}, function () {
+                gsm.spin();
+            });
             button_guess = ich.button_template(
-                {
-                    "id": "guess",
-                    "name": "guess",
-                    "color": "green",
-                    "label": "Guess a Vowel"
-                }
-            ).click({}, function() {gsm.buyVowel();});
+                    {
+                        "id": "guess",
+                        "name": "guess",
+                        "color": "green",
+                        "label": "Guess a Vowel"
+                    }
+            ).click({}, function () {
+                gsm.buyVowel();
+            });
             button_solve = ich.button_template(
-                {
-                    "id": "solve",
-                    "name": "solve",
-                    "color": "yellow",
-                    "label": "Solve the Puzzle"
-                }
-            ).click({}, function() {gsm.solvePuzzle();});
+                    {
+                        "id": "solve",
+                        "name": "solve",
+                        "color": "yellow",
+                        "label": "Solve the Puzzle"
+                    }
+            ).click({}, function () {
+                gsm.solvePuzzle();
+            });
 
             button_yes = ich.button_template(
-                {
-                    "id": "yes",
-                    "name": "yes",
-                    "color": "green",
-                    "label": "Yes"
-                }
-            ).click({}, function() {gsm.guessCorrectly();});
+                    {
+                        "id": "yes",
+                        "name": "yes",
+                        "color": "green",
+                        "label": "Yes"
+                    }
+            ).click({}, function () {
+                gsm.guessCorrectly();
+            });
 
             button_no = ich.button_template(
-                {
-                    "id": "no",
-                    "name": "no",
-                    "color": "red",
-                    "label": "No"
-                }
-            ).click({}, function() {gsm.guessIncorrectly();});
+                    {
+                        "id": "no",
+                        "name": "no",
+                        "color": "red",
+                        "label": "No"
+                    }
+            ).click({}, function () {
+                gsm.guessIncorrectly();
+            });
 
             button_cancel = ich.button_template(
-                {
-                    "id": "cancel",
-                    "name": "cancel",
-                    "color": "yellow",
-                    "label": "Cancel"
-                }
-            ).click({}, function() {gsm.cancelGuess();});
+                    {
+                        "id": "cancel",
+                        "name": "cancel",
+                        "color": "yellow",
+                        "label": "Cancel"
+                    }
+            ).click({}, function () {
+                gsm.cancelGuess();
+            });
 
             button_okay = ich.button_template(
-                {
-                    "id": "okay",
-                    "name": "okay",
-                    "color": "green",
-                    "label": "Okay"
-                }
-            ).click({}, function() {gsm.filledPuzzle();});
+                    {
+                        "id": "okay",
+                        "name": "okay",
+                        "color": "green",
+                        "label": "Okay"
+                    }
+            ).click({}, function () {
+                gsm.filledPuzzle();
+            });
 
             // retrieve the message box container
             messageContainerElement = ich.message_form_template();
@@ -861,7 +875,7 @@
                 // We would like a state to declare when there are no vowels
                 {name: 'declareNoMoreConsonants', from: 'success', to: 'noMoreConsonants'},
                 //The user guessed the last letter correctly
-                {name: 'filledPuzzle', from: ['success','guess'], to: 'termRound'},
+                {name: 'filledPuzzle', from: ['success', 'guess'], to: 'termRound'},
                 //The user has asked to solve the puzzle
                 {name: 'solvePuzzle', from: ['initTurn', 'success'], to: 'guess'},
                 //when correctly guessed, terminate round
@@ -874,29 +888,29 @@
                 {name: 'stop', from: 'initRound', to: 'term'}
             ],
             callbacks: {
-                onleavestate: function(event, from, to) {
+                onleavestate: function (event, from, to) {
                     console.log("on leave |event:" + event + "|from:" + from + "|to:" + to + "|");
                 },
-                onenterstate: function(event, from, to) {
+                onenterstate: function (event, from, to) {
                     scorebd.updateScore();
                 },
-                onenterinitPhrases: function(event, from, to) {
+                onenterinitPhrases: function (event, from, to) {
                     phraseFormPopup();
                 },
-                onenterinitPlayerNames: function(event, from, to) {
+                onenterinitPlayerNames: function (event, from, to) {
                     playerNamesFormPopup();
                 },
-                onenterinitGame: function(event, from, to) {
+                onenterinitGame: function (event, from, to) {
                     buildBoard();
                     buildPanel();
                     buildCharacter();
-                    
+
                     // initialiy make these items hidden for now
                     wheelContainerElement.hide();
                     hideMessage();
 
                 },
-                onenterinitRound: function(event, from, to) {
+                onenterinitRound: function (event, from, to) {
                     currentRound = currentRound + 1;
 
                     /*If there are more rounds to play, start by randomizing the
@@ -910,7 +924,7 @@
                         scorebd.newRound();
 
                         scorebd.updateScore();
-                        
+
                         //re-enable all letters by re-setting the attributes to yes
                         $("span.letter").attr("data-clickable", "yes");
 
@@ -926,31 +940,31 @@
                     }
 
                 },
-                onenterinitTurn: function(event, from, to) {        
+                onenterinitTurn: function (event, from, to) {
                     // set the correct players stuff to be highlighted          
                     $(".scoreboad").children().eq(currentPlayer).addClass("active");
                     gsm.success();
                 },
-                onenterwheelspin: function(event, from, to) {
+                onenterwheelspin: function (event, from, to) {
                     hideMessage();
                     wheelContainerElement.fadeIn();
                     wheel.spin();
                 },
-                onenterbankruptState: function(event, from, to){
-                   //lose current winnings
-                   scoreboard.setScore(currentPlayer, 0);
-                   gsm.termTurn();
+                onenterbankruptState: function (event, from, to) {
+                    //lose current winnings
+                    scoreboard.setScore(currentPlayer, 0);
+                    gsm.termTurn();
                 },
-                onenterconsonant: function(event, from, to) {
+                onenterconsonant: function (event, from, to) {
                     chooseConsonantDialog();
                 },
-                onentervowel: function(event, from, to) {
+                onentervowel: function (event, from, to) {
                     hideMessage();
                     chooseVowelDialog();
                 },
-                onentersuccess: function(event, from, to) {
-                     //success only occurs after a correct guess and no
-                     //bankrupt or lose turn
+                onentersuccess: function (event, from, to) {
+                    //success only occurs after a correct guess and no
+                    //bankrupt or lose turn
                     hideMessage();
 
                     // Check the status of the puzzle
@@ -980,7 +994,7 @@
                     } else {
                         var message = scorebd.getPlayerName(currentPlayer + 1) + ", it is still your turn. ";
                     }
-                    
+
                     /*If puzzle is unsolved, prompt (iff vowels available & player has >= $250, incude vowel option) */
                     if (!isPuzzleSolved) {
                         if (!allVowelsFound && !allConsonantsFound && scorebd.score(currentPlayer) >= 250) {
@@ -1000,15 +1014,15 @@
                     }
 
                 },
-                onentertermTurn: function(event, from, to) { /*Go to next player and start turn. */
-                   //remove highlight from all three scores
+                onentertermTurn: function (event, from, to) { /*Go to next player and start turn. */
+                    //remove highlight from all three scores
                     $(".score").removeClass("active");
                     currentPlayer = currentPlayer + 1;
                     currentPlayer = currentPlayer % GTP.ruleset.players;
                     alphabetElement.hide(); // hide the letters after the round has been terminated
                     gsm.initTurn(); //Init next turn.
                 },
-                onentertermRound: function(event, from, to) { /*Go to next round and start. */
+                onentertermRound: function (event, from, to) { /*Go to next round and start. */
                     //remove highlight from all three scores
                     $(".score").removeClass("active");
                     endRoundSuccessSound();
@@ -1031,7 +1045,7 @@
                     //Add point totals of winning player to total score
                     scorebd.pushToTotalScore(currentPlayer);
 
-                    var timer = $.timer(function() {
+                    var timer = $.timer(function () {
                         depopulateBoard(); //Clear the board
                         resetAlphabet(); // reset the alphabet
                         gsm.initRound();  //Init next round
@@ -1039,7 +1053,7 @@
                     timer.once(5000);
 
                 },
-                onenternoMoreVowels: function(event, from, to) {
+                onenternoMoreVowels: function (event, from, to) {
                     noMoreVowelsAlertDisplayed = true;
                     setRemainingVowelsToRed();
                     new Messi('All the vowels in the phrase have been called out.',
@@ -1047,28 +1061,28 @@
                                 titleClass: 'anim warning',
                                 buttons: [{id: 0, label: 'Close', val: 'X'}],
                                 modal: true,
-                                callback: function(val) {
+                                callback: function (val) {
                                     gsm.success();
                                 }
                             });
                 },
-                onenternoMoreConsonants: function(event, from, to) {
+                onenternoMoreConsonants: function (event, from, to) {
                     noMoreConsonantsAlertDisplayed = true;
                     setRemainingConsonantsToRed();
                     new Messi('All the consonants in the phrase have been called out.',
                             {title: 'No more consonants!',
                                 titleClass: 'anim warning',
                                 buttons: [{id: 0, label: 'Close', val: 'X'}],
-                                callback: function(val) {
+                                callback: function (val) {
                                     gsm.success();
                                 }
                             });
                 },
-                onenterguess: function(event, from, to) {
+                onenterguess: function (event, from, to) {
                     hideMessage();
                     solveLockInDialog();
                 },
-                onenterterm: function(event, from, to) {
+                onenterterm: function (event, from, to) {
                     hideMessage();
                     gameFinishDialog();
                 }
@@ -1081,7 +1095,7 @@
         ///////////////////////////////////////////////////////////
 
         // we display this message when we finish the game 
-        var gameFinishDialog = function() {
+        var gameFinishDialog = function () {
             var winners = scorebd.getWinners();
             if (winners.length === 1) {
                 var winner = scorebd.getPlayerName(winners[0] + 1);
@@ -1095,46 +1109,48 @@
             }
 
             $("button#okay").unbind("click");
-            $("button#okay").click({}, function() {return;});
-            showMessage(message,["okay"]);
+            $("button#okay").click({}, function () {
+                return;
+            });
+            showMessage(message, ["okay"]);
         };
 
         // we display this dialog when the round finishes
-        var termRoundDialog = function() {
+        var termRoundDialog = function () {
             message = "Congratulations " + scorebd.getPlayerName(currentPlayer + 1) + "! ";
             if ((currentRound + 1 < GTP.ruleset.rounds)) {
                 message += "The next round will begin shortly!";
             }
-            showMessage(message,[]);
+            showMessage(message, []);
         };
 
         // we display this dialog when the user chooses to solve the puzzle
-        var solveLockInDialog = function() {
+        var solveLockInDialog = function () {
             message = 'Did ' + scorebd.getPlayerName(currentPlayer + 1) + ' guess the puzzle correctly?';
-            showMessage(message,["yes", "no", "cancel"]);
+            showMessage(message, ["yes", "no", "cancel"]);
         };
 
-        var vowelSpinSolveDialog = function(message) {
+        var vowelSpinSolveDialog = function (message) {
             message += 'Would you like to buy a vowel, spin the wheel, or solve the puzzle?';
-            showMessage(message,["spin", "guess", "solve"]);
+            showMessage(message, ["spin", "guess", "solve"]);
         };
 
-        var spinSolveDialog = function(message) {
+        var spinSolveDialog = function (message) {
             message += 'Would you like to spin the wheel or solve the puzzle?';
-            showMessage(message,["spin", "solve"]);
+            showMessage(message, ["spin", "solve"]);
         };
 
-        var vowelSolveDialog = function(message) {
+        var vowelSolveDialog = function (message) {
             message += 'Would you like to buy a vowel or solve the puzzle?';
-            showMessage(message,["guess", "solve"]);
+            showMessage(message, ["guess", "solve"]);
         };
 
-        var solveDialog = function(message) {
+        var solveDialog = function (message) {
             message += 'You must solve the puzzle. What is your guess?';
-            showMessage(message,["solve"]);
+            showMessage(message, ["solve"]);
         };
 
-        var chooseConsonantDialog = function() {
+        var chooseConsonantDialog = function () {
             message = 'Please choose a consonant.';
             $(".consonant").show();             // show consonants
             drawSlice();                        // draw slice spin
@@ -1142,7 +1158,7 @@
             showMessage(message, []);           // show message
         };
 
-        var chooseVowelDialog = function() {
+        var chooseVowelDialog = function () {
             message = 'Please choose a vowel.';
             $(".vowel").show();                 // show vowels
             showMessage(message, []);           // show message
@@ -1160,7 +1176,7 @@
 
         //---------------------------------------------------------------------
         //Pre-scripted macros
-        $.fn.disableSelection = function() {
+        $.fn.disableSelection = function () {
             return this
                     .attr('unselectable', 'on')
                     .css('user-select', 'none')
@@ -1170,11 +1186,11 @@
 
         //---------------------------------------------------------------------
 
-        var showMessage = function(message, buttons) {
+        var showMessage = function (message, buttons) {
             $("#message-label").append(message);
 
             for (var i = 0; i !== buttons.length; i++) {
-                $("button#"+buttons[i]).show();
+                $("button#" + buttons[i]).show();
             }
 
             alphabetElement.show();
@@ -1183,13 +1199,13 @@
 
         };
 
-        var hideMessage = function() {
+        var hideMessage = function () {
             $("#message-label").empty();
 
             buttons = ["spin", "guess", "solve", "yes", "no", "cancel", "okay"];
 
             for (var i = 0; i !== buttons.length; i++) {
-                $("button#"+buttons[i]).hide();
+                $("button#" + buttons[i]).hide();
             }
 
             $(".vowel, .consonant").hide();
@@ -1201,21 +1217,21 @@
             messageContainerElement.hide();
         };
 
-        var drawSlice = function() {
+        var drawSlice = function () {
             var ctx = $("#slice_canvas").get(0).getContext("2d");
 
-            circle_origin_x = 70+shift;
-            circle_origin_y = 100+shift;
-            circle_radius   = 100;
-            start_angle     = Math.PI*(5/4);
-            end_angle       = Math.PI*(7/4);   
+            circle_origin_x = 70 + shift;
+            circle_origin_y = 100 + shift;
+            circle_radius = 100;
+            start_angle = Math.PI * (5 / 4);
+            end_angle = Math.PI * (7 / 4);
 
             ctx.beginPath();
             ctx.lineWidth = 3;
             ctx.fillStyle = "#000000";
-            ctx.arc(circle_origin_x,circle_origin_y,circle_radius,start_angle,end_angle);
-            ctx.lineTo(90+shift,200+shift);
-            ctx.lineTo(50+shift,200+shift);
+            ctx.arc(circle_origin_x, circle_origin_y, circle_radius, start_angle, end_angle);
+            ctx.lineTo(90 + shift, 200 + shift);
+            ctx.lineTo(50 + shift, 200 + shift);
             ctx.closePath();
             ctx.fillStyle = currentSliceColor;
             ctx.fill();
@@ -1224,37 +1240,37 @@
 
             str = GTP.ruleset.currency + currentSliceValue.toString();
             for (var i = 0; i < str.length; i++) {
-                ctx.fillText(str.charAt(i), 60+shift, 60 + 30*i + shift);
+                ctx.fillText(str.charAt(i), 60 + shift, 60 + 30 * i + shift);
             }
 
             ctx.stroke();
         };
 
-        var clearSlice = function(){
+        var clearSlice = function () {
             var ctx = $("#slice_canvas").get(0).getContext("2d");
-            ctx.clearRect(0,0,slice_canvas_width,slice_canvas_height);
+            ctx.clearRect(0, 0, slice_canvas_width, slice_canvas_height);
         };
 
-        var setRemainingConsonantsToRed = function() {
+        var setRemainingConsonantsToRed = function () {
             $(".consonant:not(.letter_called)").addClass("letter_called_none");
         };
 
-        var setRemainingVowelsToRed = function() {
+        var setRemainingVowelsToRed = function () {
             $(".vowel:not(.letter_called)").addClass("letter_called_none");
         };
 
-        onLetterClick = function(event) {
-            
-            if ($(event.target).attr("data-clickable")==="yes") {
+        onLetterClick = function (event) {
+
+            if ($(event.target).attr("data-clickable") === "yes") {
 
                 // we shouldn't be able to click the letter again this round
                 // so we set the attribute to no 
-                $(event.target).attr("data-clickable", "no"); 
+                $(event.target).attr("data-clickable", "no");
 
                 // hide the alphabet
                 alphabetElement.hide();
                 $(".letter").show(); //show all letters b/c only shows consonant or vowels
-                
+
                 // we clicked a letter
                 // we need to see if we were allowed to click that letter
                 letter = event.data.letter;
@@ -1263,7 +1279,7 @@
 
                 count = $("p.letter:contains('" + letter + "')").parents(".cell").length;
                 flipTiles(letter);
-                
+
                 // regardless if there are or aren't any selected vowels in 
                 // the phrase, we must deduct $250 from the current player's 
                 // score
@@ -1301,14 +1317,14 @@
             }
         };
 
-        newGameSound = function() {
+        newGameSound = function () {
             //Add sound effect for new puzzle
             var sound = new Howl({
                 urls: ['sound/new_puzzle.ogg']
             }).play();
         };
 
-        incorrectConsonantOrVowelSound = function() {
+        incorrectConsonantOrVowelSound = function () {
             var sound = new Howl(
                     {
                         urls: ['sound/incorrectConsonantOrVowelSound.mp3'],
@@ -1318,7 +1334,7 @@
             sound.play("portion");
         };
 
-        correctConsonantOrVowelSound = function() {
+        correctConsonantOrVowelSound = function () {
             var sound = new Howl(
                     {
                         urls: ['sound/correctConsonantOrVowelSound.mp3']
@@ -1327,7 +1343,7 @@
             sound.play();
         };
 
-        endRoundSuccessSound = function() {
+        endRoundSuccessSound = function () {
             var sound = new Howl(
                     {
                         urls: ['sound/endRoundSuccess.ogg']
@@ -1336,7 +1352,7 @@
             sound.play();
         };
 
-        bankruptOrLooseTurnSound = function() {
+        bankruptOrLooseTurnSound = function () {
             var sound = new Howl(
                     {
                         urls: ['sound/bankruptOrLooseTurn.ogg']
