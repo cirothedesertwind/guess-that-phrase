@@ -1,6 +1,12 @@
 (function($) {
     
     GTP = {};
+    
+    GTP.ruleset = {};
+    GTP.ruleset.rounds = 5;
+    GTP.ruleset.players = 3;
+    GTP.ruleset.currency = '$';
+    
     GTP.tiles = {};
     
     GTP.tiles.ROW12_TILES = 12;
@@ -13,6 +19,30 @@
     GTP.tiles.VOWELS = "AEIOU";
     GTP.tiles.CONSONANTS = "BCDFGHJKLMNPQRSTVWXYZ";
     
+    GTP.util = {};
+    
+    GTP.util.countVowels = function (phrase) {
+        var acc;
+          // for every vowel...
+            for (var i = 0; i !== GTP.tiles.VOWELS.length; i++) {
+                // if the vowel is in our phrase...
+                if (phrase.indexOf(GTP.tiles.VOWELS[i]) !== -1) {
+                    acc++;
+                }
+            }
+    };
+    
+    GTP.util.countConsonants = function(phrase) {
+         var acc;
+            // for every consonant...
+            for (var i = 0; i !== GTP.tiles.CONSONANTS.length; i++) {
+                // if the consonant is in our phrase...
+                if (phrase.indexOf(GTP.tiles.CONSONANTS[i]) !== -1) {
+                    acc++;
+                }
+            }
+    };
+    
     $(document).ready(function() {
 
         ///////////////////////////////////////////////////////////
@@ -23,9 +53,7 @@
         // Global Variables can't have var in front of them?
         phrases = new Array();
         hints = new Array();
-        rounds = 5;
-
-        players = 3;
+        
 
         var currentPlayer = 0;
 
@@ -37,13 +65,11 @@
         var numberOfConsonantsRemaining = 0;
         var noMoreConsonantsAlertDisplayed = false;
 
-        var currency = '$';
-
         var game = $(".game");
         var board;
         var character;
         var isCharacterOnLeft = true;
-        scorebd = new $.SCOREBOARD(game, players, currency);
+        scorebd = new $.SCOREBOARD(game, GTP.ruleset.players, GTP.ruleset.currency);
         
         // these are global pointers to elements we want to hide or show within our panel 
         var messageContainerElement;        
@@ -104,7 +130,7 @@
             var MessiStrExplanation = '<p>Please input the phrases you like to use in this game.</p>';
             var MessiStrFormOpening = '<form id="phrase_input" action="" data-parsley-validate>';
             var MessiStrContent = "";
-            for (var phraseNum = 1; phraseNum <= rounds; phraseNum++) {
+            for (var phraseNum = 1; phraseNum <= GTP.ruleset.rounds; phraseNum++) {
                 var MessiStrPhraseLabel = 'Phrase ' + phraseNum + ': ';
 
                 // the first phrase is required
@@ -121,7 +147,7 @@
                 MessiStrContent += MessiStrPhraseLabel + MessiStrPhraseInput + space + MessiStrHintLabel + MessiStrHintContent;
 
                 // add a new line after every hint entry box
-                if (phraseNum !== rounds) {
+                if (phraseNum !== GTP.ruleset.rounds) {
                     MessiStrContent += '<br>';
                 }
             }
@@ -143,7 +169,7 @@
             var MessiStrExplanation = '<p>Please input each player\'s name in the boxes below. Each name is limited to 12 characters maximum.</p>';
             var MessiStrFormOpening = '<form id="player_name_input_form" action="" data-parsley-validate>';
             var MessiStrContent = "";
-            for (var phraseNum = 1; phraseNum <= players; phraseNum++) {
+            for (var phraseNum = 1; phraseNum <= GTP.ruleset.players; phraseNum++) {
                 var MessiStrPhraseLabel = 'Player ' + phraseNum + ': ';
 
                 var MessiStrPhraseInput = '<input type="text" class="player_name_input" id="player' + phraseNum + '" name="player' + phraseNum + '" data-parsley-maxlength="12" data-parsley-fits pattern="' + GTP.tiles.PLAYER_REGEX + '" required>';
@@ -151,7 +177,7 @@
                 MessiStrContent += MessiStrPhraseLabel + MessiStrPhraseInput;
 
                 // add a new line after every hint entry box
-                if (phraseNum !== rounds) {
+                if (phraseNum !== GTP.ruleset.rounds) {
                     MessiStrContent += '<br>';
                 }
             }
@@ -873,7 +899,7 @@
                     /*If there are more rounds to play, start by randomizing the
                      onenterstate: function(event, from, to start player and start the player's turn. */
 
-                    if (currentRound < rounds) {
+                    if (currentRound < GTP.ruleset.rounds) {
 
                         newGameSound();
                         populateBoard();
@@ -887,10 +913,10 @@
 
                         // we should check if phrases with no consonants or no
                         // vowels are introduced to the game
-                        countConsonants(phrase);
-                        countVowels(phrase);
+                        numberOfConsonantsRemaining = GTP.util.countConsonants(phrase);
+                        numberOfVowelsRemaining = GTP.util.countVowels(phrase);
 
-                        currentPlayer = Math.floor((Math.random() * players));
+                        currentPlayer = Math.floor((Math.random() * GTP.ruleset.players));
                         gsm.initTurn();
                     } else {
                         gsm.stop();
@@ -975,7 +1001,7 @@
                    //remove highlight from all three scores
                     $(".score").removeClass("active");
                     currentPlayer = currentPlayer + 1;
-                    currentPlayer = currentPlayer % players;
+                    currentPlayer = currentPlayer % GTP.ruleset.players;
                     alphabetElement.hide(); // hide the letters after the round has been terminated
                     gsm.initTurn(); //Init next turn.
                 },
@@ -1073,7 +1099,7 @@
         // we display this dialog when the round finishes
         var termRoundDialog = function() {
             message = "Congratulations " + scorebd.getPlayerName(currentPlayer + 1) + "! ";
-            if ((currentRound + 1 < rounds)) {
+            if ((currentRound + 1 < GTP.ruleset.rounds)) {
                 message += "The next round will begin shortly!";
             }
             showMessage(message,[]);
@@ -1193,7 +1219,7 @@
             ctx.fillStyle = "#000000";
             ctx.font = "2em Raleway";
 
-            str = currency + currentSliceValue.toString();
+            str = GTP.ruleset.currency + currentSliceValue.toString();
             for (var i = 0; i < str.length; i++) {
                 ctx.fillText(str.charAt(i), 60+shift, 60 + 30*i + shift);
             }
@@ -1212,34 +1238,6 @@
 
         var setRemainingVowelsToRed = function() {
             $(".vowel:not(.letter_called)").addClass("letter_called_none");
-        };
-
-        var countVowels = function(phrase) {
-
-            // for every vowel...
-            for (var i = 0; i !== GTP.tiles.VOWELS.length; i++) {
-
-                // if the vowel is in our phrase...
-                if (phrase.indexOf(GTP.tiles.VOWELS[i]) !== -1) {
-
-                    // we need to incrememnt numberOfVowelsRemaining
-                    numberOfVowelsRemaining++;
-                }
-            }
-        };
-
-        var countConsonants = function(phrase) {
-
-            // for every consonant...
-            for (var i = 0; i !== GTP.tiles.CONSONANTS.length; i++) {
-
-                // if the consonant is in our phrase...
-                if (phrase.indexOf(GTP.tiles.CONSONANTS[i]) !== -1) {
-
-                    // we need to increment numberOfConsonantsRemaining
-                    numberOfConsonantsRemaining++;
-                }
-            }
         };
 
         onLetterClick = function(event) {
