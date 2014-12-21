@@ -21,6 +21,48 @@
     GTP.tiles.PRHASE_REGEX = "^[A-Za-z\\s\\.\\,\\?\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\<\\>\\:\\;\\']+$"; //This is a string to use with parsley.js
     GTP.tiles.PLAYER_REGEX = "^[A-Za-z\\s\\.\\,\\?\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\<\\>\\:\\;\\']+$"; //This is a string to use with parsley.js
 
+    GTP.sounds = {};
+    GTP.sounds.newGameSound = function () {
+        //Add sound effect for new puzzle
+        var sound = new Howl({
+            urls: ['sound/new_puzzle.ogg']
+        }).play();
+    };
+    GTP.sounds.incorrectLetterSound = function () {
+        var sound = new Howl(
+                {
+                    urls: ['sound/incorrectConsonantOrVowelSound.mp3'],
+                    sprite: {portion: [0, 400]}
+                }
+        );
+        sound.play("portion");
+    };
+    GTP.sounds.correctLetterSound = function () {
+        var sound = new Howl(
+                {
+                    urls: ['sound/correctConsonantOrVowelSound.mp3']
+                }
+        );
+        sound.play();
+    };
+    GTP.sounds.endRoundSound = function () {
+        var sound = new Howl(
+                {
+                    urls: ['sound/endRoundSuccess.ogg']
+                }
+        );
+        sound.play();
+    };
+    GTP.sounds.bankruptOrLooseTurnSound = function () {
+        var sound = new Howl(
+                {
+                    urls: ['sound/bankruptOrLooseTurn.ogg']
+                }
+        );
+        sound.play();
+    };
+
+
     GTP.util = {};
     GTP.util.countVowels = function (phrase) {
         var acc;
@@ -114,12 +156,12 @@
 
         var bankruptifyOnWheel = function (context) {
             scorebd.setScore(currentPlayer, 0);
-            bankruptOrLooseTurnSound();
+            GTP.sounds.bankruptOrLooseTurnSound();
             gsm.loseTurn();
         };
 
         var loseTurnOnWheel = function (context) {
-            bankruptOrLooseTurnSound();
+            GTP.sounds.bankruptOrLooseTurnSound();
             gsm.loseTurn();
         };
 
@@ -915,7 +957,7 @@
 
                     if (currentRound < GTP.ruleset.ROUNDS) {
 
-                        newGameSound();
+                        GTP.sounds.newGameSound();
                         populateBoard();
 
                         scorebd.newRound();
@@ -1286,7 +1328,7 @@
 
                 if (count > 0) {
 
-                    correctConsonantOrVowelSound(); // play the "correctGuess" sound
+                    GTP.sounds.correctLetterSound(); // play the "correctGuess" sound
 
                     $(".letter_" + letter).addClass("letter_called");
 
@@ -1304,7 +1346,7 @@
                     gsm.success();
 
                 } else { /*Count == 0 */
-                    incorrectConsonantOrVowelSound(); // Play the "incorrectGuess sound"
+                    GTP.sounds.incorrectLetterSound(); // Play the "incorrectGuess sound"
 
                     $(".letter_" + letter).addClass("letter_called_none");
 
@@ -1312,50 +1354,6 @@
                     gsm.loseTurn();
                 }
             }
-        };
-
-        newGameSound = function () {
-            //Add sound effect for new puzzle
-            var sound = new Howl({
-                urls: ['sound/new_puzzle.ogg']
-            }).play();
-        };
-
-        incorrectConsonantOrVowelSound = function () {
-            var sound = new Howl(
-                    {
-                        urls: ['sound/incorrectConsonantOrVowelSound.mp3'],
-                        sprite: {portion: [0, 400]}
-                    }
-            );
-            sound.play("portion");
-        };
-
-        correctConsonantOrVowelSound = function () {
-            var sound = new Howl(
-                    {
-                        urls: ['sound/correctConsonantOrVowelSound.mp3']
-                    }
-            );
-            sound.play();
-        };
-
-        endRoundSuccessSound = function () {
-            var sound = new Howl(
-                    {
-                        urls: ['sound/endRoundSuccess.ogg']
-                    }
-            );
-            sound.play();
-        };
-
-        bankruptOrLooseTurnSound = function () {
-            var sound = new Howl(
-                    {
-                        urls: ['sound/bankruptOrLooseTurn.ogg']
-                    }
-            );
-            sound.play();
         };
 
         //GAME INIT
