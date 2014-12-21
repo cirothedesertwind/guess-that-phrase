@@ -1,20 +1,24 @@
 (function($) {
+    
+    GTP = {};
+    GTP.tiles = {};
+    
+    GTP.tiles.ROW12_TILES = 12;
+    GTP.tiles.ROW14_TILES = GTP.tiles.ROW12_TILES + 2;
+    GTP.tiles.TOTAL_TILES = GTP.tiles.ROW12_TILES * 2 + GTP.tiles.ROW14_TILES * 2;
+    GTP.tiles.RPUNCTUATION_REGEX = /[\.\,\?\!\@\#\$\%\^\&\*\(\)\<\>\:\;\']/g;
+    GTP.tiles.PRHASE_REGEX = "^[A-Za-z\\s\\.\\,\\?\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\<\\>\\:\\;\\']+$"; //This is a string to use with parsley.js
+    GTP.tiles.PLAYER_REGEX = "^[A-Za-z\\s\\.\\,\\?\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\<\\>\\:\\;\\']+$"; //This is a string to use with parsley.js
+    GTP.tiles.ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    GTP.tiles.VOWELS = "AEIOU";
+    GTP.tiles.CONSONANTS = "BCDFGHJKLMNPQRSTVWXYZ";
+    
     $(document).ready(function() {
 
         ///////////////////////////////////////////////////////////
         ////////////// GAME VARIABLES /////////////////////////////
         ///////////////////////////////////////////////////////////
 
-        ROW12_TILES = 12;
-        ROW14_TILES = ROW12_TILES + 2;
-        TOTAL_TILES = ROW12_TILES * 2 + ROW14_TILES * 2;
-        PUNCTUATION_REGEX = /[\.\,\?\!\@\#\$\%\^\&\*\(\)\<\>\:\;\']/g;
-        PRHASE_REGEX = "^[A-Za-z\\s\\.\\,\\?\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\<\\>\\:\\;\\']+$"; //This is a string to use with parsley.js
-        PLAYER_REGEX = "^[A-Za-z\\s\\.\\,\\?\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\<\\>\\:\\;\\']+$"; //This is a string to use with parsley.js
-        ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        VOWELS_REGEX = /[AEIOU]/g;
-        VOWELS = "AEIOU";
-        CONSONANTS = "BCDFGHJKLMNPQRSTVWXYZ";
 
         // Global Variables can't have var in front of them?
         phrases = new Array();
@@ -109,7 +113,7 @@
                 } else {
                     var required = "";
                 }
-                var MessiStrPhraseInput = '<input type="text" id="phrase' + phraseNum + '" name="phrase' + phraseNum + '" data-parsley-maxlength="50" data-parsley-fits pattern="' + PRHASE_REGEX + '" ' + required + '>';
+                var MessiStrPhraseInput = '<input type="text" id="phrase' + phraseNum + '" name="phrase' + phraseNum + '" data-parsley-maxlength="50" data-parsley-fits pattern="' + GTP.tiles.PRHASE_REGEX + '" ' + required + '>';
 
                 var space = " ";
                 var MessiStrHintLabel = 'Hint ' + phraseNum + ': ';
@@ -142,7 +146,7 @@
             for (var phraseNum = 1; phraseNum <= players; phraseNum++) {
                 var MessiStrPhraseLabel = 'Player ' + phraseNum + ': ';
 
-                var MessiStrPhraseInput = '<input type="text" class="player_name_input" id="player' + phraseNum + '" name="player' + phraseNum + '" data-parsley-maxlength="12" data-parsley-fits pattern="' + PLAYER_REGEX + '" required>';
+                var MessiStrPhraseInput = '<input type="text" class="player_name_input" id="player' + phraseNum + '" name="player' + phraseNum + '" data-parsley-maxlength="12" data-parsley-fits pattern="' + GTP.tiles.PLAYER_REGEX + '" required>';
 
                 MessiStrContent += MessiStrPhraseLabel + MessiStrPhraseInput;
 
@@ -187,11 +191,11 @@
 
                 //Specialize the row
                 if (r === 0 || r === 3) {
-                    columns = ROW12_TILES;
+                    columns = GTP.tiles.ROW12_TILES;
                     row.addClass("grid_12 prefix_3");
                 }
                 else { //r == 1 || r == 2
-                    columns = ROW14_TILES;
+                    columns = GTP.tiles.ROW14_TILES;
                     row.addClass("grid_14 prefix_2");
                 }
 
@@ -288,7 +292,7 @@
             var max_line_len;
 
             //Checks phrase for length
-            if (phrase.length > TOTAL_TILES) {
+            if (phrase.length > GTP.tiles.TOTAL_TILES) {
                 window.alert("Phrase is too long for the board.");
             }
             //checks words for length
@@ -536,7 +540,7 @@
             if (max_line_len >= 14 || max_line_len < 1)
                 console.log("Error: max line length is too large ( >= 14) or less than 1.");
 
-            indent = Math.ceil(-0.5 * max_line_len + ROW12_TILES / 2);
+            indent = Math.ceil(-0.5 * max_line_len + GTP.tiles.ROW12_TILES / 2);
 
             // since we have our best choice, we have to now set the indices to place the words on the board
             var count = 0;
@@ -564,7 +568,7 @@
                     delay += 75; //add 250ms per letter
 
                     //Display punctuation
-                    if (PUNCTUATION_REGEX.test(words[word].charAt(c))) {
+                    if (GTP.tiles.RPUNCTUATION_REGEX.test(words[word].charAt(c))) {
                         $('div.cell_' + (wordIndex[word] + c)).addClass("flip");
                     }
                 }
@@ -641,7 +645,7 @@
         buildClickableLetters = function(){
             //Add clickable letters
             l = ich.alphabet_template();
-            for (var e = 0; e < ALPHABET.length; e++) {
+            for (var e = 0; e < GTP.tiles.ALPHABET.length; e++) {
                 //add special break for two lines of letters
                 if (e === 15){ //Magic number
                     l.append("</br>");
@@ -649,10 +653,10 @@
                 
                 l.append(ich.letter_template(
                     {
-                        "letter": ALPHABET.charAt(e), 
-                        "vowelOrConsonant": vowelOrConsonant(ALPHABET.charAt(e))
+                        "letter": GTP.tiles.ALPHABET.charAt(e), 
+                        "vowelOrConsonant": vowelOrConsonant(GTP.tiles.ALPHABET.charAt(e))
                     }
-                ).click({"letter": ALPHABET.charAt(e)}, onLetterClick));
+                ).click({"letter": GTP.tiles.ALPHABET.charAt(e)}, onLetterClick));
             }
 
             alphabetElement = l;
@@ -1213,10 +1217,10 @@
         var countVowels = function(phrase) {
 
             // for every vowel...
-            for (var i = 0; i !== VOWELS.length; i++) {
+            for (var i = 0; i !== GTP.tiles.VOWELS.length; i++) {
 
                 // if the vowel is in our phrase...
-                if (phrase.indexOf(VOWELS[i]) !== -1) {
+                if (phrase.indexOf(GTP.tiles.VOWELS[i]) !== -1) {
 
                     // we need to incrememnt numberOfVowelsRemaining
                     numberOfVowelsRemaining++;
@@ -1227,10 +1231,10 @@
         var countConsonants = function(phrase) {
 
             // for every consonant...
-            for (var i = 0; i !== CONSONANTS.length; i++) {
+            for (var i = 0; i !== GTP.tiles.CONSONANTS.length; i++) {
 
                 // if the consonant is in our phrase...
-                if (phrase.indexOf(CONSONANTS[i]) !== -1) {
+                if (phrase.indexOf(GTP.tiles.CONSONANTS[i]) !== -1) {
 
                     // we need to increment numberOfConsonantsRemaining
                     numberOfConsonantsRemaining++;
@@ -1254,7 +1258,6 @@
                 // we need to see if we were allowed to click that letter
                 letter = event.data.letter;
                 vowelChosen = ['A', 'E', 'I', 'O', 'U'].indexOf(letter) !== -1;
-                //var vowelChosen = VOWELS_REGEX.test(letter);
                 consonantChosen = !vowelChosen;
 
                 count = $("p.letter:contains('" + letter + "')").parents(".cell").length;
