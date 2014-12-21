@@ -14,7 +14,6 @@
     GTP.ruleset.CURRENCY = '$';
 
     GTP.tiles = {};
-
     GTP.tiles.ROW12_TILES = 12;
     GTP.tiles.ROW14_TILES = GTP.tiles.ROW12_TILES + 2;
     GTP.tiles.TOTAL_TILES = GTP.tiles.ROW12_TILES * 2 + GTP.tiles.ROW14_TILES * 2;
@@ -23,7 +22,6 @@
     GTP.tiles.PLAYER_REGEX = "^[A-Za-z\\s\\.\\,\\?\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\<\\>\\:\\;\\']+$"; //This is a string to use with parsley.js
 
     GTP.util = {};
-
     GTP.util.countVowels = function (phrase) {
         var acc;
         // for every vowel...
@@ -34,7 +32,6 @@
             }
         }
     };
-
     GTP.util.countConsonants = function (phrase) {
         var acc;
         // for every consonant...
