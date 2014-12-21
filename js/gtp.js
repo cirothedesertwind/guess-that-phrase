@@ -2,6 +2,12 @@
     
     GTP = {};
     
+    GTP.lang = {}
+    GTP.lang.code = "en";
+    GTP.lang.ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    GTP.lang.VOWELS = "AEIOU";
+    GTP.lang.CONSONANTS = "BCDFGHJKLMNPQRSTVWXYZ";
+    
     GTP.ruleset = {};
     GTP.ruleset.rounds = 5;
     GTP.ruleset.players = 3;
@@ -15,18 +21,15 @@
     GTP.tiles.RPUNCTUATION_REGEX = /[\.\,\?\!\@\#\$\%\^\&\*\(\)\<\>\:\;\']/g;
     GTP.tiles.PRHASE_REGEX = "^[A-Za-z\\s\\.\\,\\?\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\<\\>\\:\\;\\']+$"; //This is a string to use with parsley.js
     GTP.tiles.PLAYER_REGEX = "^[A-Za-z\\s\\.\\,\\?\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\<\\>\\:\\;\\']+$"; //This is a string to use with parsley.js
-    GTP.tiles.ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    GTP.tiles.VOWELS = "AEIOU";
-    GTP.tiles.CONSONANTS = "BCDFGHJKLMNPQRSTVWXYZ";
     
     GTP.util = {};
     
     GTP.util.countVowels = function (phrase) {
         var acc;
           // for every vowel...
-            for (var i = 0; i !== GTP.tiles.VOWELS.length; i++) {
+            for (var i = 0; i !== GTP.lang.VOWELS.length; i++) {
                 // if the vowel is in our phrase...
-                if (phrase.indexOf(GTP.tiles.VOWELS[i]) !== -1) {
+                if (phrase.indexOf(GTP.lang.VOWELS[i]) !== -1) {
                     acc++;
                 }
             }
@@ -35,9 +38,9 @@
     GTP.util.countConsonants = function(phrase) {
          var acc;
             // for every consonant...
-            for (var i = 0; i !== GTP.tiles.CONSONANTS.length; i++) {
+            for (var i = 0; i !== GTP.lang.CONSONANTS.length; i++) {
                 // if the consonant is in our phrase...
-                if (phrase.indexOf(GTP.tiles.CONSONANTS[i]) !== -1) {
+                if (phrase.indexOf(GTP.lang.CONSONANTS[i]) !== -1) {
                     acc++;
                 }
             }
@@ -671,7 +674,7 @@
         buildClickableLetters = function(){
             //Add clickable letters
             l = ich.alphabet_template();
-            for (var e = 0; e < GTP.tiles.ALPHABET.length; e++) {
+            for (var e = 0; e < GTP.lang.ALPHABET.length; e++) {
                 //add special break for two lines of letters
                 if (e === 15){ //Magic number
                     l.append("</br>");
@@ -679,10 +682,10 @@
                 
                 l.append(ich.letter_template(
                     {
-                        "letter": GTP.tiles.ALPHABET.charAt(e), 
-                        "vowelOrConsonant": vowelOrConsonant(GTP.tiles.ALPHABET.charAt(e))
+                        "letter": GTP.lang.ALPHABET.charAt(e), 
+                        "vowelOrConsonant": vowelOrConsonant(GTP.lang.ALPHABET.charAt(e))
                     }
-                ).click({"letter": GTP.tiles.ALPHABET.charAt(e)}, onLetterClick));
+                ).click({"letter": GTP.lang.ALPHABET.charAt(e)}, onLetterClick));
             }
 
             alphabetElement = l;
