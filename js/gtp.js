@@ -28,11 +28,10 @@
     GTP.gamestate.phrases = new Array();
     GTP.gamestate.hints = new Array();
     GTP.gamestate.currentRound = -1;
-
-    var isPuzzleSolved = false;
-    var numberOfVowelsRemaining = 0;
+    GTP.gamestate.isPuzzleSolved = false;
+    GTP.gamestate.numberOfVowelsRemaining = 0;
     var noMoreVowelsAlertDisplayed = false;
-    var numberOfConsonantsRemaining = 0;
+    GTP.gamestate.numberOfConsonantsRemaining = 0;
     var noMoreConsonantsAlertDisplayed = false;
 
     GTP.dialog = {};
@@ -202,7 +201,6 @@
         );
         sound.play();
     };
-
 
     GTP.util = {};
     GTP.util.countVowels = function (p) {
@@ -1094,8 +1092,8 @@
 
                         // we should check if phrases with no consonants or no
                         // vowels are introduced to the game
-                        numberOfConsonantsRemaining = GTP.util.countConsonants(phrase);
-                        numberOfVowelsRemaining = GTP.util.countVowels(phrase);
+                        GTP.gamestate.numberOfConsonantsRemaining = GTP.util.countConsonants(phrase);
+                        GTP.gamestate.numberOfVowelsRemaining = GTP.util.countVowels(phrase);
 
                         GTP.gamestate.currentPlayer = Math.floor((Math.random() * GTP.ruleset.PLAYERS));
                         gsm.initTurn();
@@ -1132,7 +1130,7 @@
                     GTP.dialog.hideMessage();
 
                     // Check the status of the puzzle
-                    if (numberOfVowelsRemaining === 0) {
+                    if (GTP.gamestate.numberOfVowelsRemaining === 0) {
                         allVowelsFound = true;
                         if (!noMoreVowelsAlertDisplayed) {
                             gsm.declareNoMoreVowels();
@@ -1141,7 +1139,7 @@
                     } else {
                         allVowelsFound = false;
                     }
-                    if (numberOfConsonantsRemaining === 0) {
+                    if (GTP.gamestate.numberOfConsonantsRemaining === 0) {
                         allConsonantsFound = true;
                         if (!noMoreConsonantsAlertDisplayed) {
                             gsm.declareNoMoreConsonants();
@@ -1150,7 +1148,7 @@
                     } else {
                         allConsonantsFound = false;
                     }
-                    isPuzzleSolved = allVowelsFound && allConsonantsFound;
+                    GTP.gamestate.isPuzzleSolved = allVowelsFound && allConsonantsFound;
 
                     // What should the message to the user be
                     if (from === "initTurn") {
@@ -1160,7 +1158,7 @@
                     }
 
                     /*If puzzle is unsolved, prompt (iff vowels available & player has >= $250, incude vowel option) */
-                    if (!isPuzzleSolved) {
+                    if (!GTP.gamestate.isPuzzleSolved) {
                         if (!allVowelsFound && !allConsonantsFound && scorebd.score(GTP.gamestate.currentPlayer) >= 250) {
                             GTP.dialog.vowelSpinSolveDialog(message);
                         }
@@ -1198,9 +1196,9 @@
                     $(".contains_letter").addClass("flip");
 
                     // reset vowel and consonant dependent variables
-                    numberOfVowelsRemaining = 0;
+                    GTP.gamestate.numberOfVowelsRemaining = 0;
                     noMoreVowelsAlertDisplayed = false;
-                    numberOfConsonantsRemaining = 0;
+                    GTP.gamestate.numberOfConsonantsRemaining = 0;
                     noMoreConsonantsAlertDisplayed = false;
 
                     //winning player minimum wins 1000.
@@ -1304,11 +1302,11 @@
 
                     // handle choosing an unselected vowel 
                     if (vowelChosen) {
-                        numberOfVowelsRemaining -= 1;
+                        GTP.gamestate.numberOfVowelsRemaining -= 1;
 
                         // handle choosing an unselected consonant
                     } else {
-                        numberOfConsonantsRemaining -= 1;
+                        GTP.gamestate.numberOfConsonantsRemaining -= 1;
                         scorebd.earnConsonant(GTP.gamestate.currentPlayer, count * GTP.gamestate.currentSliceValue);
                     }
 
