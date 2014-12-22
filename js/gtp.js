@@ -787,11 +787,7 @@
         };
 
 
-        resetAlphabet = function () {
-            //Set all the letters so they are uncalled
-            $(".letter").removeClass("letter_called letter_called_none");
-        };
-
+       
         ///////////////////////////////////////////////////////////
         ////////////// CHARACTER //////// /////////////////////////
         ///////////////////////////////////////////////////////////
@@ -832,6 +828,12 @@
             buildSlice(panel);
             buildMessage(panel);
         };
+        
+         resetAlphabet = function () {
+            //Set all the letters so they are uncalled
+            $(".letter").removeClass("letter_called letter_called_none");
+        };
+
 
         buildClickableLetters = function () {
             //Add clickable letters
