@@ -27,8 +27,7 @@
     // Global Variables can't have var in front of them?
     GTP.gamestate.phrases = new Array();
     GTP.gamestate.hints = new Array();
-
-        var currentRound = -1;
+    GTP.gamestate.currentRound = -1;
 
         var isPuzzleSolved = false;
         var numberOfVowelsRemaining = 0;
@@ -124,7 +123,7 @@
     // we display this dialog when the round finishes
     GTP.dialog.termRoundDialog = function () {
         message = "Congratulations " + scorebd.getPlayerName(+1) + "! ";
-        if ((currentRound + 1 < GTP.ruleset.ROUNDS)) {
+        if ((GTP.gamestate.currentRound + 1 < GTP.ruleset.ROUNDS)) {
             message += "The next round will begin shortly!";
         }
         GTP.dialog.showMessage(message, []);
@@ -448,7 +447,7 @@
             ///////////////////////////////////////////////////////////
 
             // here, we'll set the new phrase at the beginning of each round
-            phrase = GTP.gamestate.phrases[currentRound];
+            phrase = GTP.gamestate.phrases[GTP.gamestate.currentRound];
 
             // These indices point to the locations on the board below.
             //  X-----------  //
@@ -773,7 +772,7 @@
             //reveal punctuation marks (apostrophes,hyphens, question marks and exclamation marks)
 
             // finally, we display the hint for the players
-            $(".puzzle_hint").text(GTP.gamestate.hints[currentRound]);
+            $(".puzzle_hint").text(GTP.gamestate.hints[GTP.gamestate.currentRound]);
 
 
             ///////////////////////////////////////////////////////////
@@ -1076,12 +1075,12 @@
 
                 },
                 onenterinitRound: function (event, from, to) {
-                    currentRound = currentRound + 1;
+                    GTP.gamestate.currentRound = GTP.gamestate.currentRound + 1;
 
                     /*If there are more rounds to play, start by randomizing the
                      onenterstate: function(event, from, to start player and start the player's turn. */
 
-                    if (currentRound < GTP.ruleset.ROUNDS) {
+                    if (GTP.gamestate.currentRound < GTP.ruleset.ROUNDS) {
 
                         GTP.sounds.newGameSound();
                         populateBoard();
