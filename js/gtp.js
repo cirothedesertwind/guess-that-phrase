@@ -163,52 +163,52 @@
 
     GTP.board = {};
     GTP.board.buildBoard = function () {
-            //TODO: Sanitize phrases and set to uppercase
+        //TODO: Sanitize phrases and set to uppercase
 
-            //prepare board
-            board = ich.board_template();
+        //prepare board
+        board = ich.board_template();
 
-            //Disable selection on board.
-            board.attr('unselectable', 'on')
-                    .css('user-select', 'none')
-                    .on('selectstart', false);
+        //Disable selection on board.
+        board.attr('unselectable', 'on')
+                .css('user-select', 'none')
+                .on('selectstart', false);
 
-            //Set up the board
-            cell = ich.board_cell_template();
-            cell_n = 0;
+        //Set up the board
+        cell = ich.board_cell_template();
+        cell_n = 0;
 
-            for (var r = 0; r < 4; r++) {
-                row = ich.board_row_template();
+        for (var r = 0; r < 4; r++) {
+            row = ich.board_row_template();
 
-                //Specialize the row
-                if (r === 0 || r === 3) {
-                    columns = GTP.tiles.ROW12_TILES;
-                    row.addClass("grid_12 prefix_3");
-                }
-                else { //r == 1 || r == 2
-                    columns = GTP.tiles.ROW14_TILES;
-                    row.addClass("grid_14 prefix_2");
-                }
-
-                board.append(row);
-
-                //add all cells
-                for (var c = 0; c < columns; c++) {
-                    row.append(cell.clone().addClass("cell_" + cell_n));
-                    cell_n++;
-                }
-
-                //grid styling
-                row.children().first().addClass("alpha");
-                row.children().last().addClass("omega");
-
+            //Specialize the row
+            if (r === 0 || r === 3) {
+                columns = GTP.tiles.ROW12_TILES;
+                row.addClass("grid_12 prefix_3");
+            }
+            else { //r == 1 || r == 2
+                columns = GTP.tiles.ROW14_TILES;
+                row.addClass("grid_14 prefix_2");
             }
 
-            // finally, we create the hint template
-            board.append(ich.puzzle_hint_template({hint: ""}));
-            
-            return board;
-        };
+            board.append(row);
+
+            //add all cells
+            for (var c = 0; c < columns; c++) {
+                row.append(cell.clone().addClass("cell_" + cell_n));
+                cell_n++;
+            }
+
+            //grid styling
+            row.children().first().addClass("alpha");
+            row.children().last().addClass("omega");
+
+        }
+
+        // finally, we create the hint template
+        board.append(ich.puzzle_hint_template({hint: ""}));
+
+        return board;
+    };
     GTP.board.depopulateBoard = function () {
         //Flip all tiles back to blank the board
         $(".contains_letter").removeClass("flip");
@@ -414,7 +414,7 @@
         ////////////// BOARD //////////// /////////////////////////
         ///////////////////////////////////////////////////////////
 
-        
+
         /*end board setup*/
         populateBoard = function () {
             //Phrase setup----------------------------------------------
@@ -787,7 +787,7 @@
         };
 
 
-       
+
         ///////////////////////////////////////////////////////////
         ////////////// CHARACTER //////// /////////////////////////
         ///////////////////////////////////////////////////////////
@@ -828,8 +828,8 @@
             buildSlice(panel);
             buildMessage(panel);
         };
-        
-         resetAlphabet = function () {
+
+        resetAlphabet = function () {
             //Set all the letters so they are uncalled
             $(".letter").removeClass("letter_called letter_called_none");
         };
