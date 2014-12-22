@@ -1183,7 +1183,7 @@
                 onentertermRound: function (event, from, to) { /*Go to next round and start. */
                     //remove highlight from all three scores
                     $(".score").removeClass("active");
-                    GTP.sounds.endRoundSuccessSound();
+                    GTP.sounds.endRoundSound();
 
                     GTP.dialog.hideMessage();
                     GTP.dialog.termRoundDialog();
