@@ -160,6 +160,9 @@
         $(".vowel").show();                 // show vowels
         GTP.dialog.showMessage(message, []);           // show message
     };
+    
+    GTP.dom = {};
+    GTP.dom.game = null;
 
     GTP.board = {};
     GTP.board.buildBoard = function () {
@@ -284,18 +287,13 @@
 
     $(document).ready(function () {
 
-        ///////////////////////////////////////////////////////////
-        ////////////// GAME VARIABLES /////////////////////////////
-        ///////////////////////////////////////////////////////////
-
-
-
-
-        var game = $(".game");
+        //Get the game elment       
+        GTP.dom.game = $(".game");
+        
         var board;
         var character;
         var isCharacterOnLeft = true;
-        scorebd = new $.SCOREBOARD(game, GTP.ruleset.PLAYERS, GTP.ruleset.CURRENCY);
+        scorebd = new $.SCOREBOARD(GTP.dom.game, GTP.ruleset.PLAYERS, GTP.ruleset.CURRENCY);
 
         var wheelContainerElement;
 
@@ -822,7 +820,7 @@
 
         buildPanel = function () {
             panel = ich.panel_template();
-            game.append(panel);
+            GTP.dom.game.append(panel); //TODO: move this into doc.ready
             buildWheel(panel);
             buildClickableLetters();
             buildSlice(panel);
@@ -1066,7 +1064,7 @@
                 },
                 onenterinitGame: function (event, from, to) {
                     board = GTP.board.buildBoard();
-                    game.append(board);
+                    GTP.dom.game.append(board);
                     buildPanel();
                     buildCharacter();
 
