@@ -367,7 +367,10 @@
             board = ich.board_template();
             game.append(board);
 
-            board.disableSelection();
+            //Disable selection on board.
+            board.attr('unselectable', 'on')
+                 .css('user-select', 'none')
+                 .on('selectstart', false);
 
             //Set up the board
             cell = ich.board_cell_template();
@@ -1252,21 +1255,6 @@
         ///////////////////////////////////////////////////////////
         //////////////////////  START /////////////////////////////
         ///////////////////////////////////////////////////////////
-
-
-
-        //---------------------------------------------------------------------
-        //Pre-scripted macros
-        $.fn.disableSelection = function () {
-            return this
-                    .attr('unselectable', 'on')
-                    .css('user-select', 'none')
-                    .on('selectstart', false);
-        };
-
-
-        //---------------------------------------------------------------------
-
 
 
         var setRemainingConsonantsToRed = function () {
