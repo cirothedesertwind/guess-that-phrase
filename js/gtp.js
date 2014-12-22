@@ -206,18 +206,20 @@
 
 
     GTP.util = {};
-    GTP.util.countVowels = function (phrase) {
-        var acc;
+    GTP.util.countVowels = function (p) {
+        var acc = 0;
         // for every vowel...
         for (var i = 0; i !== GTP.lang.VOWELS.length; i++) {
             // if the vowel is in our phrase...
-            if (phrase.indexOf(GTP.lang.VOWELS[i]) !== -1) {
+            if (p.indexOf(GTP.lang.VOWELS[i]) !== -1) {
                 acc++;
             }
         }
+        
+        return acc;
     };
     GTP.util.countConsonants = function (phrase) {
-        var acc;
+        var acc = 0;
         // for every consonant...
         for (var i = 0; i !== GTP.lang.CONSONANTS.length; i++) {
             // if the consonant is in our phrase...
@@ -225,6 +227,8 @@
                 acc++;
             }
         }
+        
+        return acc;
     };
 
     $(document).ready(function () {
@@ -1088,12 +1092,12 @@
 
                         //re-enable all letters by re-setting the attributes to yes
                         $("span.letter").attr("data-clickable", "yes");
-
+ 
                         // we should check if phrases with no consonants or no
                         // vowels are introduced to the game
                         numberOfConsonantsRemaining = GTP.util.countConsonants(phrase);
                         numberOfVowelsRemaining = GTP.util.countVowels(phrase);
-
+                       
                         GTP.gamestate.currentPlayer = Math.floor((Math.random() * GTP.ruleset.PLAYERS));
                         gsm.initTurn();
                     } else {
