@@ -29,11 +29,11 @@
     GTP.gamestate.hints = new Array();
     GTP.gamestate.currentRound = -1;
 
-        var isPuzzleSolved = false;
-        var numberOfVowelsRemaining = 0;
-        var noMoreVowelsAlertDisplayed = false;
-        var numberOfConsonantsRemaining = 0;
-        var noMoreConsonantsAlertDisplayed = false;
+    var isPuzzleSolved = false;
+    var numberOfVowelsRemaining = 0;
+    var noMoreVowelsAlertDisplayed = false;
+    var numberOfConsonantsRemaining = 0;
+    var noMoreConsonantsAlertDisplayed = false;
 
     GTP.dialog = {};
     GTP.dialog.shift = 5;
@@ -214,7 +214,7 @@
                 acc++;
             }
         }
-        
+
         return acc;
     };
     GTP.util.countConsonants = function (phrase) {
@@ -226,7 +226,7 @@
                 acc++;
             }
         }
-        
+
         return acc;
     };
 
@@ -237,7 +237,7 @@
         ///////////////////////////////////////////////////////////
 
 
-        
+
 
         var game = $(".game");
         var board;
@@ -372,8 +372,8 @@
 
             //Disable selection on board.
             board.attr('unselectable', 'on')
-                 .css('user-select', 'none')
-                 .on('selectstart', false);
+                    .css('user-select', 'none')
+                    .on('selectstart', false);
 
             //Set up the board
             cell = ich.board_cell_template();
@@ -1091,12 +1091,12 @@
 
                         //re-enable all letters by re-setting the attributes to yes
                         $("span.letter").attr("data-clickable", "yes");
- 
+
                         // we should check if phrases with no consonants or no
                         // vowels are introduced to the game
                         numberOfConsonantsRemaining = GTP.util.countConsonants(phrase);
                         numberOfVowelsRemaining = GTP.util.countVowels(phrase);
-                       
+
                         GTP.gamestate.currentPlayer = Math.floor((Math.random() * GTP.ruleset.PLAYERS));
                         gsm.initTurn();
                     } else {
