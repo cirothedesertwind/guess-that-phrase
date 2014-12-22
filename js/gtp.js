@@ -820,11 +820,12 @@
 
         buildPanel = function () {
             panel = ich.panel_template();
-            GTP.dom.game.append(panel); //TODO: move this into doc.ready
             buildWheel(panel);
             buildClickableLetters();
             buildSlice(panel);
             buildMessage(panel);
+            
+            return panel;
         };
 
         resetAlphabet = function () {
@@ -1065,7 +1066,8 @@
                 onenterinitGame: function (event, from, to) {
                     board = GTP.board.buildBoard();
                     GTP.dom.game.append(board);
-                    buildPanel();
+                    panel = buildPanel();
+                    GTP.dom.game.append(panel);
                     buildCharacter();
 
                     // initialiy make these items hidden for now
@@ -1133,7 +1135,7 @@
                     // Check the status of the puzzle
                     if (GTP.gamestate.numberOfVowelsRemaining === 0) {
                         allVowelsFound = true;
-                        if (!GTP.namestate.noMoreVowelsAlertDisplayed) {
+                        if (!GTP.gamestate.noMoreVowelsAlertDisplayed) {
                             gsm.declareNoMoreVowels();
                             return; // we need to return to indicate we want to leave this state
                         }
