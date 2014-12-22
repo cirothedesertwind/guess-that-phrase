@@ -161,6 +161,56 @@
         GTP.dialog.showMessage(message, []);           // show message
     };
 
+    GTP.board = {};
+    GTP.board.buildBoard = function () {
+            //TODO: Sanitize phrases and set to uppercase
+
+            //prepare board
+            board = ich.board_template();
+
+            //Disable selection on board.
+            board.attr('unselectable', 'on')
+                    .css('user-select', 'none')
+                    .on('selectstart', false);
+
+            //Set up the board
+            cell = ich.board_cell_template();
+            cell_n = 0;
+
+            for (var r = 0; r < 4; r++) {
+                row = ich.board_row_template();
+
+                //Specialize the row
+                if (r === 0 || r === 3) {
+                    columns = GTP.tiles.ROW12_TILES;
+                    row.addClass("grid_12 prefix_3");
+                }
+                else { //r == 1 || r == 2
+                    columns = GTP.tiles.ROW14_TILES;
+                    row.addClass("grid_14 prefix_2");
+                }
+
+                board.append(row);
+
+                //add all cells
+                for (var c = 0; c < columns; c++) {
+                    row.append(cell.clone().addClass("cell_" + cell_n));
+                    cell_n++;
+                }
+
+                //grid styling
+                row.children().first().addClass("alpha");
+                row.children().last().addClass("omega");
+
+            }
+
+            // finally, we create the hint template
+            board.append(ich.puzzle_hint_template({hint: ""}));
+            
+            return board;
+        };
+
+
     GTP.sounds = {};
     GTP.sounds.newGameSound = function () {
         //Add sound effect for new puzzle
@@ -360,54 +410,7 @@
         ////////////// BOARD //////////// /////////////////////////
         ///////////////////////////////////////////////////////////
 
-        //build a board
-        buildBoard = function () {
-            //TODO: Sanitize phrases and set to uppercase
-
-            //prepare board
-            board = ich.board_template();
-            game.append(board);
-
-            //Disable selection on board.
-            board.attr('unselectable', 'on')
-                    .css('user-select', 'none')
-                    .on('selectstart', false);
-
-            //Set up the board
-            cell = ich.board_cell_template();
-            cell_n = 0;
-
-            for (var r = 0; r < 4; r++) {
-                row = ich.board_row_template();
-
-                //Specialize the row
-                if (r === 0 || r === 3) {
-                    columns = GTP.tiles.ROW12_TILES;
-                    row.addClass("grid_12 prefix_3");
-                }
-                else { //r == 1 || r == 2
-                    columns = GTP.tiles.ROW14_TILES;
-                    row.addClass("grid_14 prefix_2");
-                }
-
-                board.append(row);
-
-                //add all cells
-                for (var c = 0; c < columns; c++) {
-                    row.append(cell.clone().addClass("cell_" + cell_n));
-                    cell_n++;
-                }
-
-                //grid styling
-                row.children().first().addClass("alpha");
-                row.children().last().addClass("omega");
-
-            }
-
-            // finally, we create the hint template
-            board.append(ich.puzzle_hint_template({hint: ""}));
-        };
-
+        
         /*end board setup*/
         populateBoard = function () {
             //Phrase setup----------------------------------------------
@@ -1063,7 +1066,8 @@
                     playerNamesFormPopup();
                 },
                 onenterinitGame: function (event, from, to) {
-                    buildBoard();
+                    board = GTP.board.buildBoard();
+                    game.append(board);
                     buildPanel();
                     buildCharacter();
 
