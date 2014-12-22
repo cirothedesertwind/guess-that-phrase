@@ -30,9 +30,9 @@
     GTP.gamestate.currentRound = -1;
     GTP.gamestate.isPuzzleSolved = false;
     GTP.gamestate.numberOfVowelsRemaining = 0;
-    var noMoreVowelsAlertDisplayed = false;
+    GTP.gamestate.noMoreVowelsAlertDisplayed = false;
     GTP.gamestate.numberOfConsonantsRemaining = 0;
-    var noMoreConsonantsAlertDisplayed = false;
+    GTP.gamestate.noMoreConsonantsAlertDisplayed = false;
 
     GTP.dialog = {};
     GTP.dialog.shift = 5;
@@ -1132,7 +1132,7 @@
                     // Check the status of the puzzle
                     if (GTP.gamestate.numberOfVowelsRemaining === 0) {
                         allVowelsFound = true;
-                        if (!noMoreVowelsAlertDisplayed) {
+                        if (!GTP.namestate.noMoreVowelsAlertDisplayed) {
                             gsm.declareNoMoreVowels();
                             return; // we need to return to indicate we want to leave this state
                         }
@@ -1141,7 +1141,7 @@
                     }
                     if (GTP.gamestate.numberOfConsonantsRemaining === 0) {
                         allConsonantsFound = true;
-                        if (!noMoreConsonantsAlertDisplayed) {
+                        if (!GTP.gamestate.noMoreConsonantsAlertDisplayed) {
                             gsm.declareNoMoreConsonants();
                             return; // we need to return to indicate we want to leave this state
                         }
@@ -1197,9 +1197,9 @@
 
                     // reset vowel and consonant dependent variables
                     GTP.gamestate.numberOfVowelsRemaining = 0;
-                    noMoreVowelsAlertDisplayed = false;
+                    GTP.gamestate.noMoreVowelsAlertDisplayed = false;
                     GTP.gamestate.numberOfConsonantsRemaining = 0;
-                    noMoreConsonantsAlertDisplayed = false;
+                    GTP.gamestate.noMoreConsonantsAlertDisplayed = false;
 
                     //winning player minimum wins 1000.
                     scorebd.setScore(GTP.gamestate.currentPlayer, Math.max(1000, scorebd.score(GTP.gamestate.currentPlayer)));
@@ -1216,7 +1216,7 @@
 
                 },
                 onenternoMoreVowels: function (event, from, to) {
-                    noMoreVowelsAlertDisplayed = true;
+                    GTP.gamestate.noMoreVowelsAlertDisplayed = true;
                     setRemainingVowelsToRed();
                     new Messi('All the vowels in the phrase have been called out.',
                             {title: 'No more vowels!',
@@ -1229,7 +1229,7 @@
                             });
                 },
                 onenternoMoreConsonants: function (event, from, to) {
-                    noMoreConsonantsAlertDisplayed = true;
+                    GTP.gamestate.noMoreConsonantsAlertDisplayed = true;
                     setRemainingConsonantsToRed();
                     new Messi('All the consonants in the phrase have been called out.',
                             {title: 'No more consonants!',
