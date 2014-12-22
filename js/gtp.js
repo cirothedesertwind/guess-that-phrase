@@ -24,6 +24,17 @@
     GTP.gamestate = {};
     GTP.gamestate.currentSliceValue = -1;
     GTP.gamestate.currentPlayer = -1;
+    // Global Variables can't have var in front of them?
+    GTP.gamestate.phrases = new Array();
+    GTP.gamestate.hints = new Array();
+
+        var currentRound = -1;
+
+        var isPuzzleSolved = false;
+        var numberOfVowelsRemaining = 0;
+        var noMoreVowelsAlertDisplayed = false;
+        var numberOfConsonantsRemaining = 0;
+        var noMoreConsonantsAlertDisplayed = false;
 
     GTP.dialog = {};
     GTP.dialog.shift = 5;
@@ -223,17 +234,7 @@
         ///////////////////////////////////////////////////////////
 
 
-        // Global Variables can't have var in front of them?
-        phrases = new Array();
-        hints = new Array();
-
-        var currentRound = -1;
-
-        var isPuzzleSolved = false;
-        var numberOfVowelsRemaining = 0;
-        var noMoreVowelsAlertDisplayed = false;
-        var numberOfConsonantsRemaining = 0;
-        var noMoreConsonantsAlertDisplayed = false;
+        
 
         var game = $(".game");
         var board;
@@ -440,7 +441,7 @@
             ///////////////////////////////////////////////////////////
 
             // here, we'll set the new phrase at the beginning of each round
-            phrase = phrases[currentRound];
+            phrase = GTP.gamestate.phrases[currentRound];
 
             // These indices point to the locations on the board below.
             //  X-----------  //
@@ -765,7 +766,7 @@
             //reveal punctuation marks (apostrophes,hyphens, question marks and exclamation marks)
 
             // finally, we display the hint for the players
-            $(".puzzle_hint").text(hints[currentRound]);
+            $(".puzzle_hint").text(GTP.gamestate.hints[currentRound]);
 
 
             ///////////////////////////////////////////////////////////

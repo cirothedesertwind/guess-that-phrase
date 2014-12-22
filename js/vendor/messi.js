@@ -151,8 +151,8 @@ Messi.prototype = {
                 hint = hint.trim();
 
                 // ... and add them to our arrays
-                phrases.push(phrase);
-                hints.push(hint);
+                GTP.gamestate.phrases.push(phrase);
+                GTP.gamestate.hints.push(hint);
             }
         }
 
