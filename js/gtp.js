@@ -217,6 +217,13 @@
         $(".contains_letter").removeClass("flip");
         $(".cell").removeClass("contains_letter");
     };
+    
+    GTP.panel = {};
+    GTP.panel.resetAlphabet = function () {
+            //Set all the letters so they are uncalled
+            $(".letter").removeClass("letter_called letter_called_none");
+        };
+
 
     GTP.sounds = {};
     GTP.sounds.newGameSound = function () {
@@ -289,6 +296,13 @@
                 return "vowel";
             else
                 return "consonant";
+        };
+        GTP.util.setRemainingConsonantsToRed = function () {
+            $(".consonant:not(.letter_called)").addClass("letter_called_none");
+        };
+
+        GTP.util.setRemainingVowelsToRed = function () {
+            $(".vowel:not(.letter_called)").addClass("letter_called_none");
         };
 
     $(document).ready(function () {
@@ -816,11 +830,7 @@
             return panel;
         };
 
-        resetAlphabet = function () {
-            //Set all the letters so they are uncalled
-            $(".letter").removeClass("letter_called letter_called_none");
-        };
-
+        
 
         buildClickableLetters = function () {
             //Add clickable letters
@@ -1200,7 +1210,7 @@
 
                     var timer = $.timer(function () {
                         GTP.board.depopulateBoard(); //Clear the board
-                        resetAlphabet(); // reset the alphabet
+                        GTP.panel.resetAlphabet(); // reset the alphabet
                         gsm.initRound();  //Init next round
                     });
                     timer.once(5000);
@@ -1208,7 +1218,7 @@
                 },
                 onenternoMoreVowels: function (event, from, to) {
                     GTP.gamestate.noMoreVowelsAlertDisplayed = true;
-                    setRemainingVowelsToRed();
+                    GTP.util.setRemainingVowelsToRed();
                     new Messi('All the vowels in the phrase have been called out.',
                             {title: 'No more vowels!',
                                 titleClass: 'anim warning',
@@ -1221,7 +1231,7 @@
                 },
                 onenternoMoreConsonants: function (event, from, to) {
                     GTP.gamestate.noMoreConsonantsAlertDisplayed = true;
-                    setRemainingConsonantsToRed();
+                    GTP.util.setRemainingConsonantsToRed();
                     new Messi('All the consonants in the phrase have been called out.',
                             {title: 'No more consonants!',
                                 titleClass: 'anim warning',
@@ -1249,13 +1259,6 @@
         ///////////////////////////////////////////////////////////
 
 
-        var setRemainingConsonantsToRed = function () {
-            $(".consonant:not(.letter_called)").addClass("letter_called_none");
-        };
-
-        var setRemainingVowelsToRed = function () {
-            $(".vowel:not(.letter_called)").addClass("letter_called_none");
-        };
 
         onLetterClick = function (event) {
 
