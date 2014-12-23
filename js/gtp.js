@@ -441,7 +441,7 @@
 
 
         /*end board setup*/
-        populateBoard = function () {
+        populateBoard = function (phrase) {
             //Phrase setup----------------------------------------------
             //This is alpha quality
 
@@ -475,9 +475,6 @@
             ///////////////////////////////////////////////////////////
             ///////////////// BEGIN PHRASE SETUP //////////////////////
             ///////////////////////////////////////////////////////////
-
-            // here, we'll set the new phrase at the beginning of each round
-            phrase = GTP.gamestate.phrases[GTP.gamestate.currentRound];
 
             // These indices point to the locations on the board below.
             //  X-----------  //
@@ -779,6 +776,8 @@
                     }
                 }
             }
+            
+            //TODO: BREAK METHOD HERE INTO LAYOUT AND PRESENTATION
 
             //place letters in respective tiles, tile by tile using a schedule
             delay = 0;
@@ -1081,8 +1080,9 @@
 
                     if (GTP.gamestate.currentRound < GTP.ruleset.ROUNDS) {
 
+                        phrase = GTP.gamestate.phrases[GTP.gamestate.currentRound];
                         GTP.sounds.newGameSound();
-                        populateBoard();
+                        populateBoard(phrase);
 
                         scorebd.newRound();
 
