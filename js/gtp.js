@@ -801,17 +801,6 @@
         flipTiles = function (letter) {
             letterSet = $("p.letter:contains('" + letter + "')").parents(".cell");
             letterSet.addClass("flip");
-
-            //only move if there are characters to be flipped
-            if (letterSet.length > 0) {
-                if (isCharacterOnLeft) {
-                    character.velocity({translateX: "1100px"});
-                    isCharacterOnLeft = false;
-                } else {
-                    character.velocity({translateX: "0px"});
-                    isCharacterOnLeft = true;
-                }
-            }
         };
 
         ///////////////////////////////////////////////////////////
@@ -1300,6 +1289,17 @@
                 if (count > 0) {
 
                     GTP.sounds.correctLetterSound(); // play the "correctGuess" sound
+                    
+                    
+            //only move if there are characters to be flipped
+                if (isCharacterOnLeft) {
+                    character.velocity({translateX: "1100px"});
+                    isCharacterOnLeft = false;
+                } else {
+                    character.velocity({translateX: "0px"});
+                    isCharacterOnLeft = true;
+                }
+            
 
                     $(".letter_" + letter).addClass("letter_called");
 
