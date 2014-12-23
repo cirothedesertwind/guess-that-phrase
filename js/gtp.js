@@ -223,6 +223,20 @@
             //Set all the letters so they are uncalled
             $(".letter").removeClass("letter_called letter_called_none");
         };
+    GTP.panel.buildSlice = function () {
+            sliceContainer = ich.slice_container_template();
+            sliceCanvas = ich.slice_canvas_template(
+                    {width: 200 + GTP.dialog.shift,
+                        height: 200 + GTP.dialog.shift});
+
+            sliceContainer.append(sliceCanvas);
+
+            slice_canvas = sliceCanvas.get(0);
+            slice_canvasCtx = slice_canvas.getContext("2d");
+
+            return sliceContainer;
+
+        };
 
 
     GTP.sounds = {};
@@ -824,7 +838,9 @@
             panel = ich.panel_template();
             buildWheel(panel);
             buildClickableLetters();
-            buildSlice(panel);
+            slice = GTP.panel.buildSlice();
+            GTP.dialog.sliceContainerElement = slice;
+            panel.append(slice);
             buildMessage(panel);
             
             return panel;
@@ -876,22 +892,6 @@
 
             //TODO: Ideally, set bankrupt callbacks here
             wheelContainerElement = wheelContainer;
-
-        };
-
-        buildSlice = function (element) {
-            sliceContainer = ich.slice_container_template();
-            sliceCanvas = ich.slice_canvas_template(
-                    {width: 200 + GTP.dialog.shift,
-                        height: 200 + GTP.dialog.shift});
-
-            sliceContainer.append(sliceCanvas);
-            element.append(sliceContainer);
-
-            slice_canvas = sliceCanvas.get(0);
-            slice_canvasCtx = slice_canvas.getContext("2d");
-
-            GTP.dialog.sliceContainerElement = sliceContainer;
 
         };
 
