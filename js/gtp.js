@@ -284,6 +284,12 @@
 
         return acc;
     };
+    GTP.util.vowelOrConsonant = function (letter) {
+            if (['A', 'E', 'I', 'O', 'U'].indexOf(letter) !== -1)
+                return "vowel";
+            else
+                return "consonant";
+        };
 
     $(document).ready(function () {
 
@@ -317,13 +323,6 @@
                 //only choose consonants after a wheel spin
                 gsm.chooseConsonant();
             }
-        };
-
-        var vowelOrConsonant = function (letter) {
-            if (['A', 'E', 'I', 'O', 'U'].indexOf(letter) !== -1)
-                return "vowel";
-            else
-                return "consonant";
         };
 
         var bankruptifyOnWheel = function (context) {
@@ -835,7 +834,7 @@
                 l.append(ich.letter_template(
                         {
                             "letter": GTP.lang.ALPHABET.charAt(e),
-                            "vowelOrConsonant": vowelOrConsonant(GTP.lang.ALPHABET.charAt(e))
+                            "vowelOrConsonant": GTP.util.vowelOrConsonant(GTP.lang.ALPHABET.charAt(e))
                         }
                 ).click({"letter": GTP.lang.ALPHABET.charAt(e)}, onLetterClick));
             }
