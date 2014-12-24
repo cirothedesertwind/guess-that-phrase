@@ -218,6 +218,11 @@
         $(".cell").removeClass("contains_letter");
     };
     
+    GTP.hint = {};
+    GTP.hint.setHint = function (hint) {
+        $(".puzzle_hint").text(hint);
+    }
+
     GTP.panel = {};
     GTP.panel.resetAlphabet = function () {
             //Set all the letters so they are uncalled
@@ -777,6 +782,7 @@
                 }
             }
             
+
             //TODO: BREAK METHOD HERE INTO LAYOUT AND PRESENTATION
 
             //place letters in respective tiles, tile by tile using a schedule
@@ -794,15 +800,12 @@
                         $('div.cell_' + (wordIndex[word] + c)).addClass("flip");
                     }
                 }
-
-
             }
 
             //reveal punctuation marks (apostrophes,hyphens, question marks and exclamation marks)
 
             // finally, we display the hint for the players
-            $(".puzzle_hint").text(GTP.gamestate.hints[GTP.gamestate.currentRound]);
-
+            GTP.hint.setHint(GTP.gamestate.hints[GTP.gamestate.currentRound]);
 
             ///////////////////////////////////////////////////////////
             /////////////////// END PHRASE SETUP //////////////////////
