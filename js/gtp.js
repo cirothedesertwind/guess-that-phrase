@@ -230,7 +230,7 @@
         // phrase = "BAKED POTATO WITH SOUR CREAM & CHIVES";
         // phrase = "THE LORD OF THE RINGS";
         // phrase = "LORD OF THE RINGS";
-        // phrase = "SEVEN SWAMS A-SWIMMING";
+        // phrase = "SEVEN SWANS A-SWIMMING";
         // phrase = "I'VE GOT A GOOD FEELING ABOUT THIS";
         // phrase = "BUCKET LIST";
         // phrase = "NEW BABY BUGGY";
