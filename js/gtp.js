@@ -92,6 +92,7 @@
         }
 
         $(".vowel, .consonant").hide();
+        $("#alphabetSplitter").hide();
         GTP.dialog.alphabetElement.hide();
 
         GTP.dialog.clearSlice();
@@ -150,14 +151,15 @@
     };
     GTP.dialog.chooseConsonantDialog = function () {
         message = 'Please choose a consonant.';
-        $(".consonant").show();             // show consonants
-        GTP.dialog.drawSlice();                        // draw slice spin
+        $("#alphabetSplitter").show();                 // we have lots of letters, so we want to split them in half
+        $(".consonant").show();                        // show consonants
+        GTP.dialog.drawSlice();                        // draw slice spun
         GTP.dialog.sliceContainerElement.show();       // show slice spun
         GTP.dialog.showMessage(message, []);           // show message
     };
     GTP.dialog.chooseVowelDialog = function () {
         message = 'Please choose a vowel.';
-        $(".vowel").show();                 // show vowels
+        $(".vowel").show();                            // show vowels
         GTP.dialog.showMessage(message, []);           // show message
     };
 
@@ -839,7 +841,7 @@
             for (var e = 0; e < GTP.lang.ALPHABET.length; e++) {
                 //add special break for two lines of letters
                 if (e === 15) { //Magic number
-                    l.append("</br>");
+                    l.append("<br id='alphabetSplitter'></br>");
                 }
 
                 l.append(ich.letter_template(
@@ -854,6 +856,7 @@
 
             // hide the alphabet
             $(".vowel, .consonant").hide();
+            $("#alphabetSplitter").hide();
             GTP.dialog.alphabetElement.hide();
         };
 
