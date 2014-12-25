@@ -572,7 +572,9 @@
     GTP.board.depopulateBoard = function () {
         //Flip all tiles back to blank the board
         $(".contains_letter").removeClass("flip");
+        // remove the contains letter class and remove the letter itself
         $(".cell").removeClass("contains_letter");
+        $("p.letter").empty();
     };
 
     GTP.hint = {};
