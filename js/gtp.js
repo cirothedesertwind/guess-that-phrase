@@ -121,7 +121,7 @@
     };
     // we display this dialog when the round finishes
     GTP.dialog.termRoundDialog = function () {
-        message = "Congratulations " + scorebd.getPlayerName(+1) + "! ";
+        message = "Congratulations " + scorebd.getPlayerName(GTP.gamestate.currentPlayer) + "! ";
         if ((GTP.gamestate.currentRound + 1 < GTP.ruleset.ROUNDS)) {
             message += "The next round will begin shortly!";
         }
@@ -129,7 +129,7 @@
     };
     // we display this dialog when the user chooses to solve the puzzle
     GTP.dialog.solveLockInDialog = function () {
-        message = 'Did ' + scorebd.getPlayerName(+1) + ' guess the puzzle correctly?';
+        message = 'Did ' + scorebd.getPlayerName(GTP.gamestate.currentPlayer) + ' guess the puzzle correctly?';
         GTP.dialog.showMessage(message, ["yes", "no", "cancel"]);
     };
     GTP.dialog.vowelSpinSolveDialog = function (message) {
@@ -1142,11 +1142,12 @@
                     }
                     GTP.gamestate.isPuzzleSolved = allVowelsFound && allConsonantsFound;
 
+                    var message = scorebd.getPlayerName(GTP.gamestate.currentPlayer);
                     // What should the message to the user be
                     if (from === "initTurn") {
-                        var message = scorebd.getPlayerName(GTP.gamestate.currentPlayer + 1) + ", it is your turn. ";
+                        message += ", it is your turn. ";
                     } else {
-                        var message = scorebd.getPlayerName(GTP.gamestate.currentPlayer + 1) + ", it is still your turn. ";
+                        message += ", it is still your turn. ";
                     }
 
                     /*If puzzle is unsolved, prompt (iff vowels available & player has >= $250, incude vowel option) */

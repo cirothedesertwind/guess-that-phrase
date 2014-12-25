@@ -167,6 +167,9 @@ Messi.prototype = {
                 player = player.trim();
 
                 // ... and add them to our arrays
+                if (player === "") {
+                    player = "Player " + count;
+                }
                 scorebd.setPlayerName(count-1, player);
             }
         }
