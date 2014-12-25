@@ -212,241 +212,7 @@
 
         return board;
     };
-    GTP.board.depopulateBoard = function () {
-        //Flip all tiles back to blank the board
-        $(".contains_letter").removeClass("flip");
-        $(".cell").removeClass("contains_letter");
-    };
-    
-    GTP.hint = {};
-    GTP.hint.setHint = function (hint) {
-        $(".puzzle_hint").text(hint);
-    }
-
-    GTP.panel = {};
-    GTP.panel.resetAlphabet = function () {
-            //Set all the letters so they are uncalled
-            $(".letter").removeClass("letter_called letter_called_none");
-        };
-    GTP.panel.buildSlice = function () {
-            sliceContainer = ich.slice_container_template();
-            sliceCanvas = ich.slice_canvas_template(
-                    {width: 200 + GTP.dialog.shift,
-                        height: 200 + GTP.dialog.shift});
-
-            sliceContainer.append(sliceCanvas);
-
-            slice_canvas = sliceCanvas.get(0);
-            slice_canvasCtx = slice_canvas.getContext("2d");
-
-            return sliceContainer;
-
-        };
-
-
-    GTP.sounds = {};
-    GTP.sounds.newGameSound = function () {
-        //Add sound effect for new puzzle
-        var sound = new Howl({
-            urls: ['sound/new_puzzle.ogg']
-        }).play();
-    };
-    GTP.sounds.incorrectLetterSound = function () {
-        var sound = new Howl(
-                {
-                    urls: ['sound/incorrectConsonantOrVowelSound.mp3'],
-                    sprite: {portion: [0, 400]}
-                }
-        );
-        sound.play("portion");
-    };
-    GTP.sounds.correctLetterSound = function () {
-        var sound = new Howl(
-                {
-                    urls: ['sound/correctConsonantOrVowelSound.mp3']
-                }
-        );
-        sound.play();
-    };
-    GTP.sounds.endRoundSound = function () {
-        var sound = new Howl(
-                {
-                    urls: ['sound/endRoundSuccess.ogg']
-                }
-        );
-        sound.play();
-    };
-    GTP.sounds.bankruptOrLooseTurnSound = function () {
-        var sound = new Howl(
-                {
-                    urls: ['sound/bankruptOrLooseTurn.ogg']
-                }
-        );
-        sound.play();
-    };
-
-    GTP.util = {};
-    GTP.util.countVowels = function (p) {
-        var acc = 0;
-        // for every vowel...
-        for (var i = 0; i !== GTP.lang.VOWELS.length; i++) {
-            // if the vowel is in our phrase...
-            if (p.indexOf(GTP.lang.VOWELS[i]) !== -1) {
-                acc++;
-            }
-        }
-
-        return acc;
-    };
-    GTP.util.countConsonants = function (phrase) {
-        var acc = 0;
-        // for every consonant...
-        for (var i = 0; i !== GTP.lang.CONSONANTS.length; i++) {
-            // if the consonant is in our phrase...
-            if (phrase.indexOf(GTP.lang.CONSONANTS[i]) !== -1) {
-                acc++;
-            }
-        }
-
-        return acc;
-    };
-    GTP.util.vowelOrConsonant = function (letter) {
-            if (['A', 'E', 'I', 'O', 'U'].indexOf(letter) !== -1)
-                return "vowel";
-            else
-                return "consonant";
-        };
-        GTP.util.setRemainingConsonantsToRed = function () {
-            $(".consonant:not(.letter_called)").addClass("letter_called_none");
-        };
-
-        GTP.util.setRemainingVowelsToRed = function () {
-            $(".vowel:not(.letter_called)").addClass("letter_called_none");
-        };
-
-    $(document).ready(function () {
-
-        //Get the game elment       
-        GTP.dom.game = $(".game");
-        
-        var board;
-        var character;
-        var isCharacterOnLeft = true;
-        scorebd = new $.SCOREBOARD(GTP.dom.game, GTP.ruleset.PLAYERS, GTP.ruleset.CURRENCY);
-
-        var wheelContainerElement;
-
-
-        console.log(scorebd);
-
-        var spinFinishedCallback = function () {
-            GTP.gamestate.currentSliceValue = wheel.getValue();
-            currentSliceColor = wheel.getColor();
-            //TODO: unlock letters here
-            wheelContainerElement.fadeOut();
-
-            //Enter the appropriate wheel state:
-            if (GTP.gamestate.currentSliceValue === 0xFFFFBA) { //bankrupt
-                gsm.bankrupt();
-            }
-            else if (GTP.gamestate.currentSliceValue === 0xFFFF10) { //lose turn
-                gsm.loseTurn();
-            }
-            else {
-                //only choose consonants after a wheel spin
-                gsm.chooseConsonant();
-            }
-        };
-
-        var bankruptifyOnWheel = function (context) {
-            scorebd.setScore(GTP.gamestate.currentPlayer, 0);
-            GTP.sounds.bankruptOrLooseTurnSound();
-            gsm.loseTurn();
-        };
-
-        var loseTurnOnWheel = function (context) {
-            GTP.sounds.bankruptOrLooseTurnSound();
-            gsm.loseTurn();
-        };
-
-
-        phraseFormPopup = function () {
-
-            // The Messi message needs to be broken down for maintainability
-            var MessiStrExplanation = '<p>Please input the phrases you like to use in this game.</p>';
-            var MessiStrFormOpening = '<form id="phrase_input" action="" data-parsley-validate>';
-            var MessiStrContent = "";
-            for (var phraseNum = 1; phraseNum <= GTP.ruleset.ROUNDS; phraseNum++) {
-                var MessiStrPhraseLabel = 'Phrase ' + phraseNum + ': ';
-
-                // the first phrase is required
-                if (phraseNum === 1) {
-                    var required = "required";
-                } else {
-                    var required = "";
-                }
-                var MessiStrPhraseInput = '<input type="text" id="phrase' + phraseNum + '" name="phrase' + phraseNum + '" data-parsley-maxlength="50" data-parsley-fits pattern="' + GTP.tiles.PRHASE_REGEX + '" ' + required + '>';
-
-                var space = " ";
-                var MessiStrHintLabel = 'Hint ' + phraseNum + ': ';
-                var MessiStrHintContent = '<input type="text" id="hint' + phraseNum + '" name="hint' + phraseNum + '">';
-                MessiStrContent += MessiStrPhraseLabel + MessiStrPhraseInput + space + MessiStrHintLabel + MessiStrHintContent;
-
-                // add a new line after every hint entry box
-                if (phraseNum !== GTP.ruleset.ROUNDS) {
-                    MessiStrContent += '<br>';
-                }
-            }
-            var MessiStrFormClosing = '</form>';
-            var MessiStr = MessiStrExplanation + MessiStrFormOpening + MessiStrContent + MessiStrFormClosing;
-
-            new Messi(MessiStr,
-                    {title: 'Set your phrases', titleClass: 'info',
-                        buttons: [{id: 0, label: 'Ok', val: 'Ok', class: 'btn-success'}],
-                        callback: function (val) {
-                            gsm.initPlayerNames();
-                        }
-                    });
-        };
-
-        playerNamesFormPopup = function () {
-
-            // The Messi message needs to be broken down for maintainability
-            var MessiStrExplanation = '<p>Please input each player\'s name in the boxes below. Each name is limited to 12 characters maximum.</p>';
-            var MessiStrFormOpening = '<form id="player_name_input_form" action="" data-parsley-validate>';
-            var MessiStrContent = "";
-            for (var phraseNum = 1; phraseNum <= GTP.ruleset.PLAYERS; phraseNum++) {
-                var MessiStrPhraseLabel = 'Player ' + phraseNum + ': ';
-
-                var MessiStrPhraseInput = '<input type="text" class="player_name_input" id="player' + phraseNum + '" name="player' + phraseNum + '" data-parsley-maxlength="12" data-parsley-fits pattern="' + GTP.tiles.PLAYER_REGEX + '" required>';
-
-                MessiStrContent += MessiStrPhraseLabel + MessiStrPhraseInput;
-
-                // add a new line after every hint entry box
-                if (phraseNum !== GTP.ruleset.ROUNDS) {
-                    MessiStrContent += '<br>';
-                }
-            }
-            var MessiStrFormClosing = '</form>';
-            var MessiStr = MessiStrExplanation + MessiStrFormOpening + MessiStrContent + MessiStrFormClosing;
-
-            new Messi(MessiStr,
-                    {title: 'Set Your Player Names', titleClass: 'info',
-                        buttons: [{id: 0, label: 'Ok', val: 'Ok', class: 'btn-success'}],
-                        callback: function (val) {
-                            gsm.initGame();
-                            gsm.initRound();
-                        }
-                    });
-        };
-
-        ///////////////////////////////////////////////////////////
-        ////////////// BOARD //////////// /////////////////////////
-        ///////////////////////////////////////////////////////////
-
-
-        /*end board setup*/
-        populateBoard = function (phrase) {
+        GTP.board.layoutPhraseOnBoard = function (phrase) {
             //Phrase setup----------------------------------------------
             //This is alpha quality
 
@@ -782,10 +548,10 @@
                 }
             }
             
-
-            //TODO: BREAK METHOD HERE INTO LAYOUT AND PRESENTATION
-
-            //place letters in respective tiles, tile by tile using a schedule
+            return [words,wordIndex];
+        };
+    GTP.board.populateBoard = function (words, wordIndex){
+        //place letters in respective tiles, tile by tile using a schedule
             delay = 0;
             for (var word = 0; word < words.length; word++) {
                 for (var c = 0; c < words[word].length; c++) {
@@ -802,18 +568,234 @@
                 }
             }
 
-            //reveal punctuation marks (apostrophes,hyphens, question marks and exclamation marks)
+    };
+    GTP.board.depopulateBoard = function () {
+        //Flip all tiles back to blank the board
+        $(".contains_letter").removeClass("flip");
+        $(".cell").removeClass("contains_letter");
+    };
+    
+    GTP.hint = {};
+    GTP.hint.setHint = function (hint) {
+        $(".puzzle_hint").text(hint);
+    };
 
-            // finally, we display the hint for the players
-            GTP.hint.setHint(GTP.gamestate.hints[GTP.gamestate.currentRound]);
+    GTP.panel = {};
+    GTP.panel.resetAlphabet = function () {
+            //Set all the letters so they are uncalled
+            $(".letter").removeClass("letter_called letter_called_none");
+        };
+    GTP.panel.buildSlice = function () {
+            sliceContainer = ich.slice_container_template();
+            sliceCanvas = ich.slice_canvas_template(
+                    {width: 200 + GTP.dialog.shift,
+                        height: 200 + GTP.dialog.shift});
 
-            ///////////////////////////////////////////////////////////
-            /////////////////// END PHRASE SETUP //////////////////////
-            ///////////////////////////////////////////////////////////
+            sliceContainer.append(sliceCanvas);
+
+            slice_canvas = sliceCanvas.get(0);
+            slice_canvasCtx = slice_canvas.getContext("2d");
+
+            return sliceContainer;
 
         };
 
 
+    GTP.sounds = {};
+    GTP.sounds.newGameSound = function () {
+        //Add sound effect for new puzzle
+        var sound = new Howl({
+            urls: ['sound/new_puzzle.ogg']
+        }).play();
+    };
+    GTP.sounds.incorrectLetterSound = function () {
+        var sound = new Howl(
+                {
+                    urls: ['sound/incorrectConsonantOrVowelSound.mp3'],
+                    sprite: {portion: [0, 400]}
+                }
+        );
+        sound.play("portion");
+    };
+    GTP.sounds.correctLetterSound = function () {
+        var sound = new Howl(
+                {
+                    urls: ['sound/correctConsonantOrVowelSound.mp3']
+                }
+        );
+        sound.play();
+    };
+    GTP.sounds.endRoundSound = function () {
+        var sound = new Howl(
+                {
+                    urls: ['sound/endRoundSuccess.ogg']
+                }
+        );
+        sound.play();
+    };
+    GTP.sounds.bankruptOrLooseTurnSound = function () {
+        var sound = new Howl(
+                {
+                    urls: ['sound/bankruptOrLooseTurn.ogg']
+                }
+        );
+        sound.play();
+    };
+
+    GTP.util = {};
+    GTP.util.countVowels = function (p) {
+        var acc = 0;
+        // for every vowel...
+        for (var i = 0; i !== GTP.lang.VOWELS.length; i++) {
+            // if the vowel is in our phrase...
+            if (p.indexOf(GTP.lang.VOWELS[i]) !== -1) {
+                acc++;
+            }
+        }
+
+        return acc;
+    };
+    GTP.util.countConsonants = function (phrase) {
+        var acc = 0;
+        // for every consonant...
+        for (var i = 0; i !== GTP.lang.CONSONANTS.length; i++) {
+            // if the consonant is in our phrase...
+            if (phrase.indexOf(GTP.lang.CONSONANTS[i]) !== -1) {
+                acc++;
+            }
+        }
+
+        return acc;
+    };
+    GTP.util.vowelOrConsonant = function (letter) {
+            if (['A', 'E', 'I', 'O', 'U'].indexOf(letter) !== -1)
+                return "vowel";
+            else
+                return "consonant";
+        };
+        GTP.util.setRemainingConsonantsToRed = function () {
+            $(".consonant:not(.letter_called)").addClass("letter_called_none");
+        };
+
+        GTP.util.setRemainingVowelsToRed = function () {
+            $(".vowel:not(.letter_called)").addClass("letter_called_none");
+        };
+
+    $(document).ready(function () {
+
+        //Get the game elment       
+        GTP.dom.game = $(".game");
+        
+        var board;
+        var character;
+        var isCharacterOnLeft = true;
+        scorebd = new $.SCOREBOARD(GTP.dom.game, GTP.ruleset.PLAYERS, GTP.ruleset.CURRENCY);
+
+        var wheelContainerElement;
+
+
+        console.log(scorebd);
+
+        var spinFinishedCallback = function () {
+            GTP.gamestate.currentSliceValue = wheel.getValue();
+            currentSliceColor = wheel.getColor();
+            //TODO: unlock letters here
+            wheelContainerElement.fadeOut();
+
+            //Enter the appropriate wheel state:
+            if (GTP.gamestate.currentSliceValue === 0xFFFFBA) { //bankrupt
+                gsm.bankrupt();
+            }
+            else if (GTP.gamestate.currentSliceValue === 0xFFFF10) { //lose turn
+                gsm.loseTurn();
+            }
+            else {
+                //only choose consonants after a wheel spin
+                gsm.chooseConsonant();
+            }
+        };
+
+        var bankruptifyOnWheel = function (context) {
+            scorebd.setScore(GTP.gamestate.currentPlayer, 0);
+            GTP.sounds.bankruptOrLooseTurnSound();
+            gsm.loseTurn();
+        };
+
+        var loseTurnOnWheel = function (context) {
+            GTP.sounds.bankruptOrLooseTurnSound();
+            gsm.loseTurn();
+        };
+
+
+        phraseFormPopup = function () {
+
+            // The Messi message needs to be broken down for maintainability
+            var MessiStrExplanation = '<p>Please input the phrases you like to use in this game.</p>';
+            var MessiStrFormOpening = '<form id="phrase_input" action="" data-parsley-validate>';
+            var MessiStrContent = "";
+            for (var phraseNum = 1; phraseNum <= GTP.ruleset.ROUNDS; phraseNum++) {
+                var MessiStrPhraseLabel = 'Phrase ' + phraseNum + ': ';
+
+                // the first phrase is required
+                if (phraseNum === 1) {
+                    var required = "required";
+                } else {
+                    var required = "";
+                }
+                var MessiStrPhraseInput = '<input type="text" id="phrase' + phraseNum + '" name="phrase' + phraseNum + '" data-parsley-maxlength="50" data-parsley-fits pattern="' + GTP.tiles.PRHASE_REGEX + '" ' + required + '>';
+
+                var space = " ";
+                var MessiStrHintLabel = 'Hint ' + phraseNum + ': ';
+                var MessiStrHintContent = '<input type="text" id="hint' + phraseNum + '" name="hint' + phraseNum + '">';
+                MessiStrContent += MessiStrPhraseLabel + MessiStrPhraseInput + space + MessiStrHintLabel + MessiStrHintContent;
+
+                // add a new line after every hint entry box
+                if (phraseNum !== GTP.ruleset.ROUNDS) {
+                    MessiStrContent += '<br>';
+                }
+            }
+            var MessiStrFormClosing = '</form>';
+            var MessiStr = MessiStrExplanation + MessiStrFormOpening + MessiStrContent + MessiStrFormClosing;
+
+            new Messi(MessiStr,
+                    {title: 'Set your phrases', titleClass: 'info',
+                        buttons: [{id: 0, label: 'Ok', val: 'Ok', class: 'btn-success'}],
+                        callback: function (val) {
+                            gsm.initPlayerNames();
+                        }
+                    });
+        };
+
+        playerNamesFormPopup = function () {
+
+            // The Messi message needs to be broken down for maintainability
+            var MessiStrExplanation = '<p>Please input each player\'s name in the boxes below. Each name is limited to 12 characters maximum.</p>';
+            var MessiStrFormOpening = '<form id="player_name_input_form" action="" data-parsley-validate>';
+            var MessiStrContent = "";
+            for (var phraseNum = 1; phraseNum <= GTP.ruleset.PLAYERS; phraseNum++) {
+                var MessiStrPhraseLabel = 'Player ' + phraseNum + ': ';
+
+                var MessiStrPhraseInput = '<input type="text" class="player_name_input" id="player' + phraseNum + '" name="player' + phraseNum + '" data-parsley-maxlength="12" data-parsley-fits pattern="' + GTP.tiles.PLAYER_REGEX + '" required>';
+
+                MessiStrContent += MessiStrPhraseLabel + MessiStrPhraseInput;
+
+                // add a new line after every hint entry box
+                if (phraseNum !== GTP.ruleset.ROUNDS) {
+                    MessiStrContent += '<br>';
+                }
+            }
+            var MessiStrFormClosing = '</form>';
+            var MessiStr = MessiStrExplanation + MessiStrFormOpening + MessiStrContent + MessiStrFormClosing;
+
+            new Messi(MessiStr,
+                    {title: 'Set Your Player Names', titleClass: 'info',
+                        buttons: [{id: 0, label: 'Ok', val: 'Ok', class: 'btn-success'}],
+                        callback: function (val) {
+                            gsm.initGame();
+                            gsm.initRound();
+                        }
+                    });
+        };
 
         ///////////////////////////////////////////////////////////
         ////////////// CHARACTER //////// /////////////////////////
@@ -1085,7 +1067,11 @@
 
                         phrase = GTP.gamestate.phrases[GTP.gamestate.currentRound];
                         GTP.sounds.newGameSound();
-                        populateBoard(phrase);
+                        wordsAndIndexes = GTP.board.layoutPhraseOnBoard(phrase);
+                        GTP.board.populateBoard(wordsAndIndexes[0], wordsAndIndexes[1]);
+                        
+                        // finally, we display the hint for the players
+                        GTP.hint.setHint(GTP.gamestate.hints[GTP.gamestate.currentRound]);
 
                         scorebd.newRound();
 
