@@ -706,10 +706,10 @@
 
             //Enter the appropriate wheel state:
             if (GTP.gamestate.currentSliceValue === 0xFFFFBA) { //bankrupt
-                gsm.bankrupt();
+                bankruptifyOnWheel();
             }
             else if (GTP.gamestate.currentSliceValue === 0xFFFF10) { //lose turn
-                gsm.loseTurn();
+                loseTurnOnWheel();
             }
             else {
                 //only choose consonants after a wheel spin
@@ -717,13 +717,12 @@
             }
         };
 
-        var bankruptifyOnWheel = function (context) {
+        var bankruptifyOnWheel = function () {
             scorebd.setScore(GTP.gamestate.currentPlayer, 0);
-            GTP.sounds.bankruptOrLooseTurnSound();
-            gsm.loseTurn();
+            loseTurnOnWheel();
         };
 
-        var loseTurnOnWheel = function (context) {
+        var loseTurnOnWheel = function () {
             GTP.sounds.bankruptOrLooseTurnSound();
             gsm.loseTurn();
         };
@@ -872,9 +871,6 @@
 
             //TODO: make this part of init in wheel
             wheel.setAllCallbacks(spinFinishedCallback);
-            wheel.setCallback(10, bankruptifyOnWheel);
-            wheel.setCallback(19, bankruptifyOnWheel);
-            wheel.setCallback(27, loseTurnOnWheel);
 
             //TODO: Ideally, set bankrupt callbacks here
             wheelContainerElement = wheelContainer;
@@ -1007,15 +1003,13 @@
                 {name: 'spin', from: ['initTurn', 'success'], to: 'wheelspin'},
                 //Choose a consonant from the alphabet
                 {name: 'chooseConsonant', from: 'wheelspin', to: 'consonant'},
-                //Go bankrupt
-                {name: 'bankrupt', from: 'wheelspin', to: 'bankruptState'},
                 //Buy a vowel only after spinning the wheel and calling a consonant or buying another vowel previously
                 {name: 'buyVowel', from: 'success', to: 'vowel'},
                 //On a sucessful selection, prompt for next action
                 {name: 'success', from: ['initTurn', 'consonant', 'vowel', 'wheelspin', 'noMoreVowels', 'noMoreConsonants'], to: 'success'},
                 //Lose your turn by incorrectly calling a letter or vowel,
                 //landing on bankrupt or lose your trn, or incorrectly
-                //solving the puzzle (triggered by facilitator clicking button)
+                //solving the puzzle incorrectly
                 {name: 'loseTurn', from: ['consonant', 'vowel', 'wheelspin'], to: 'termTurn'},
                 // We would like a state to declare when there are no vowels
                 {name: 'declareNoMoreVowels', from: 'success', to: 'noMoreVowels'},
@@ -1104,11 +1098,6 @@
                     wheelContainerElement.fadeIn();
                     wheel.spin();
                 },
-                onenterbankruptState: function (event, from, to) {
-                    //lose current winnings
-                    scoreboard.setScore(GTP.gamestate.currentPlayer, 0);
-                    gsm.termTurn();
-                },
                 onenterconsonant: function (event, from, to) {
                     GTP.dialog.chooseConsonantDialog();
                 },
@@ -1167,7 +1156,6 @@
                     } else {
                         gsm.filledPuzzle();
                     }
-
                 },
                 onentertermTurn: function (event, from, to) { /*Go to next player and start turn. */
                     //remove highlight from all three scores
