@@ -844,7 +844,6 @@
                     l.append("<br id='alphabetSplitter'>");
                 }
                 
-                $('#alphabetSplitter').hide();
 
                 l.append(ich.letter_template(
                         {
