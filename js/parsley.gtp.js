@@ -50,7 +50,6 @@ canFitOnBoard = function(phrase) {
     // -X------------ //
     //  X-----------  //
 
-    TOTAL_TILES = 12 + 14 + 14 + 12;
     FIRST_LINE_IND = 0;
     SECOND_LINE_IND = 13;
     THIRD_LINE_IND = 27;
@@ -81,12 +80,12 @@ canFitOnBoard = function(phrase) {
     var max_line_len;
 
     //Checks phrase for length
-    if (phrase.length > TOTAL_TILES) {
+    if (phrase.length > GTP.tiles.TOTAL_TILES) {
         return false;
     }
 
     //checks words for length
-    for (var i = 0; i != words.length; i++) {
+    for (var i = 0; i !== words.length; i++) {
         if (words[i].length >= 14) {
             return false;
         }
@@ -127,7 +126,7 @@ canFitOnBoard = function(phrase) {
                         word = words[i];
                         len += word.length;
                     }
-                    if (len != 0) {
+                    if (len !== 0) {
                         len += choose[0] - 1;
                     }
                     len_per_line[0] = len;
@@ -137,7 +136,7 @@ canFitOnBoard = function(phrase) {
                         word = words[i + choose[0]];
                         len += word.length;
                     }
-                    if (len != 0) {
+                    if (len !== 0) {
                         len += choose[1] - 1;
                     }
                     len_per_line[1] = len;
@@ -147,7 +146,7 @@ canFitOnBoard = function(phrase) {
                         word = words[i + choose[0] + choose[1]];
                         len += word.length;
                     }
-                    if (len != 0) {
+                    if (len !== 0) {
                         len += choose[2] - 1;
                     }
                     len_per_line[2] = len;
@@ -157,7 +156,7 @@ canFitOnBoard = function(phrase) {
                         word = words[i + choose[0] + choose[1] + choose[2]];
                         len += word.length;
                     }
-                    if (len != 0) {
+                    if (len !== 0) {
                         len += choose[3] - 1;
                     }
                     len_per_line[3] = len;
@@ -190,7 +189,7 @@ canFitOnBoard = function(phrase) {
                         }
                     }
 
-                    if (num_lines_occupied == 2) {
+                    if (num_lines_occupied === 2) {
                         var count = 0;
                         var temp_len_per_line = new Array(4);
                         temp_len_per_line[0] = 0;
@@ -199,13 +198,13 @@ canFitOnBoard = function(phrase) {
                         tmp_choose[3] = 0;
                         for (var i = 0; i < len_per_line.length; i++) {
                             if (len_per_line[i] > 0) {
-                                if (count == 1) {
+                                if (count === 1) {
                                     temp_len_per_line[2] = len_per_line[i];
                                     tmp_choose[2] = choose[i];
                                     len_per_line = temp_len_per_line;
                                     break;
                                 }
-                                else if (count == 0) {
+                                else if (count === 0) {
                                     temp_len_per_line[1] = len_per_line[i];
                                     tmp_choose[1] = choose[i];
                                     count++;
@@ -213,24 +212,24 @@ canFitOnBoard = function(phrase) {
                             }
                         }
 
-                    } else if (num_lines_occupied == 3) {
+                    } else if (num_lines_occupied === 3) {
                         var count = 0;
                         var temp_len_per_line = new Array(4);
                         temp_len_per_line[3] = 0;
                         tmp_choose[3] = 0;
                         for (var i = 0; i < len_per_line.length; i++) {
                             if (len_per_line[i] > 0) {
-                                if (count == 2) {
+                                if (count === 2) {
                                     temp_len_per_line[2] = len_per_line[i];
                                     tmp_choose[2] = choose[i];
                                     len_per_line = temp_len_per_line;
                                     break;
-                                } else if (count == 1) {
+                                } else if (count === 1) {
                                     temp_len_per_line[1] = len_per_line[i];
                                     tmp_choose[1] = choose[i];
                                     count++;
                                 }
-                                else if (count == 0) {
+                                else if (count === 0) {
                                     temp_len_per_line[0] = len_per_line[i];
                                     tmp_choose[0] = choose[i];
                                     count++;
@@ -260,4 +259,4 @@ canFitOnBoard = function(phrase) {
 
     // we need to alert the user if they gave a phrase that could not fit on the board
     return false;
-}
+};
