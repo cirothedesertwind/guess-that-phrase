@@ -38,15 +38,15 @@
             radius: 580,
             slices: [
                 {value: 250, alt: "", color: '#2E8B57', formatting: null, callback: null},//00
-                {value: 300, alt: "", color: '#FF8C00', formatting: null, callback: null},//01
-                {value: 500, alt: "", color: '#00BFFF', formatting: null, callback: null},//02
-                {value: 650, alt: "", color: '#FA8072', formatting: null, callback: null},//03
-                {value: 750, alt: "", color: '#808000', formatting: null, callback: null},//04
-                {value: 800, alt: "", color: '#CC0000', formatting: null, callback: null},//05
-                {value: 400, alt: "", color: '#9400D3', formatting: null, callback: null},//06
-                {value: 250, alt: "", color: '#2E8B57', formatting: null, callback: null},//07
-                {value: 350, alt: "", color: '#FFA500', formatting: null, callback: null},//08
-                {value: 500, alt: "", color: '#00BFFF', formatting: null, callback: null},//09
+                {value: 0xFFFFBA, alt: "BANKRUPT", color: '#0A0A0A', formatting: bankruptFormat, callback: null},//10
+                {value: 0xFFFFBA, alt: "BANKRUPT", color: '#0A0A0A', formatting: bankruptFormat, callback: null},//10
+                {value: 0xFFFFBA, alt: "BANKRUPT", color: '#0A0A0A', formatting: bankruptFormat, callback: null},//10
+                {value: 0xFFFFBA, alt: "BANKRUPT", color: '#0A0A0A', formatting: bankruptFormat, callback: null},//10
+                {value: 0xFFFFBA, alt: "BANKRUPT", color: '#0A0A0A', formatting: bankruptFormat, callback: null},//10
+                {value: 0xFFFFBA, alt: "BANKRUPT", color: '#0A0A0A', formatting: bankruptFormat, callback: null},//10
+                {value: 0xFFFFBA, alt: "BANKRUPT", color: '#0A0A0A', formatting: bankruptFormat, callback: null},//10
+                {value: 0xFFFFBA, alt: "BANKRUPT", color: '#0A0A0A', formatting: bankruptFormat, callback: null},//10
+                {value: 0xFFFFBA, alt: "BANKRUPT", color: '#0A0A0A', formatting: bankruptFormat, callback: null},//10
                 {value: 0xFFFFBA, alt: "BANKRUPT", color: '#0A0A0A', formatting: bankruptFormat, callback: null},//10
                 {value: 1000, alt: "", color: '#DAA520', formatting: null, callback: null},//11
                 {value: 800, alt: "", color: '#CC0000', formatting: null, callback: null},//12

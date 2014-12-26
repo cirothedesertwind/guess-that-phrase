@@ -637,10 +637,10 @@
         );
         sound.play();
     };
-    GTP.sounds.bankruptOrLooseTurnSound = function () {
+    GTP.sounds.bankruptOrLoseTurnSound = function () {
         var sound = new Howl(
                 {
-                    urls: ['sound/bankruptOrLooseTurn.ogg']
+                    urls: ['sound/bankruptOrLoseTurn.ogg']
                 }
         );
         sound.play();
@@ -725,7 +725,7 @@
         };
 
         var loseTurnOnWheel = function () {
-            GTP.sounds.bankruptOrLooseTurnSound();
+            GTP.sounds.bankruptOrLoseTurnSound();
             gsm.loseTurn();
         };
 
