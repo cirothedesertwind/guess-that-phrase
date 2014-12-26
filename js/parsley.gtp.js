@@ -3,7 +3,8 @@ window.ParsleyValidator
         if (value === "") {
             return true;
         } else {
-            return canFitOnBoard(value);
+            var pass = canFitOnBoard(value);
+            return pass;
         }
     }, 32)
     .addMessage('en', 'fits', 'This phrase must fit in the Wheel of Fortune board.');
@@ -49,6 +50,7 @@ canFitOnBoard = function(phrase) {
     // -X------------ //
     //  X-----------  //
 
+    TOTAL_TILES = 12 + 14 + 14 + 12;
     FIRST_LINE_IND = 0;
     SECOND_LINE_IND = 13;
     THIRD_LINE_IND = 27;
@@ -82,6 +84,7 @@ canFitOnBoard = function(phrase) {
     if (phrase.length > TOTAL_TILES) {
         return false;
     }
+
     //checks words for length
     for (var i = 0; i != words.length; i++) {
         if (words[i].length >= 14) {
