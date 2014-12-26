@@ -767,6 +767,10 @@
                             gsm.initPlayerNames();
                         }
                     });
+
+            // When doing $('#target').parsley() on a <form id="target"> element, 
+            // it will bind the whole form and its various inputs and return you a ParsleyForm instance.
+            var phraseParsley = $("#phrase_input").parsley();
         };
 
         playerNamesFormPopup = function () {
@@ -798,6 +802,10 @@
                             gsm.initRound();
                         }
                     });
+
+            // When doing $('#target').parsley() on a <form id="target"> element, 
+            // it will bind the whole form and its various inputs and return you a ParsleyForm instance.
+            var playerNameParsley = $("#player_name_input_form").parsley();
         };
 
         ///////////////////////////////////////////////////////////

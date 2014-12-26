@@ -135,7 +135,6 @@
          <!-- END MESSAGE -->  <!-- END MESSAGE -->  <!-- END MESSAGE -->
 
         <script src="js/vendor/jquery-2.1.0.min.js"></script>
-        <script src="js/vendor/parsley.min.js"></script>
         <script src="js/vendor/jquery.schedule.js"></script>
         <script src="js/vendor/jquery.timer.js"></script>
         <script src="js/vendor/jquery.spritely.js"></script>
@@ -145,6 +144,11 @@
         <script src="js/vendor/velocity.min.js"></script>
         <script src="js/vendor/messi.js"></script>
         <script src="js/vendor/mustache.js"></script>
+        <!--Load your needed localization after parsley. 
+            The last loaded file will automatically set the messages locale for ParsleyValidator.
+            Here's it's just the english file.-->
+        <script src="js/vendor/parsley.min.js"></script>
+        <script src="js/vendor/i18n/en.js"></script>
         <script src="js/parsley.gtp.js"></script>
         <script src="js/wheel.gtp.js"></script>
         <script src="js/scoreboard.gtp.js"></script>
