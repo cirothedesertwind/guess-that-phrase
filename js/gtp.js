@@ -841,8 +841,10 @@
             for (var e = 0; e < GTP.lang.ALPHABET.length; e++) {
                 //add special break for two lines of letters
                 if (e === 15) { //Magic number
-                    l.append("<br id='alphabetSplitter'></br>");
+                    l.append("<br id='alphabetSplitter'>");
                 }
+                
+                $('#alphabetSplitter').hide();
 
                 l.append(ich.letter_template(
                         {
