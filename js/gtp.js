@@ -692,7 +692,7 @@
 
         var board;
         var character;
-        var isCharacterOnLeft = true;
+        //var isCharacterOnLeft = true;
         scorebd = new $.SCOREBOARD(GTP.dom.game, GTP.ruleset.PLAYERS, GTP.ruleset.CURRENCY);
 
         var wheelContainerElement;
@@ -815,9 +815,8 @@
         buildCharacter = function () {
             character = ich.character_template();
             $("body").append(character);
-            character.css("top", 200);
-            character.css("left", 200);
-            character.sprite({fps: 6, no_of_frames: 3}).active();
+             character.css("top", 100);
+             character.css("left", ($( window ).width()-1152)/2+1152-160);
         };
 
         flipTiles = function (letter) {
@@ -1284,7 +1283,7 @@
 
                     GTP.sounds.correctLetterSound(); // play the "correctGuess" sound
 
-
+                    /*
                     //only move if there are characters to be flipped
                     if (isCharacterOnLeft) {
                         character.velocity({translateX: "1100px"});
@@ -1293,6 +1292,7 @@
                         character.velocity({translateX: "0px"});
                         isCharacterOnLeft = true;
                     }
+                    */
 
 
                     $(".letter_" + letter).addClass("letter_called");
@@ -1323,6 +1323,13 @@
 
         //GAME INIT
         gsm.initPhrases();
+        
+        //each time window resizes, redraw where the mascot is.
+        $( window ).resize(function() {
+          character.css("top", 100);
+          character.css("left", ($( window ).width()-1152)/2+1152-160);
+        });
+         
 
 
     });
