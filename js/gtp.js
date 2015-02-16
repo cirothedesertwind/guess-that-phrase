@@ -733,80 +733,162 @@
         phraseFormPopup = function () {
 
             // The Messi message needs to be broken down for maintainability
-            var MessiStrExplanation = '<p>Please input the phrases you like to use in this game.</p>';
-            var MessiStrFormOpening = '<form id="phrase_input" action="" data-parsley-validate>';
-            var MessiStrContent = "";
-            for (var phraseNum = 1; phraseNum <= GTP.ruleset.ROUNDS; phraseNum++) {
-                var MessiStrPhraseLabel = 'Phrase ' + phraseNum + ': ';
+            var content;
+            var explanation = '<p>Please input the phrases you like to use in this game.</p>';
+            var form = phraseFormPopupPhraseFormHelper();
 
-                // the first phrase is required
-                if (phraseNum === 1) {
-                    var required = "required";
-                } else {
-                    var required = "";
-                }
-                var MessiStrPhraseInput = '<input type="text" id="phrase' + phraseNum + '" name="phrase' + phraseNum + '" data-parsley-maxlength="50" data-parsley-fits pattern="' + GTP.tiles.PRHASE_REGEX + '" ' + required + '>';
+            content = explanation + form;
 
-                var space = " ";
-                var MessiStrHintLabel = 'Hint ' + phraseNum + ': ';
-                var MessiStrHintContent = '<input type="text" id="hint' + phraseNum + '" name="hint' + phraseNum + '">';
-                MessiStrContent += MessiStrPhraseLabel + MessiStrPhraseInput + space + MessiStrHintLabel + MessiStrHintContent;
-
-                // add a new line after every hint entry box
-                if (phraseNum !== GTP.ruleset.ROUNDS) {
-                    MessiStrContent += '<br>';
-                }
-            }
-            var MessiStrFormClosing = '</form>';
-            var MessiStr = MessiStrExplanation + MessiStrFormOpening + MessiStrContent + MessiStrFormClosing;
-
-            new Messi(MessiStr,
-                    {title: 'Set your phrases', titleClass: 'info',
-                        buttons: [{id: 0, label: 'Ok', val: 'Ok', class: 'btn-success'}],
-                        callback: function (val) {
-                            gsm.initPlayerNames();
-                        }
-                    });
+            var html = '<div id="phrase_form_popup" title="Set your Phrases">' + content + '</div>';
 
             // When doing $('#target').parsley() on a <form id="target"> element, 
             // it will bind the whole form and its various inputs and return you a ParsleyForm instance.
             var phraseParsley = $("#phrase_input").parsley();
-        };
 
-        playerNamesFormPopup = function () {
+            // append the html to the body
+            $(html).appendTo(document.body);
 
-            // The Messi message needs to be broken down for maintainability
-            var MessiStrExplanation = '<p>Please input each player\'s name in the boxes below. Each name is limited to 12 characters maximum.</p>';
-            var MessiStrFormOpening = '<form id="player_name_input_form" action="" data-parsley-validate>';
-            var MessiStrContent = "";
-            for (var phraseNum = 1; phraseNum <= GTP.ruleset.PLAYERS; phraseNum++) {
-                var MessiStrPhraseLabel = 'Player ' + phraseNum + ': ';
+            // popup the dialog
+            $( "#phrase_form_popup" ).dialog();
+        }
 
-                var MessiStrPhraseInput = '<input type="text" class="player_name_input" id="player' + phraseNum + '" name="player' + phraseNum + '" data-parsley-maxlength="12" data-parsley-fits pattern="' + GTP.tiles.PLAYER_REGEX + '" required>';
+        phraseFormHandler = function () {
+            // let's store the phrases and their associated hints
+            for (var count = 1; count <= GTP.ruleset.ROUNDS; count++) {
 
-                MessiStrContent += MessiStrPhraseLabel + MessiStrPhraseInput;
+                // Parsley check
+                var parsleyValidateResult = $('#phrase'+count).parsley().isValid();
+                if ((typeof parsleyValidateResult == "boolean" 
+                        && parsleyValidateResult == false) || 
+                    (typeof parsleyValidateResult == "object"
+                        && parsleyValidateResult.length != 0)) {
+                    // var phraseParsley = $("#phrase_input_form").parsley();
+                    return;
+                }
+
+                // it looks like our phrase passes the Parsley validation 
+                // let's sanitize the phrases and hints...
+                var phrase = document.forms["phrase_input"]["phrase"+count].value;
+                phrase = phrase.toUpperCase();
+                phrase = phrase.trim();
+
+                var hint = document.forms["phrase_input"]["hint"+count].value;
+                hint = hint.toUpperCase();
+                hint = hint.trim();
+
+                // ... and add them to our arrays
+                GTP.gamestate.phrases.push(phrase);
+                GTP.gamestate.hints.push(hint);
+            }
+
+            $( "#phrase_form_popup" ).dialog( "close" );
+            gsm.initPlayerNames();
+        }
+
+        phraseFormPopupPhraseFormHelper = function () {
+            // The Messi content has two forms: phrases and hints
+            // Here is the html for the phrases
+            var form;
+            var formOpening = '<form id="phrase_input" onSubmit="phraseFormHandler(); return false;" data-parsley-validate>';
+            var formContent = "";
+
+            var phraseLabel;
+            var phraseInput;
+            var hintLabel;
+            var hintInput;
+
+            for (var i = 1; i <= GTP.ruleset.ROUNDS; i++) {
+                phraseLabel = '<label for="phrase' + i + '">Phrase ' + i + ': </label>'
+
+                // the first phrase is required
+                if (i === 1) { var required = "required"; } else { var required = ""; }
+                phraseInput = '<input type="text" id="phrase' + i + '" name="phrase' + i + '" data-parsley-maxlength="50" data-parsley-fits pattern="' + GTP.tiles.PRHASE_REGEX + '" ' + required + '>';
+
+                hintLabel = '<label for="hint' + i + '">Hint ' + i + ': </label>'
+                hintInput = '<input type="text" id="hint' + i + '" name="hint' + i + '">';
+
+                formContent += phraseLabel + phraseInput + hintLabel + hintInput;
 
                 // add a new line after every hint entry box
-                if (phraseNum !== GTP.ruleset.ROUNDS) {
-                    MessiStrContent += '<br>';
+                if (i !== GTP.ruleset.ROUNDS) {
+                    formContent += '<br>';
                 }
             }
-            var MessiStrFormClosing = '</form>';
-            var MessiStr = MessiStrExplanation + MessiStrFormOpening + MessiStrContent + MessiStrFormClosing;
 
-            new Messi(MessiStr,
-                    {title: 'Set Your Player Names', titleClass: 'info',
-                        buttons: [{id: 0, label: 'Ok', val: 'Ok', class: 'btn-success'}],
-                        callback: function (val) {
-                            gsm.initGame();
-                            gsm.initRound();
-                        }
-                    });
+            var formClosing = '<input type="submit"/></form>';
+            form = formOpening + formContent + formClosing
+            return form;
+        }
+
+        playerFormPopup = function () {
+
+            // The Messi message needs to be broken down for maintainability
+            var content;
+            var explanation = '<p>Please input each player\'s name in the boxes below. Each name is limited to 12 characters maximum.</p>';
+            var form = playerFormPopupPlayerFormHelper();
+
+            content = explanation + form;
+
+            var html = '<div id="player_name_form_popup" title="Set your Player Names">' + content + '</div>';
 
             // When doing $('#target').parsley() on a <form id="target"> element, 
             // it will bind the whole form and its various inputs and return you a ParsleyForm instance.
-            var playerNameParsley = $("#player_name_input_form").parsley();
-        };
+            var playerNameParsley = $("#player_name_input").parsley();
+
+            // append the html to the body
+            $(html).appendTo(document.body);
+
+            // popup the dialog
+            $( "#player_name_form_popup" ).dialog();
+        }
+
+        playerFormHandler = function () {
+
+            // let's store the player names
+            for (var count = 1; count <= GTP.ruleset.PLAYERS; count++) {
+
+                // let's sanitize the phrases and hints...
+                var player = document.forms["player_name_input_form"]["player"+count].value;
+                player = player.trim();
+
+                // ... and add them to our arrays
+                if (player === "") {
+                    player = "Player " + count;
+                }
+                scorebd.setPlayerName(count-1, player);
+            }
+
+            $( "#player_name_form_popup" ).dialog( "close" );
+            gsm.initGame();
+            gsm.initRound();
+        }
+
+        playerFormPopupPlayerFormHelper = function () {
+            // The Messi content has two forms: phrases and hints
+            // Here is the html for the phrases
+            var form;
+            var formOpening = '<form id="player_name_input_form" onSubmit="playerFormHandler(); return false;" data-parsley-validate>';
+            var formContent = "";
+
+            var label;
+            var input;
+
+            for (var i = 1; i <= GTP.ruleset.PLAYERS; i++) {
+                label = '<label for="player' + i + '">Player ' + i + ': </label>'
+                input = '<input type="text" class="player_name_input" id="player' + i + '" name="player' + i + '" data-parsley-maxlength="12" data-parsley-fits pattern="' + GTP.tiles.PLAYER_REGEX + '">';
+
+                formContent += label + input;
+
+                // add a new line after every hint entry box
+                if (i !== GTP.ruleset.ROUNDS) {
+                    formContent += '<br>';
+                }
+            }
+
+            var formClosing = '<input type="submit"/></form>';
+            form = formOpening + formContent + formClosing
+            return form;
+        }
 
         ///////////////////////////////////////////////////////////
         ////////////// CHARACTER //////// /////////////////////////
@@ -1051,7 +1133,7 @@
                     phraseFormPopup();
                 },
                 onenterinitPlayerNames: function (event, from, to) {
-                    playerNamesFormPopup();
+                    playerFormPopup();
                 },
                 onenterinitGame: function (event, from, to) {
                     board = GTP.board.buildBoard();
@@ -1066,6 +1148,7 @@
 
                 },
                 onenterinitRound: function (event, from, to) {
+                    
                     GTP.gamestate.currentRound = GTP.gamestate.currentRound + 1;
 
                     /*If there are more rounds to play, start by randomizing the
