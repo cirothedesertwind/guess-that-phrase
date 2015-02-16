@@ -745,7 +745,7 @@
 
         phraseFormPopup = function () {
 
-            // The Messi message needs to be broken down for maintainability
+            // The message needs to be broken down for maintainability
             var content;
             var explanation = '<p>Please input the phrases you like to use in this game.</p>';
             var form = phraseFormPopupPhraseFormHelper();
@@ -799,7 +799,7 @@
         }
 
         phraseFormPopupPhraseFormHelper = function () {
-            // The Messi content has two forms: phrases and hints
+            // The content has two forms: phrases and hints
             // Here is the html for the phrases
             var form;
             var formOpening = '<form id="phrase_input" onSubmit="phraseFormHandler(); return false;" data-parsley-validate>';
@@ -835,7 +835,7 @@
 
         playerFormPopup = function () {
 
-            // The Messi message needs to be broken down for maintainability
+            // The message needs to be broken down for maintainability
             var content;
             var explanation = '<p>Please input each player\'s name in the boxes below. Each name is limited to 12 characters maximum.</p>';
             var form = playerFormPopupPlayerFormHelper();
@@ -877,7 +877,7 @@
         }
 
         playerFormPopupPlayerFormHelper = function () {
-            // The Messi content has two forms: phrases and hints
+            // The content has two forms: phrases and hints
             // Here is the html for the phrases
             var form;
             var formOpening = '<form id="player_name_input_form" onSubmit="playerFormHandler(); return false;" data-parsley-validate>';
