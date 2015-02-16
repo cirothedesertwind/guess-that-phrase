@@ -759,7 +759,7 @@
             $(html).appendTo(document.body);
 
             // popup the dialog
-            $( "#phrase_form_popup" ).dialog();
+            $( "#phrase_form_popup" ).dialog({width: 650, height:320});
         }
 
         phraseFormHandler = function () {
@@ -825,7 +825,7 @@
                 }
             }
 
-            var formClosing = '<input type="submit"/></form>';
+            var formClosing = '<input type="submit" value="Submit Phrases"/></form>';
             form = formOpening + formContent + formClosing
             return form;
         }
@@ -849,7 +849,7 @@
             $(html).appendTo(document.body);
 
             // popup the dialog
-            $( "#player_name_form_popup" ).dialog();
+            $( "#player_name_form_popup" ).dialog({width: 450, height: 300});
         }
 
         playerFormHandler = function () {
@@ -895,7 +895,7 @@
                 }
             }
 
-            var formClosing = '<input type="submit"/></form>';
+            var formClosing = '<input type="submit" value="Submit Player Names"/></form>';
             form = formOpening + formContent + formClosing
             return form;
         }
