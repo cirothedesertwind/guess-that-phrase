@@ -25,3 +25,9 @@ CC-BY 3.0
 endRoundSuccess.ogg, by grunz
 http://www.freesound.org/people/grunz/sounds/109662/
 CC-BY 3.0
+
+## Yipee (for Mascot)
+
+sound-jupee2.mp3, by zippi1
+https://www.freesound.org/people/zippi1/sounds/17940/
+CC-BY-NC 3.0

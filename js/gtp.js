@@ -637,6 +637,16 @@
         );
         sound.play();
     };
+    
+    GTP.sounds.yipee = function () {
+        var sound = new Howl(
+                {
+                    urls: ['sound/yipee.ogg']
+                }
+        );
+        sound.play();
+    };
+    
     GTP.sounds.bankruptOrLoseTurnSound = function () {
         var sound = new Howl(
                 {
@@ -1180,6 +1190,12 @@
                     //remove highlight from all three scores
                     $(".score").removeClass("active");
                     GTP.sounds.endRoundSound();
+                    
+                    //mascot makes a comment
+                    var timer = $.timer(function () {
+                         GTP.sounds.yipee();
+                    });
+                    timer.once(3000);
 
                     GTP.dialog.hideMessage();
                     GTP.dialog.termRoundDialog();
