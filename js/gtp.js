@@ -739,6 +739,9 @@
             gsm.loseTurn();
         };
 
+        ///////////////////////////////////////////////////////////
+        ////////////////// POPUPS /////////////////////////////////
+        ///////////////////////////////////////////////////////////
 
         phraseFormPopup = function () {
 
@@ -898,6 +901,55 @@
             var formClosing = '<input type="submit" value="Submit Player Names"/></form>';
             form = formOpening + formContent + formClosing
             return form;
+        }
+
+        buildNoMoreLetterTypePopup = function () {
+            // set the variables
+            var content;
+            var id = "no_more_letter_type_popup";
+            var title = "";
+            var message = '<p id="no_more_letter_type_message"></p>';
+            var button = '<button id="no_more_letter_type_button">Ok</button>';
+
+            content = message + button;
+
+            var html = '<div id="' + id + '" title="' + title + '">' + content + '</div>';
+
+            // append the html to the body
+            $(html).appendTo(document.body);
+
+            // popup the dialog
+            $( "#" + id ).dialog({autoOpen: false});
+
+            // button handler
+            $("#no_more_letter_type_button").click( function() {
+                noMoreLetterTypePopupHandler();
+            })
+        }
+
+        noMoreLetterTypePopup = function (letter_type) {
+
+            //  decide if you're looking at vowels or consonants
+            if (letter_type === "vowel") {
+                var title = "No More Vowels";
+                var message = 'All the vowels in the phrase have been called out.';
+            } else {
+                var title = "No More Consonants";
+                var message = 'All the consonants in the phrase have been called out.';
+            }
+
+            // set the title and message
+            $("#no_more_letter_type_popup").dialog( "option", "title", title );
+            $("#no_more_letter_type_message").text(message);
+
+            // open the popup
+            $("#no_more_letter_type_popup").dialog( "open" );
+        }
+
+        noMoreLetterTypePopupHandler = function () {
+            // close the popup
+            $( "#no_more_letter_type_popup" ).dialog( "close" );
+            gsm.success();
         }
 
         ///////////////////////////////////////////////////////////
@@ -1150,6 +1202,7 @@
                     panel = buildPanel();
                     GTP.dom.game.append(panel);
                     buildCharacter();
+                    buildNoMoreLetterTypePopup();
 
                     // initialiy make these items hidden for now
                     wheelContainerElement.hide();
@@ -1309,27 +1362,12 @@
                 onenternoMoreVowels: function (event, from, to) {
                     GTP.gamestate.noMoreVowelsAlertDisplayed = true;
                     GTP.util.setRemainingVowelsToRed();
-                    new Messi('All the vowels in the phrase have been called out.',
-                            {title: 'No more vowels!',
-                                titleClass: 'anim warning',
-                                buttons: [{id: 0, label: 'Close', val: 'X'}],
-                                modal: true,
-                                callback: function (val) {
-                                    gsm.success();
-                                }
-                            });
+                    noMoreLetterTypePopup("vowel");
                 },
                 onenternoMoreConsonants: function (event, from, to) {
                     GTP.gamestate.noMoreConsonantsAlertDisplayed = true;
                     GTP.util.setRemainingConsonantsToRed();
-                    new Messi('All the consonants in the phrase have been called out.',
-                            {title: 'No more consonants!',
-                                titleClass: 'anim warning',
-                                buttons: [{id: 0, label: 'Close', val: 'X'}],
-                                callback: function (val) {
-                                    gsm.success();
-                                }
-                            });
+                    noMoreLetterTypePopup("consonant");
                 },
                 onenterguess: function (event, from, to) {
                     GTP.dialog.hideMessage();
