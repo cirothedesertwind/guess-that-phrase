@@ -121,62 +121,6 @@ Messi.prototype = {
         this.visible = true
     },
     hide: function (e) {
-        /////////////////////////////////////////////////////////////////////////////////////
-        //////////////////////////////// BEGIN MODIFIED CODE ////////////////////////////////
-        /////////////////////////////////////////////////////////////////////////////////////
-        
-        // if there is a form inside the Messi message, we should process it
-        if (($("form").length == 1) && ($("form").attr("id") == "phrase_input")){
-
-            // let's store the phrases and their associated hints
-            for (var count = 1; count <= GTP.ruleset.ROUNDS; count++) {
-
-                // Parsley check
-                var parsleyValidateResult = $('#phrase'+count).parsley().isValid();
-                if ((typeof parsleyValidateResult == "boolean" 
-                        && parsleyValidateResult == false) || 
-                    (typeof parsleyValidateResult == "object"
-                        && parsleyValidateResult.length != 0)) {
-                    return;
-                }
-
-                // it looks like our phrase passes the Parsley validation 
-                // let's sanitize the phrases and hints...
-                var phrase = document.forms["phrase_input"]["phrase"+count].value;
-                phrase = phrase.toUpperCase();
-                phrase = phrase.trim();
-
-                var hint = document.forms["phrase_input"]["hint"+count].value;
-                hint = hint.toUpperCase();
-                hint = hint.trim();
-
-                // ... and add them to our arrays
-                GTP.gamestate.phrases.push(phrase);
-                GTP.gamestate.hints.push(hint);
-            }
-        }
-
-        // if there is a form inside the Messi message, we should process it
-        if (($("form").length == 1) && ($("form").attr("id") == "player_name_input_form")){
-
-            // let's store the phrases and their associated hints
-            for (var count = 1; count <= GTP.ruleset.PLAYERS; count++) {
-
-                // let's sanitize the phrases and hints...
-                var player = document.forms["player_name_input_form"]["player"+count].value;
-                player = player.trim();
-
-                // ... and add them to our arrays
-                if (player === "") {
-                    player = "Player " + count;
-                }
-                scorebd.setPlayerName(count-1, player);
-            }
-        }
-
-        /////////////////////////////////////////////////////////////////////////////////////
-        ///////////////////////////////// END MODIFIED CODE /////////////////////////////////
-        /////////////////////////////////////////////////////////////////////////////////////
         if (!this.visible) return;
         var t = this;
         this.messi.animate({
