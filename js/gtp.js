@@ -747,7 +747,7 @@
 
             // The message needs to be broken down for maintainability
             var content;
-            var explanation = '<p>Please input the phrases you like to use in this game.</p>';
+            var explanation = '<p>Please input the phrases you like to use in this game. (If the "Submit Phrases" button isn\'t working, it\'s probably because the phrase you typed in is too long, has a word that is more than 12 characters, or just doesn\'t fit on the board.)</p>';
             var form = phraseFormPopupPhraseFormHelper();
 
             content = explanation + form;
@@ -762,7 +762,7 @@
             $(html).appendTo(document.body);
 
             // popup the dialog
-            $( "#phrase_form_popup" ).dialog({width: 650, height:320});
+            $( "#phrase_form_popup" ).dialog({width: 650, height:350});
         }
 
         phraseFormHandler = function () {
@@ -852,7 +852,7 @@
             $(html).appendTo(document.body);
 
             // popup the dialog
-            $( "#player_name_form_popup" ).dialog({width: 450, height: 300});
+            $( "#player_name_form_popup" ).dialog({width: 450, height: 260});
         }
 
         playerFormHandler = function () {
