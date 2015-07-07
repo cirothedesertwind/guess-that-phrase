@@ -1,0 +1,130 @@
+@cell-height: 75px;
+@cell-width: 60px;
+@cell-border: 5px;
+
+@letter-size: @cell-height * 0.64;
+
+@flipper-animation-speed: 0.6s;
+@flipper-animation-style: preserve-3d;
+
+@row-margin: 5px;
+
+/*Cell flip animation ----------------------------- */
+/*Based on tutorial by David Walsh */
+
+.flip-container {
+  -webkit-perspective: 1000;
+  -moz-perspective: 1000;
+  -o-perspective: 1000;
+  perspective: 1000;
+	width: @cell-width;
+	height: @cell-height;
+}
+
+.flip-container.flip .flipper {
+	transform: rotateY(180deg);
+}
+
+div.board div.row {
+    margin-top: @row-margin;
+}
+
+
+//TODO: Understand how this actually works because it doesn't make
+        //sense mathematically.
+        // It may be because of the 3D transform.
+.cell .front {
+        
+	height: @cell-height - @cell-border * 2; /*Top and bottom*/ 
+	width: @cell-width - @cell-border * 2; /*Right and left*/
+        top: @cell-border/2;
+        left: @cell-border/2;
+	position: absolute;
+}
+
+.cell .back {
+     
+	height: @cell-height - @cell-border * 2; /*Top and bottom*/ 
+	width: @cell-width - @cell-border * 2; /*Right and left*/
+        top: @cell-border;
+        left: @cell-border;
+	position: absolute;
+}
+
+.cell .back {
+ background-color: white;
+}
+
+.front, .back {
+	-webkit-backface-visibility: hidden;
+	-moz-backface-visibility: hidden;
+  -o-backface-visibility: hidden;
+	backface-visibility: hidden;
+}
+
+.front {
+	z-index: 2;
+}
+
+.back {
+	-webkit-transform: rotateY(180deg);
+	-moz-transform: rotateY(180deg);
+  -o-transform: rotateY(180deg);
+	transform: rotateY(180deg);
+}
+
+
+.cell .back p.letter {
+    color: black;
+    font-size: @letter-size;
+    padding: 0;
+    margin: 0;
+}
+
+.back p {
+	text-align: center;
+    line-height: @cell-height;
+}
+
+/*Flipper animation */
+.flipper {
+	-webkit-transition: @flipper-animation-speed;
+	-moz-transition: @flipper-animation-speed;
+    -o-transition: @flipper-animation-speed;
+	transition: @flipper-animation-speed;
+	-webkit-transform-style: @flipper-animation-style;
+	-moz-transform-style: @flipper-animation-style;
+	-o-transform-style: @flipper-animation-style;
+	transform-style: @flipper-animation-style;
+}
+
+.cell {
+  background: #45484d; /* Old browsers */
+background: -moz-linear-gradient(top, #45484d 0%, #000000 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#45484d), color-stop(100%,#000000)); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(top, #45484d 0%,#000000 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(top, #45484d 0%,#000000 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(top, #45484d 0%,#000000 100%); /* IE10+ */
+background: linear-gradient(to bottom, #45484d 0%,#000000 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#45484d', endColorstr='#000000',GradientType=0 ); /* IE6-9 */
+}
+
+div.cell:not(.contains_letter) .front {
+ /*Decoration*/
+  background: #299a0b; /* Old browsers */
+  background: -moz-linear-gradient(top, #299a0b 0%, #226608 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#299a0b), color-stop(100%,#226608)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top, #299a0b 0%,#226608 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top, #299a0b 0%,#226608 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top, #299a0b 0%,#226608 100%); /* IE10+ */
+  background: linear-gradient(to bottom, #299a0b 0%,#226608 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#299a0b', endColorstr='#226608',GradientType=0 ); /* IE6-9 */
+}
+
+div.cell.contains_letter div.flipper div.front {
+	background-color: white;
+}
+
+.cell .back {
+  text-transform: uppercase;
+}

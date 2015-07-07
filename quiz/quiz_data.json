@@ -1,0 +1,191 @@
+{
+  "quiz_data":{
+    "name":"Quizzler Template",
+    "rounds":[
+      {
+        "topics":[
+          {
+            "name":"Topic 1",
+            "questions":[
+              {
+                "value":1,
+                "answer":" Answer 1",
+                "question":"Question 1"
+              },
+              {
+                "value":2,
+                "answer":"Answer 2",
+                "question":"Question 2"
+              },
+              {
+                "value":3,
+                "answer":"Answer 3",
+                "question":"Question 3"
+              },
+              {
+                "value":4,
+                "answer":"Answer 4",
+                "question":"Question 4"
+              },
+              {
+                "value":5,
+                "answer":"Answer 5",
+                "question":"Question 5"
+              }
+            ]
+          },
+          {
+            "name":"Topic 1",
+            "questions":[
+              {
+                "value":1,
+                "answer":" Answer 1",
+                "question":"Question 1"
+              },
+              {
+                "value":2,
+                "answer":"Answer 2",
+                "question":"Question 2"
+              },
+              {
+                "value":3,
+                "answer":"Answer 3",
+                "question":"Question 3"
+              },
+              {
+                "value":4,
+                "answer":"Answer 4",
+                "question":"Question 4"
+              },
+              {
+                "value":5,
+                "answer":"Answer 5",
+                "question":"Question 5"
+              }
+            ]
+          },
+          {
+            "name":"Topic 1",
+            "questions":[
+              {
+                "value":1,
+                "answer":" Answer 1",
+                "question":"Question 1"
+              },
+              {
+                "value":2,
+                "answer":"Answer 2",
+                "question":"Question 2"
+              },
+              {
+                "value":3,
+                "answer":"Answer 3",
+                "question":"Question 3"
+              },
+              {
+                "value":4,
+                "answer":"Answer 4",
+                "question":"Question 4"
+              },
+              {
+                "value":5,
+                "answer":"Answer 5",
+                "question":"Question 5"
+              }
+            ]
+          },
+          {
+            "name":"Topic 1",
+            "questions":[
+              {
+                "value":1,
+                "answer":" Answer 1",
+                "question":"Question 1"
+              },
+              {
+                "value":2,
+                "answer":"Answer 2",
+                "question":"Question 2"
+              },
+              {
+                "value":3,
+                "answer":"Answer 3",
+                "question":"Question 3"
+              },
+              {
+                "value":4,
+                "answer":"Answer 4",
+                "question":"Question 4"
+              },
+              {
+                "value":5,
+                "answer":"Answer 5",
+                "question":"Question 5"
+              }
+            ]
+          },
+          {
+            "name":"Topic 1",
+            "questions":[
+              {
+                "value":1,
+                "answer":" Answer 1",
+                "question":"Question 1"
+              },
+              {
+                "value":2,
+                "answer":"Answer 2",
+                "question":"Question 2"
+              },
+              {
+                "value":3,
+                "answer":"Answer 3",
+                "question":"Question 3"
+              },
+              {
+                "value":4,
+                "answer":"Answer 4",
+                "question":"Question 4"
+              },
+              {
+                "value":5,
+                "answer":"Answer 5",
+                "question":"Question 5"
+              }
+            ]
+          },
+          {
+            "name":"Topic 1",
+            "questions":[
+              {
+                "value":1,
+                "answer":" Answer 1",
+                "question":"Question 1"
+              },
+              {
+                "value":2,
+                "answer":"Answer 2",
+                "question":"Question 2"
+              },
+              {
+                "value":3,
+                "answer":"Answer 3",
+                "question":"Question 3"
+              },
+              {
+                "value":4,
+                "answer":"Answer 4",
+                "question":"Question 4"
+              },
+              {
+                "value":5,
+                "answer":"Answer 5",
+                "question":"Question 5"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

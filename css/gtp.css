@@ -1,0 +1,85 @@
+body {
+	font-family: sans-serif;
+	background: #00294D
+}
+
+.hide {
+	visibility: hidden;
+}
+
+.alphabet {
+    text-align: center;
+}
+
+span.letter {
+    font-weight: bold;
+    font-size: 3em;
+    color: white;
+}
+
+span.letter {
+	cursor: pointer;
+}
+
+span.letter.letter_called {
+	color: gray;
+}
+
+span.letter.letter_called_none {
+	color: red;
+}
+
+/* End Message Panel*/ 
+.message-box {
+	text-align: center;
+}
+
+#message-label {
+	font-size: 1.5em; 
+	color: white;
+}
+
+#button-list {
+	padding-top: 10px;
+}
+
+.button-green {
+    background: rgb(28, 184, 65); /* this is a green */
+}
+
+.button-red {
+    background: rgb(202, 60, 60); /* this is a maroon */
+}
+
+.button-yellow {
+    background: rgb(255, 255, 0); /* this is an yellow */
+}
+
+
+.score:not(.active) {
+    opacity: .4;
+}
+
+/* Start Message Panel*/
+
+fieldset {
+    padding: 0;
+    padding-top: 0.25em;
+    margin: 0;
+}
+
+#canvas {
+    transform: rotateX(60deg);
+    position: absolute;
+    top: -300px;
+}
+
+#player_name_input_form {
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+}
+
+.player_name_input {
+    width: 200px;
+}
