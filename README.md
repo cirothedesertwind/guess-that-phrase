@@ -1,4 +1,4 @@
-# guess-that-phrase
+# [guess-that-phrase](http://lukepetrolekas.github.io/guess-that-phrase/)
 
 Guess That Phrase! is a HTML5 Gameshow that simulates a Wheel of Fortune gaming experience for educators.
 
@@ -10,4 +10,4 @@ This game does *not* contain any wordmarks, trademarks, or other copyrighted mat
 
 ## License
 
-GPLv3.
+This project is licensed under GPLv3. It can be found here: http://www.gnu.org/licenses/gpl-3.0.en.html
