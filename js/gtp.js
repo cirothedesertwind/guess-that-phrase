@@ -104,11 +104,11 @@
     GTP.dialog.gameFinishDialog = function () {
         var winners = scorebd.getWinners();
         if (winners.length === 1) {
-            var winner = scorebd.getPlayerName(winners[0] + 1);
+            var winner = scorebd.getPlayerName(winners[0]);
             var message = 'The game has ended. ' + winner + ' is the winner!';
         } else if (winners.length === 2) {
-            var winner1 = scorebd.getPlayerName(winners[0] + 1);
-            var winner2 = scorebd.getPlayerName(winners[1] + 1);
+            var winner1 = scorebd.getPlayerName(winners[0]);
+            var winner2 = scorebd.getPlayerName(winners[1]);
             var message = 'The game has ended. It seems there is a tie. ' + winner1 + ' and ' + winner2 + ' are both winners!';
         } else {
             var message = 'The game has ended. You\'re all winners!';
